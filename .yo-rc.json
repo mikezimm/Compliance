@@ -1,0 +1,16 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "version": "1.15.2",
+    "libraryName": "compliance-opportunities",
+    "libraryId": "bc58652d-3bd6-430b-83df-8453b9e147f4",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "Compliance Opportunities",
+    "solutionShortDescription": "Compliance Opportunities description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

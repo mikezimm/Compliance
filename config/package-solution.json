@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "compliance-opportunities-client-side-solution",
+    "id": "bc58652d-3bd6-430b-83df-8453b9e147f4",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.15.2"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "Compliance Opportunities description"
+      },
+      "longDescription": {
+        "default": "Compliance Opportunities description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "compliance-opportunities Feature",
+        "description": "The feature that activates elements of the compliance-opportunities solution.",
+        "id": "24438ce3-ef2b-4466-a567-415a7bceeb69",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/compliance-opportunities.sppkg"
+  }
+}
