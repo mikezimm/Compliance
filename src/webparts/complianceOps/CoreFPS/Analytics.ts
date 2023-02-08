@@ -13,7 +13,7 @@ import { DisplayMode, } from '@microsoft/sp-core-library';
  *          
  */
 
- import { IFpsCore115BannerProps } from '../components/IFpsCore115BannerProps';
+ import { IComplianceOpsProps } from '../components/IComplianceOpsProps';
  import { check4Gulp, ILoadPerformance, } from '../fpsMinIndex';
  import { saveAnalytics3, getMinPerformanceString } from '@mikezimm/fps-library-v2/lib/pnpjs/Logging/saveAnalytics';
  import { IZLoadAnalytics, IZSentAnalytics, } from '@mikezimm/fps-library-v2/lib/pnpjs/Logging/interfaces';
@@ -43,7 +43,7 @@ import { DisplayMode, } from '@microsoft/sp-core-library';
  *
  */
 
-export function saveViewAnalytics( Title: string, Result: string, parentProps: IFpsCore115BannerProps, analyticsWasExecuted: boolean, performanceObj: ILoadPerformance) : boolean {
+export function saveViewAnalytics( Title: string, Result: string, parentProps: IComplianceOpsProps, analyticsWasExecuted: boolean, performanceObj: ILoadPerformance) : boolean {
 
     if ( analyticsWasExecuted === true ) {
       console.log('saved view info already');
