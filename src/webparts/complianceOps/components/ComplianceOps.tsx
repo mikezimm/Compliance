@@ -12,9 +12,9 @@ import FetchBannerX from '@mikezimm/fps-library-v2/lib/banner/bannerX/FetchBanne
 
 import { getWebPartHelpElementBoxTiles } from '../PropPaneHelp/PropPaneHelp';
 import { getBannerPages, } from './HelpPanel/AllContent';
-import { check4Gulp, IBannerPages, IPinMeState } from "../fpsMinIndex";
+import { check4Gulp, IBannerPages, IPinMeState } from "../fpsReferences";
 
-import { ILoadPerformance, startPerformOp, updatePerformanceEnd } from "../fpsMinIndex";
+import { ILoadPerformance, startPerformOp, updatePerformanceEnd } from "../fpsReferences";
 
 import { ISiteThemes } from "@mikezimm/fps-library-v2/lib/common/commandStyles/ISiteThemeChoices";
 const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.fpsSiteThemeLight, primary: styles.fpsSiteThemePrimary };
@@ -56,6 +56,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
  *               
  */
 
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
    private _farBannerElements: any[] = [];
 
  /***

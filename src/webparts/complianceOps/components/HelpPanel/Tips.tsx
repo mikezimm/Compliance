@@ -26,7 +26,7 @@
 
 // const tipCellStyle: React.CSSProperties = {paddingRight: '20px' };
 
-export const webParTips : any[] = [
+export const webParTips : JSX.Element[] = [
 
 //Sample of basic tip
 

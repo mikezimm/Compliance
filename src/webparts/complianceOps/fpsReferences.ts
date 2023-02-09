@@ -44,6 +44,7 @@ export { sortObjectArrayByNumberKey, } from '@mikezimm/fps-library-v2/lib/logic/
 
 export { getHelpfullError, getHelpfullErrorV2 } from '@mikezimm/fps-library-v2/lib/logic/Errors/friendly';
 
+export { ISeriesSort, ISeriesSortObject } from '@mikezimm/fps-library-v2/lib/logic/Arrays/sorting/Interfaces';
 
 export { makeid } from '@mikezimm/fps-library-v2/lib/logic/Strings/guids';
 
