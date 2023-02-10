@@ -53,6 +53,8 @@ export { makeid } from '@mikezimm/fps-library-v2/lib/logic/Strings/guids';
 // export { getNumberArrayFromString } from '@mikezimm/fps-library-v2/lib/logic/Strings/arraysFromString';
 
 
+export { IAnySourceItem } from '@mikezimm/fps-library-v2/lib/components/molecules/SourceList/IAnyContent';
+export { IFpsItemsReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Common/CheckItemsResults';
 
 
 

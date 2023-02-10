@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styles from './ComplianceOps.module.scss';
-import { IComplianceOpsProps, IComplianceOpsState } from './IComplianceOpsProps';
+import { IComplianceOpsProps, IComplianceOpsState, IStateSource } from './IComplianceOpsProps';
 import { escape } from '@microsoft/sp-lodash-subset';
 
 import { saveViewAnalytics } from '../CoreFPS/Analytics';
@@ -16,7 +16,11 @@ import { check4Gulp, IBannerPages, IPinMeState } from "../fpsReferences";
 
 import { ILoadPerformance, startPerformOp, updatePerformanceEnd } from "../fpsReferences";
 
+import { getSourceItems } from '@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/getSourceItems';
+
 import { ISiteThemes } from "@mikezimm/fps-library-v2/lib/common/commandStyles/ISiteThemeChoices";
+import { IDefSourceType, ISourcePropsCOP, SourceInfo } from './DataInterface';
+
 const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.fpsSiteThemeLight, primary: styles.fpsSiteThemePrimary };
 
 //Use this to add more console.logs for this component
@@ -38,6 +42,20 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     const startTime = new Date();
     const refreshId = startTime.toISOString().replace('T', ' T'); // + ' ~ ' + startTime.toLocaleTimeString();
     return refreshId;
+
+  }
+
+  private _missingFetches() : IDefSourceType[] {
+    const loads: IDefSourceType[] = [];
+    if ( this.state.committee.loaded !== true ) loads.push( 'committee' );
+    if ( this.state.coordinators.loaded !== true ) loads.push( 'coordinators' );
+    if ( this.state.maps.loaded !== true ) loads.push( 'maps' );
+    if ( this.state.forms.loaded !== true ) loads.push( 'forms' );
+    if ( this.state.tips.loaded !== true ) loads.push( 'tips' );
+
+    if ( loads.length === 0 ) loads.push( '*' );
+
+    return loads;
 
   }
 
@@ -75,7 +93,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     super(props);
 
     if ( this._performance === null ) { this._performance = this.props.performance;  }
-
+    const constId: string = this._newRefreshId();
     this.state = {
       pinState: this.props.bannerProps.fpsPinMenu.defPinState ? this.props.bannerProps.fpsPinMenu.defPinState : 'normal',
       showDevHeader: false,
@@ -85,20 +103,30 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       debugMode: false,
       showSpinner: false,
 
-      };
+      mainPivotKey: 'Home',
+
+      fullAnalyticsSaved: false,
+
+      committee : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      coordinators : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      maps : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      forms : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      tips : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+
+    };
   }
 
-  public componentDidMount(): void {
+  public async componentDidMount(): Promise<void> {
       if ( check4Gulp() === true )  console.log( `${consolePrefix} ~ componentDidMount` );
-    
+
       //Start tracking performance
-      this._performance.ops.fetch1 = startPerformOp( 'fetch1 TitleText', this.props.bannerProps.displayMode );
+      // this._performance.ops.fetch1 = startPerformOp( 'fetch1 TitleText', this.props.bannerProps.displayMode );
       //Do async code here
-
+      await this.updateTheseSources( this._missingFetches() );
       //End tracking performance
-      this._performance.ops.fetch1 = updatePerformanceEnd( this._performance.ops.fetch1, true, 777 );
+      // this._performance.ops.fetch1 = updatePerformanceEnd( this._performance.ops.fetch1, true, 777 );
 
-      const analyticsWasExecuted = saveViewAnalytics( 'FPS Core114 Banner View', 'didMount' , this.props, this.state.analyticsWasExecuted, this._performance );
+      const analyticsWasExecuted = saveViewAnalytics( 'Compliance mount', 'didMount' , this.props, this.state.analyticsWasExecuted, this._performance );
 
       if ( this.state.analyticsWasExecuted !==  analyticsWasExecuted ) {
         this.setState({ analyticsWasExecuted: analyticsWasExecuted });
@@ -106,9 +134,9 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     }
 
-    
 
-  //        
+
+  //
     /***
    *         d8888b. d888888b d8888b.      db    db d8888b. d8888b.  .d8b.  d888888b d88888b 
    *         88  `8D   `88'   88  `8D      88    88 88  `8D 88  `8D d8' `8b `~~88~~' 88'     
@@ -120,17 +148,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
    *         
    */
 
-  public componentDidUpdate( prevProps: IComplianceOpsProps ): void {
-
-    if ( check4Gulp() === true )  console.log( `${consolePrefix} ~ componentDidUpdate` );
-
-    const refresh = this.props.bannerProps.displayMode !== prevProps.bannerProps.displayMode ? true : false;
-
-    //refresh these privates when the prop changes warrent it
-    if ( refresh === true ) {
-      this._contentPages = getBannerPages( this.props.bannerProps );
-    }
-    
+  public async componentDidUpdate( prevProps: IComplianceOpsProps ): Promise<void> {
 
     /**
      * This section is needed if you want to track performance in the react component.
@@ -141,25 +159,69 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
      *    this._replacePanelHTML = refreshPanelHTML( <=== This updates the performance panel content
      */
 
-      if ( refresh === true ) {
-      //Start tracking performance item
-      this._performance.ops.fetch2 = startPerformOp( 'fetch2 TitleText', this.props.bannerProps.displayMode );
+    if ( check4Gulp() === true )  console.log( `${consolePrefix} ~ componentDidUpdate` );
 
-      /**
-       *       Do async code here
-       */
+    const refresh = this.props.bannerProps.displayMode !== prevProps.bannerProps.displayMode ? true : false;
 
-      //End tracking performance
-      this._performance.ops.fetch2 = updatePerformanceEnd( this._performance.ops.fetch2, true, 999 );
-
-      if ( check4Gulp() === true )  console.log('React componentDidUpdate - this._performance:', JSON.parse(JSON.stringify(this._performance)) );
-
+    //refresh these privates when the prop changes warrent it
+    if ( refresh === true ) {
+      await this.updateTheseSources( this._missingFetches() );
+      this._contentPages = getBannerPages( this.props.bannerProps );
     }
+  }
+
+  private async updateTheseSources( sources: IDefSourceType[] ): Promise<void> {
+    const { ops } = this._performance;
+
+    ops.fetch = startPerformOp( 'fetch Sync', this.props.bannerProps.displayMode );
+
+    const all: boolean = sources.indexOf( '*' ) > -1 ? true : false;
+
+    const [ maps, committee, coordinators, forms, tips ] = await Promise.all([
+      all === true || sources.indexOf( 'maps' ) > -1 ? this.getSource( SourceInfo.maps ) : this.state.maps,
+      all === true || sources.indexOf( 'committee' ) > -1 ? this.getSource( SourceInfo.committee ) : this.state.committee,
+      all === true || sources.indexOf( 'coordinators' ) > -1 ? this.getSource( SourceInfo.coordinators ) : this.state.coordinators,
+      all === true || sources.indexOf( 'forms' ) > -1 ? this.getSource( SourceInfo.forms ) : this.state.forms,
+      all === true || sources.indexOf( 'tips' ) > -1 ? this.getSource( SourceInfo.tips ) : this.state.tips,
+    ]);
+
+    const endWas = Math.max(
+      ops.fetch0 && ops.fetch0.end ? ops.fetch0.end.getTime() : -1,
+      ops.fetch1 && ops.fetch1.end ? ops.fetch1.end.getTime() : -1,
+      ops.fetch2 && ops.fetch2.end ? ops.fetch2.end.getTime() : -1,
+      ops.fetch3 && ops.fetch3.end ? ops.fetch3.end.getTime() : -1,
+      ops.fetch4 && ops.fetch4.end ? ops.fetch4.end.getTime() : -1,
+    );
+
+    ops.fetch = updatePerformanceEnd( ops.fetch, true, 999999 );
+
+    const totalTime = endWas - ops.fetch.start.getTime();
+    console.log('Total fetch time was:', totalTime );
+
+    this.setState({
+      maps: maps,
+      committee: committee,
+      coordinators: coordinators,
+      forms: forms,
+      tips: tips,
+      fullAnalyticsSaved: true,
+    });
+
+  }
+
+  private async getSource( sourceProps: ISourcePropsCOP ) : Promise<IStateSource> {
+    const stateSource = await getSourceItems( sourceProps, true, true ) as IStateSource;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const _performanceOpsAny: any = this._performance.ops;
+    const op = sourceProps.performanceSettings.op;
+    if ( op && stateSource.loaded === true ) _performanceOpsAny[ op ] = stateSource.performanceOp;
+    console.log('getSource', sourceProps, stateSource, _performanceOpsAny );
+    return stateSource;
 
   }
 
   // public async _updatePerformance () {
-  public _updatePerformance (): boolean  {
+  public async _updatePerformance (): Promise<boolean>  {
 
 
     /**
@@ -196,7 +258,6 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
   }
 
-
   public render(): React.ReactElement<IComplianceOpsProps> {
     const {
       description,
@@ -228,7 +289,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     //Setting showTricks to false here ( skipping this line does not have any impact on bug #90 )
     if ( this.props.bannerProps.beAUser === false ) {
-      farBannerElementsArray.push( 
+      farBannerElementsArray.push(
         // <div title={'Show Debug Info'}><Icon iconName='TestAutoSolid' onClick={ this.toggleDebugMode.bind(this) } style={ this.debugCmdStyles }></Icon></div>
       );
     }
@@ -240,7 +301,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     if ( check4Gulp() === true )  console.log('React Render - this._performance:', JSON.parse(JSON.stringify(this._performance)) );
 
-    const Banner = <FetchBannerX 
+    const Banner = <FetchBannerX
 
       // bonusHTML1={ 'BonusHTML1 Text' }
       panelPerformance={ this._performance }
@@ -269,6 +330,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { Banner }
         <div className={styles.welcome}>
           <img  onClick={ this._doSomething.bind(this)} alt="" src={isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />
+          <h2>Fetch Status: { this.state.fullAnalyticsSaved === true ? 'Finished!' : 'working' } { this.state.fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' }</h2>
           <h2>Well done, {escape(userDisplayName)}!</h2>
           <div>{environmentMessage}</div>
           <div>Web part property value: <strong>{escape(description)}</strong></div>
