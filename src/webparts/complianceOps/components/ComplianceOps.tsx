@@ -1,7 +1,11 @@
 import * as React from 'react';
 import styles from './ComplianceOps.module.scss';
-import { IComplianceOpsProps, IComplianceOpsState, IStateSource } from './IComplianceOpsProps';
+import { IComplianceOpsProps, IComplianceOpsState, IStateSource, ITabMain } from './IComplianceOpsProps';
 import { escape } from '@microsoft/sp-lodash-subset';
+
+
+import { Pivot, PivotItem, PivotLinkFormat, PivotLinkSize,} from 'office-ui-fabric-react/lib/Pivot';
+import { ISpinnerStyles, Spinner, SpinnerSize, } from 'office-ui-fabric-react/lib/Spinner';
 
 import { saveViewAnalytics } from '../CoreFPS/Analytics';
 
@@ -19,13 +23,20 @@ import { ILoadPerformance, startPerformOp, updatePerformanceEnd } from "../fpsRe
 import { getSourceItems } from '@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/getSourceItems';
 
 import { ISiteThemes } from "@mikezimm/fps-library-v2/lib/common/commandStyles/ISiteThemeChoices";
-import { IDefSourceType, ISourcePropsCOP, SourceInfo } from './DataInterface';
+import { buildCurrentSourceInfo, IDefSourceType, ISourceInfo, ISourcePropsCOP } from './DataInterface';
+
+import HomePageHook from './Pages/Home/Page';
+import SitePageHook from './Pages/Site/Page';
 
 const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.fpsSiteThemeLight, primary: styles.fpsSiteThemePrimary };
 
 //Use this to add more console.logs for this component
 const consolePrefix: string = 'fpsconsole: FpsCore115Banner';
 
+const mainKeys: ITabMain[] = [ 'Home', 'Site', 'Maps', 'Forms', 'Tips', 'Instructions', 'Contacts', 'Details'];
+const mainPivots: any[] = mainKeys.map( ( key: string, idx: number ) => {
+  return <PivotItem key={ idx } headerText={ mainKeys[idx] } ariaLabel={mainKeys[idx]} title={mainKeys[idx]} itemKey={ key }/>;
+});
 
 export default class ComplianceOps extends React.Component<IComplianceOpsProps, IComplianceOpsState> {
 
@@ -46,7 +57,9 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
   }
 
   private _missingFetches() : IDefSourceType[] {
+
     const loads: IDefSourceType[] = [];
+    if ( this.state.site.loaded !== true ) loads.push( 'site' );
     if ( this.state.committee.loaded !== true ) loads.push( 'committee' );
     if ( this.state.coordinators.loaded !== true ) loads.push( 'coordinators' );
     if ( this.state.maps.loaded !== true ) loads.push( 'maps' );
@@ -97,7 +110,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     this.state = {
       pinState: this.props.bannerProps.fpsPinMenu.defPinState ? this.props.bannerProps.fpsPinMenu.defPinState : 'normal',
       showDevHeader: false,
-      lastStateChange: '', 
+      lastStateChange: '',
       analyticsWasExecuted: false,
       refreshId: this._newRefreshId(),
       debugMode: false,
@@ -107,6 +120,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
       fullAnalyticsSaved: false,
 
+      site : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       committee : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       coordinators : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       maps : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
@@ -133,8 +147,6 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       }
 
     }
-
-
 
   //
     /***
@@ -172,15 +184,16 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
   private async updateTheseSources( sources: IDefSourceType[] ): Promise<void> {
     const { ops } = this._performance;
-
+    const SourceInfo : ISourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode );
     ops.fetch = startPerformOp( 'fetch Sync', this.props.bannerProps.displayMode );
 
     const all: boolean = sources.indexOf( '*' ) > -1 ? true : false;
 
-    const [ maps, committee, coordinators, forms, tips ] = await Promise.all([
-      all === true || sources.indexOf( 'maps' ) > -1 ? this.getSource( SourceInfo.maps ) : this.state.maps,
+    const [ maps, committee, coordinators, forms, tips, site ] = await Promise.all([
+      all === true || sources.indexOf( 'site' ) > -1 ? this.getSource( SourceInfo.site ) : this.state.site,
       all === true || sources.indexOf( 'committee' ) > -1 ? this.getSource( SourceInfo.committee ) : this.state.committee,
       all === true || sources.indexOf( 'coordinators' ) > -1 ? this.getSource( SourceInfo.coordinators ) : this.state.coordinators,
+      all === true || sources.indexOf( 'maps' ) > -1 ? this.getSource( SourceInfo.maps ) : this.state.maps,
       all === true || sources.indexOf( 'forms' ) > -1 ? this.getSource( SourceInfo.forms ) : this.state.forms,
       all === true || sources.indexOf( 'tips' ) > -1 ? this.getSource( SourceInfo.tips ) : this.state.tips,
     ]);
@@ -191,6 +204,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       ops.fetch2 && ops.fetch2.end ? ops.fetch2.end.getTime() : -1,
       ops.fetch3 && ops.fetch3.end ? ops.fetch3.end.getTime() : -1,
       ops.fetch4 && ops.fetch4.end ? ops.fetch4.end.getTime() : -1,
+      ops.fetch5 && ops.fetch5.end ? ops.fetch5.end.getTime() : -1,
     );
 
     ops.fetch = updatePerformanceEnd( ops.fetch, true, 999999 );
@@ -199,6 +213,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     console.log('Total fetch time was:', totalTime );
 
     this.setState({
+      site: site,
       maps: maps,
       committee: committee,
       coordinators: coordinators,
@@ -210,7 +225,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
   }
 
   private async getSource( sourceProps: ISourcePropsCOP ) : Promise<IStateSource> {
-    const stateSource = await getSourceItems( sourceProps, true, true ) as IStateSource;
+    const stateSource = await getSourceItems( { ...sourceProps, ...{ editMode: this.props.bannerProps.displayMode } }, true, true ) as IStateSource;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const _performanceOpsAny: any = this._performance.ops;
     const op = sourceProps.performanceSettings.op;
@@ -220,51 +235,9 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
   }
 
-  // public async _updatePerformance () {
-  public async _updatePerformance (): Promise<boolean>  {
-
-
-    /**
-     * This section is needed if you want to track performance in the react component.
-     *    In the case of ALVFM, I do the following:
-     *    this._performance.ops.fetch1 = startPerformOp( <=== Starts tracking perforamnce
-     *    ... Stuff to do
-     *    this._performance.ops.fetch1 = updatePerformanceEnd( <=== ENDS tracking performance
-     *    this._replacePanelHTML = refreshPanelHTML( <=== This updates the performance panel content
-     */
-
-     const updateThis = this._performance.ops.fetch2 ? 'fetch3' : 'fetch2';
-
-     //Start tracking performance
-     this._performance.ops[updateThis] = startPerformOp( `${updateThis} TitleText`, this.props.bannerProps.displayMode );
-
-     /**
-      *       Do async code here
-      */
-
-     //End tracking performance
-     this._performance.ops[updateThis] = updatePerformanceEnd( this._performance.ops[updateThis], true, 888 );
-
-     alert(`${[updateThis]} should now be updated`);
-
-     if ( check4Gulp() === true )  console.log('React - _updatePerformance:', JSON.parse(JSON.stringify(this._performance)) );
-
-    //PERFORMANCE COMMENT:  YOU NEED TO UPDATE STATE HERE FOR IT TO REFLECT IN THE BANNER.
-    this.setState({ 
-      refreshId: this._newRefreshId(),
-    });
-
-    return true;
-
-  }
-
   public render(): React.ReactElement<IComplianceOpsProps> {
     const {
-      description,
-      isDarkTheme,
-      environmentMessage,
       hasTeamsContext,
-      userDisplayName
     } = this.props;
 
 
@@ -324,10 +297,54 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     />;
 
+    const mainPivot = 
+    <div id={ `MainPivot${this.props.bannerProps.refreshId}` }>
+      <Pivot
+          getTabId={ ( itemKey, index ) => { return `MainPivot${itemKey}`} }
+          // styles={ mainPivotStyles }
+          linkFormat={PivotLinkFormat.links}
+          linkSize={PivotLinkSize.normal}
+          selectedKey={ this.state.mainPivotKey }
+          // onLinkClick={this.pivotMainClick.bind(this)}
+          onLinkClick={ this.pivotMainClick.bind(this) }
+      > 
+        { mainPivots }
+
+      </Pivot>
+    </div>
+    ;
+
+    const homePage = <HomePageHook
+      debugMode={ this.state.debugMode }
+      mainPivotKey={ this.state.mainPivotKey }
+      // appLinks={ this.state.appLinks }
+      // news={ this.state.news }
+      wpID={ '' }
+      refreshID= { this.state.refreshId }
+      // wpID={ this.props.bannerProps.refreshId }
+    />;
+
+    const sitePage = <SitePageHook
+      debugMode={ this.state.debugMode }
+      mainPivotKey={ this.state.mainPivotKey }
+      // appLinks={ this.state.appLinks }
+      // news={ this.state.news }
+      wpID={ '' }
+      refreshID= { this.state.refreshId }
+      // wpID={ this.props.bannerProps.refreshId }
+    />;
+
     return (
       <section className={`${styles.complianceOps} ${hasTeamsContext ? styles.teams : ''}`}>
         { devHeader }
         { Banner }
+        { mainPivot }
+        { homePage }
+        { sitePage }
+        <h2>Fetch Status: { this.state.fullAnalyticsSaved === true ? 'Finished!' : 'working' } { this.state.fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' }</h2>
+
+
+{/* 
         <div className={styles.welcome}>
           <img  onClick={ this._doSomething.bind(this)} alt="" src={isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />
           <h2>Fetch Status: { this.state.fullAnalyticsSaved === true ? 'Finished!' : 'working' } { this.state.fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' }</h2>
@@ -350,13 +367,17 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
             <li><a href="https://aka.ms/spfx-yeoman-api" target="_blank" rel="noreferrer">SharePoint Framework API reference</a></li>
             <li><a href="https://aka.ms/m365pnp" target="_blank" rel="noreferrer">Microsoft 365 Developer Community</a></li>
           </ul>
-        </div>
+        </div> */}
       </section>
     );
   }
 
-  private _doSomething(): void {
-    const result = this._updatePerformance();
+  private pivotMainClick( temp: any ): void {
+    console.log('pivotMainClick:', temp.props.itemKey );
+    //This will force state update first, to show spinner, then will update the info.   https://stackoverflow.com/a/38245851
+    this.setState({ 
+      mainPivotKey: temp.props.itemKey,
+    });
   }
 
 }

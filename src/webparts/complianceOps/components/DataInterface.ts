@@ -3,23 +3,25 @@
 // import { ISourcePropsFM, ISourceInfo, ISearchType, ISearchTypes } from './DataInterface';
 
 import { ISourceProps } from '@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/Interface';
+import { getSiteCollectionUrlFromLink } from '@mikezimm/fps-library-v2/lib/logic/Strings/urlServices';
 import { libraryColumns } from '@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/FileInterface';
 import { ModernSitePagesColumns, ModernSitePagesSearch, ExtraFetchModernPage } from '@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/SitePages/SitePagesSource';
 import { ISearchType, ISearchTypes } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/ISearchTypes';
 import { StdFileKeys, StdFileSearchTypes, StdSharePointKeys, StdSharePointSearchTypes } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/StandardTypes';
+import { DisplayMode } from '@microsoft/sp-core-library';
 
 // import { ISeriesSort } from '../fpsReferences';
 // import { IAppFormat } from './INTERFACES/ILayoutsPage';
 
 // NOTE:  IAppFormat must be very similar to StdComplianceKeys... except history vs unknown
-export type IAppFormat = 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'history';
+export type IAppFormat = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'history';
 
 export const IntraNetRecs = ['/sites','/lif','enet','_reco','rds_','home/']; //Just so this is not searchable easily
 export const IntraNetHome: string =`${IntraNetRecs.join('')}`;
 
-export type IDefSourceType = 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'history' | 'unknown' | '*';
+export type IDefSourceType = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'history' | 'unknown' | '*';
 
-export type ISearchSource = 'Committee' | 'Coordinators' | 'Maps' | 'Forms' | 'Tips' | 'History';
+export type ISearchSource = 'Site' | 'Committee' | 'Coordinators' | 'Maps' | 'Forms' | 'Tips' | 'History';
 
 /**
  * Added  { prop: string; asc: boolean; } to fix the orderBy? Lint Error.
@@ -43,6 +45,7 @@ export interface ISourcePropsCOP extends ISourceProps {
 }
 
 export interface ISourceInfo {
+  site: ISourcePropsCOP;
   committee: ISourcePropsCOP;
   coordinators: ISourcePropsCOP;
   maps: ISourcePropsCOP;
@@ -50,6 +53,8 @@ export interface ISourceInfo {
   tips: ISourcePropsCOP;
   history: ISourcePropsCOP;
 }
+
+export const EnforcementColumns: string[] = [ 'ID', 'Title', 'URL', 'Subsite', 'NoRecordsDeclared', 'DocumentsHosted', 'JSONLists' ];
 
 export const CoordinatorColumns: string[] = [ 'ID','Facility', 'Division', 'Name/Title', 'AlternateContact/Title', 'Datelastverified', 'MapComplete' ];
 export const MapsColumns: string[] = [ 'ID','Region', 'Facility', ];
@@ -59,12 +64,43 @@ export const CommitteeSearch: string[] = [ 'Corporate', 'Global', 'Divisional', 
 
 export const Divisions: string[] = [ 'AAM','AEU','AJA','ASA','Global','TCH', 'TKR','TND' ];
 
+const collectionUrl: string = getSiteCollectionUrlFromLink( window.location.pathname );
+console.log( collectionUrl );
+
+/**
+ * NOTE ABOUT ADDING SOURCES:
+ * Be sure to include here, component did mount fetch AND this._missingFetches in main react component
+ */
+
 export const SourceInfo: ISourceInfo = {
 
+  site: {
+    key: 'site',
+    defType: 'site',
+    performanceSettings: {  label: 'site', updateMiliseconds: true, includeMsStr: true, op: 'fetch0' },
+    webUrl: `/sites/alvsiteprovisioning/`,
+    listTitle: 'SPORetentionLabelsEnforcement',
+    webRelativeLink: 'lists/SPORetentionLabelsEnforcement',
+    searchSource: 'Site',
+    searchSourceDesc:  'Retention Label Status',
+    columns: [ ...EnforcementColumns ],
+    itemFetchCol: [],
+    searchProps: [ ...EnforcementColumns ],
+    selectThese: [ ...['*'], ...EnforcementColumns ],
+    isModern: true,
+    restFilter: `URL eq '${collectionUrl}'`,
+    defSearchButtons: [ 'SiteCollection','ThisSubSite' ],
+    orderBy: { //Including even though it does not seem to do anything
+      prop: 'Title',
+      order: 'asc',
+      asc: true,
+    },
+    fetchCount: 500,
+  },
   committee: {
     key: 'committee',
     defType: 'committee',
-    performanceSettings: {  label: 'committee', updateMiliseconds: true, includeMsStr: true, op: 'fetch0' },
+    performanceSettings: {  label: 'committee', updateMiliseconds: true, includeMsStr: true, op: 'fetch1' },
     webUrl: `${IntraNetHome}`,
     listTitle: 'RIG Committee',
     webRelativeLink: 'lists/RIG Committee',
@@ -89,7 +125,7 @@ export const SourceInfo: ISourceInfo = {
   coordinators: {
     key: 'coordinators',
     defType: 'coordinators',
-    performanceSettings: {  label: 'coordinators', updateMiliseconds: true, includeMsStr: true, op: 'fetch1'  },
+    performanceSettings: {  label: 'coordinators', updateMiliseconds: true, includeMsStr: true, op: 'fetch2'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Facility Records Coordinators',
     webRelativeLink: 'lists/Facility%20Records%20Coordinators',
@@ -114,7 +150,7 @@ export const SourceInfo: ISourceInfo = {
   maps: {
     key: 'maps',
     defType: 'maps',
-    performanceSettings: {  label: 'maps', updateMiliseconds: true, includeMsStr: true, op: 'fetch2'  },
+    performanceSettings: {  label: 'maps', updateMiliseconds: true, includeMsStr: true, op: 'fetch3'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Facility Record Maps',
     webRelativeLink: 'Facility Record Maps',
@@ -139,7 +175,7 @@ export const SourceInfo: ISourceInfo = {
   forms: {
     key: 'forms',
     defType: 'forms',
-    performanceSettings: {  label: 'forms', updateMiliseconds: true, includeMsStr: true, op: 'fetch3'  },
+    performanceSettings: {  label: 'forms', updateMiliseconds: true, includeMsStr: true, op: 'fetch4'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Appendices toAS303 and Commonly Used Forms',
     webRelativeLink: 'lists/Commonly Used Forms',
@@ -159,7 +195,7 @@ export const SourceInfo: ISourceInfo = {
   tips: {
     key: 'tips',
     defType: 'tips',
-    performanceSettings: {  label: 'tips', updateMiliseconds: true, includeMsStr: true, op: 'fetch4'  },
+    performanceSettings: {  label: 'tips', updateMiliseconds: true, includeMsStr: true, op: 'fetch5'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Site Pages',
     webRelativeLink: 'SitePages',
@@ -231,4 +267,14 @@ export const SearchTypesCOP:ISearchTypesCOP  = {
     ]
 };
 
+export function buildCurrentSourceInfo( editMode: DisplayMode ) : ISourceInfo {
 
+  SourceInfo.site.performanceSettings.editMode = editMode;
+  SourceInfo.committee.performanceSettings.editMode = editMode;
+  SourceInfo.coordinators.performanceSettings.editMode = editMode;
+  SourceInfo.maps.performanceSettings.editMode = editMode;
+  SourceInfo.forms.performanceSettings.editMode = editMode;
+  SourceInfo.tips.performanceSettings.editMode = editMode;
+
+  return SourceInfo;
+}
