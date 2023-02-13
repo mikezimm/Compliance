@@ -51,7 +51,7 @@ export { makeid } from '@mikezimm/fps-library-v2/lib/logic/Strings/guids';
 // export { makeTheTimeObject, } from '@mikezimm/fps-library-v2/lib/logic/Time/timeObject';
 
 // export { getNumberArrayFromString } from '@mikezimm/fps-library-v2/lib/logic/Strings/arraysFromString';
-
+export { getHighlightedText } from '@mikezimm/fps-library-v2/lib/components/atoms/Elements/HighlightedText';
 
 export { IAnySourceItem } from '@mikezimm/fps-library-v2/lib/components/molecules/SourceList/IAnyContent';
 export { IFpsItemsReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Common/CheckItemsResults';

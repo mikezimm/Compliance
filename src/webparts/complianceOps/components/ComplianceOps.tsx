@@ -56,6 +56,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
   }
 
+  private _SourceInfo : ISourceInfo = null;
+
   private _missingFetches() : IDefSourceType[] {
 
     const loads: IDefSourceType[] = [];
@@ -105,6 +107,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
   public constructor(props:IComplianceOpsProps){
     super(props);
 
+    this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode );
     if ( this._performance === null ) { this._performance = this.props.performance;  }
     const constId: string = this._newRefreshId();
     this.state = {
@@ -177,6 +180,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     //refresh these privates when the prop changes warrent it
     if ( refresh === true ) {
+      this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode );
       await this.updateTheseSources( this._missingFetches() );
       this._contentPages = getBannerPages( this.props.bannerProps );
     }
@@ -184,18 +188,17 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
   private async updateTheseSources( sources: IDefSourceType[] ): Promise<void> {
     const { ops } = this._performance;
-    const SourceInfo : ISourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode );
     ops.fetch = startPerformOp( 'fetch Sync', this.props.bannerProps.displayMode );
 
     const all: boolean = sources.indexOf( '*' ) > -1 ? true : false;
 
-    const [ maps, committee, coordinators, forms, tips, site ] = await Promise.all([
-      all === true || sources.indexOf( 'site' ) > -1 ? this.getSource( SourceInfo.site ) : this.state.site,
-      all === true || sources.indexOf( 'committee' ) > -1 ? this.getSource( SourceInfo.committee ) : this.state.committee,
-      all === true || sources.indexOf( 'coordinators' ) > -1 ? this.getSource( SourceInfo.coordinators ) : this.state.coordinators,
-      all === true || sources.indexOf( 'maps' ) > -1 ? this.getSource( SourceInfo.maps ) : this.state.maps,
-      all === true || sources.indexOf( 'forms' ) > -1 ? this.getSource( SourceInfo.forms ) : this.state.forms,
-      all === true || sources.indexOf( 'tips' ) > -1 ? this.getSource( SourceInfo.tips ) : this.state.tips,
+    const [ site, committee, coordinators, maps, forms, tips,  ] = await Promise.all([
+      all === true || sources.indexOf( 'site' ) > -1 ? this.getSource( this._SourceInfo.site ) : this.state.site,
+      all === true || sources.indexOf( 'committee' ) > -1 ? this.getSource( this._SourceInfo.committee ) : this.state.committee,
+      all === true || sources.indexOf( 'coordinators' ) > -1 ? this.getSource( this._SourceInfo.coordinators ) : this.state.coordinators,
+      all === true || sources.indexOf( 'maps' ) > -1 ? this.getSource( this._SourceInfo.maps ) : this.state.maps,
+      all === true || sources.indexOf( 'forms' ) > -1 ? this.getSource( this._SourceInfo.forms ) : this.state.forms,
+      all === true || sources.indexOf( 'tips' ) > -1 ? this.getSource( this._SourceInfo.tips ) : this.state.tips,
     ]);
 
     const endWas = Math.max(
@@ -325,6 +328,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     />;
 
     const sitePage = <SitePageHook
+      primarySource={ this._SourceInfo.site }
+      stateSource={ this.state.site }
       debugMode={ this.state.debugMode }
       mainPivotKey={ this.state.mainPivotKey }
       // appLinks={ this.state.appLinks }

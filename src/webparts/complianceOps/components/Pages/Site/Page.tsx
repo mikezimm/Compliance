@@ -1,7 +1,7 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
-import { ITabMain } from '../../IComplianceOpsProps';
+import { IStateSource, ITabMain } from '../../IComplianceOpsProps';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 
 // import FadeCarousel from '@mikezimm/fps-library-v2/lib/components/molecules/FadeCarousel/component'
@@ -9,12 +9,17 @@ import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import styles from './page.module.scss';
 // import stylesT from './tour.module.scss';
 import { IAnySourceItem } from '../../../fpsReferences';
+
+import SourcePages from '../SourcePages/SourcePages';
+import { createItemRow } from './Row';
+
 // import { IPagesContent } from '../INTERFACES/IPagesContent';
 // import { SampleSitePages } from '../MockData/SitePages';
 // import { AppLinks } from '../MockData/AppLinks';
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
+import { ISourcePropsCOP, SourceInfo } from '../../DataInterface';
 
 // import { Pivot, PivotItem, PivotLinkFormat, PivotLinkSize,} from 'office-ui-fabric-react/lib/Pivot';
 // import { Icon, } from 'office-ui-fabric-react/lib/Icon';
@@ -26,6 +31,8 @@ export interface ISitePageProps {
   // appLinks: IAnySourceItemFM[];
   // news: IPagesContent[];
   refreshID: string;
+  stateSource: IStateSource;
+  primarySource: ISourcePropsCOP;
 
 }
 
@@ -107,6 +114,23 @@ const SitePageHook: React.FC<ISitePageProps> = ( props ) => {
   // />
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Site' ), updateTour, closeTour );
 
+  const sourceItems = <SourcePages
+    // source={ SourceInfo }
+    primarySource={ SourceInfo.site }
+    itemsPerPage={ 20 }
+    pageWidth={ 1000 }
+    topButtons={ [ 'Collection','Current' ] }
+
+    stateSource={ props.stateSource }
+    startQty={ 20 }
+    showItemType={ false }
+    debugMode={ props.debugMode }
+    renderRow={ createItemRow }
+    // bumpDeepLinks= { this.bumpDeepStateFromComponent.bind(this) }
+    deepProps={ null } //this.state.deepProps
+    // canvasOptions={ this.props.canvasOptions }
+  />;
+
   const SitePageElement: JSX.Element = mainPivotKey !== 'Site' ? null : <div className = { styles.page } style={ null }>
     {/* <div className={ styles.homeBanner } style={{ backgroundImage: backgroundImage }} onClick={ () => { updateTour( lastBubble ); } } id='ComplSiteBanner'> */}
     <div className={ styles.homeBanner } style={{ backgroundImage: backgroundImage }} id='ComplSiteBanner'>
@@ -126,7 +150,8 @@ const SitePageHook: React.FC<ISitePageProps> = ( props ) => {
         </div> */}
     </div>
 
-    <div className={ styles.keyButtons }>
+    { sourceItems }
+    {/* <div className={ styles.keyButtons }>
       <div id='ComplHomeSummary' >Summary</div>
       <div id='ComplHomeSummary' >Committee</div>
       <div id='ComplHomeSummary' >Coordinators</div>
@@ -135,7 +160,7 @@ const SitePageHook: React.FC<ISitePageProps> = ( props ) => {
       <div id='ComplHomeTopics' >Forms</div>
       <div id='ComplHomeLinkButton' >Tips</div>
       <div id='ComplHomeHelp' >Committee</div>
-    </div>
+    </div> */}
     {/* <div className={ styles.newsBanner } id='ComplHomeNews' >
       { NewsCarousel }
     </div>
