@@ -26,29 +26,36 @@ export function createItemRow( props: ISourceRowRender ): JSX.Element { // eslin
 
   //export const EnforcementColumns: string[] = [ 'ID', 'Title', 'URL', 'Subsite', 'NoRecordsDeclared', 'DocumentsHosted', 'JSONLists' ];
 
+    // const jsonElement: any = !thisItem.JSONLists ? '---' : getHighlightedText( `${ thisItem.JSONLists }`, searchText );
+
+    const webLink: string = thisItem.URL;
+    const libLink: string = thisItem.URL;
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    const title: any = <div title="Site TItle">{ getHighlightedText( `${ thisItem.Title }`, searchText )  }</div>;
-    const URL: any = getHighlightedText( `${ thisItem.URL }`, searchText ) ; // eslint-disable-line dot-notation 
-    const libraries: any = <div title="Libraries">{  getHighlightedText( `${ thisItem.NoRecordsDeclared }`, searchText )  }</div>;  // 
-    const jsonElement: any = !thisItem.JSONLists ? '---' : getHighlightedText( `${ thisItem.JSONLists }`, searchText );
+    const title: any = <div title={webLink} onClick = { () => { window.open( webLink, '_blank' )} } style={{cursor: 'pointer' }} >
+        { getHighlightedText( `${ thisItem.Title }`, searchText )  }</div>;
+
+    // const URL: any = getHighlightedText( `${ webLink }`, searchText ) ; // eslint-disable-line dot-notation 
+    const libraries: any = <div title="Libraries" onClick = { () => { window.open( libLink, '_blank' )} } style={{cursor: 'pointer' }} >
+        {  getHighlightedText( `${ thisItem.NoRecordsDeclared }`, searchText )  }</div>;  // 
+
 
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    const descElement: JSX.Element = <div className={ details === true ? stylesSP.showDetails : stylesSP.textEllipse }>
-      { jsonElement }
-    </div>;
+    // const descElement: JSX.Element = <div className={ details === true ? stylesSP.showDetails : stylesSP.textEllipse }>
+    //   { jsonElement }
+    // </div>;
 
-    const row = <div className={ styles.genericItem } style={{cursor: 'pointer' }} onClick = { () => onClick( item.ID, 'generic', item ) }>
+    const row = <div className={ styles.genericItem } onClick = { () => onClick( item.ID, 'generic', item ) }>
 
         {/* { SourceIconElement( SearchTypesCOP.objs[item.typeIdx].icon, showItemType && item.File_x0020_Type ? item.File_x0020_Type : showItemType && item.type ? item.type : '' )} */}
-        <div className={ styles.genericDetails}>
-          <div className={ styles.genericRow1 }>
+        {/* <div className={ styles.genericDetails}> */}
+          {/* <div className={ styles.genericRow1 }> */}
               { title }
-              { URL }
+              {/* { URL } */}
               { thisItem.DocumentsHosted }
               { libraries }
-          </div>
-          { descElement }
-        </div>
+          {/* </div> */}
+          {/* { descElement } */}
+        {/* </div> */}
     </div>;
 
     return row;

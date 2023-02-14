@@ -103,47 +103,52 @@ import { SearchTypesCOP } from "../../../DataInterface";
     }
 
     let passThis: boolean = false;
+    let countNotNull = 0;
 
+    // 2023-02-23: Added from ALVFM for when CTRL-Unselecting all items... the array searchStrings can be like this causing error:  [ null ]
     searchStrings.map( searchObjectFull => {
+      if ( searchObjectFull ) {
 
-      const searchSplits: string[] = searchObjectFull.split('==');
-      const searchTest: string = searchSplits[0];
-      const searchTestLC: string = searchTest.toLowerCase();
+        countNotNull ++;
+        const searchSplits: string[] = searchObjectFull.split('==');
+        const searchTest: string = searchSplits[0];
+        const searchTestLC: string = searchTest.toLowerCase();
 
-      if ( searchSplits.length === 1 ) { //First test if it is simple search
-        if ( item.searchTextLC.indexOf( searchTestLC ) > -1 ) { passThis = true ; }
+        if ( searchSplits.length === 1 ) { //First test if it is simple search
+          if ( item.searchTextLC.indexOf( searchTestLC ) > -1 ) { passThis = true ; }
 
-      } else { //If not simple, proceed to more complex search
+        } else { //If not simple, proceed to more complex search
 
-        if ( searchSplits[1].toLowerCase() === 'proper' || searchSplits[1].toLowerCase() === 'exact' ) {
-          if ( item.searchText.indexOf( searchTest ) > -1 ) { passThis = true ; }
+          if ( searchSplits[1].toLowerCase() === 'proper' || searchSplits[1].toLowerCase() === 'exact' ) {
+            if ( item.searchText.indexOf( searchTest ) > -1 ) { passThis = true ; }
 
-        } else if ( searchSplits[1].indexOf('/') === 0 ) {
-          const regexParams = searchSplits[1].split('/');
+          } else if ( searchSplits[1].indexOf('/') === 0 ) {
+            const regexParams = searchSplits[1].split('/');
 
-          if ( regexParams.length < 3 ) { console.log('INVALID SEARCH REGEX:  ', searchObjectFull ) ; }
-          else {
-            // const regexParams = searchSplits[1].substring(nextSlash + 1);
-            const regex = new RegExp( regexParams[1], regexParams[2] ); // eslint-disable-line @rushstack/security/no-unsafe-regexp
-            const matches = item.searchText.match( regex );
-            if ( matches?.length > 0 ) { passThis = true ; }
+            if ( regexParams.length < 3 ) { console.log('INVALID SEARCH REGEX:  ', searchObjectFull ) ; }
+            else {
+              // const regexParams = searchSplits[1].substring(nextSlash + 1);
+              const regex = new RegExp( regexParams[1], regexParams[2] ); // eslint-disable-line @rushstack/security/no-unsafe-regexp
+              const matches = item.searchText.match( regex );
+              if ( matches?.length > 0 ) { passThis = true ; }
+            }
+
+          } else if ( searchSplits[1].indexOf('item.') === 0 ) {
+            //This will Target the property of the item, not case sensitive
+            const itemColumn = searchSplits[1].substring( 5 );
+            const columnValue = item[itemColumn] ? item[itemColumn] : '';
+            if ( columnValue && typeof columnValue === 'string' && columnValue.toLowerCase().indexOf( searchTestLC ) > -1 ) { passThis = true ; }
+
+          } else {
+            //default to string search if no paramter was provided
+            if ( item.searchTextLC.indexOf( searchTestLC ) > -1 ) { passThis = true ; }
           }
 
-        } else if ( searchSplits[1].indexOf('item.') === 0 ) {
-          //This will Target the property of the item, not case sensitive
-          const itemColumn = searchSplits[1].substring( 5 );
-          const columnValue = item[itemColumn] ? item[itemColumn] : '';
-          if ( columnValue && typeof columnValue === 'string' && columnValue.toLowerCase().indexOf( searchTestLC ) > -1 ) { passThis = true ; }
-
-        } else {
-          //default to string search if no paramter was provided
-          if ( item.searchTextLC.indexOf( searchTestLC ) > -1 ) { passThis = true ; }
-        }
-
-      } // End if basic Search or Complex Search
+        } // End if basic Search or Complex Search
+      }
 
     }); // End map Search Strings
 
-    return passThis;
+    return countNotNull > 0 ? passThis : true ;
 
   }

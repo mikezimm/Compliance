@@ -16,7 +16,7 @@ import FetchBannerX from '@mikezimm/fps-library-v2/lib/banner/bannerX/FetchBanne
 
 import { getWebPartHelpElementBoxTiles } from '../PropPaneHelp/PropPaneHelp';
 import { getBannerPages, } from './HelpPanel/AllContent';
-import { check4Gulp, IBannerPages, IPinMeState } from "../fpsReferences";
+import { check4Gulp, IBannerPages, IPinMeState, makeid } from "../fpsReferences";
 
 import { ILoadPerformance, startPerformOp, updatePerformanceEnd } from "../fpsReferences";
 
@@ -27,6 +27,9 @@ import { buildCurrentSourceInfo, IDefSourceType, ISourceInfo, ISourcePropsCOP } 
 
 import HomePageHook from './Pages/Home/Page';
 import SitePageHook from './Pages/Site/Page';
+import { addSearchMeta1 } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/functions/addSearchMeta1';
+import { addSearchMeta2 } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/functions/addSearchMeta2';
+import { SearchTypes } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/Interfaces/StandardTypes';
 
 const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.fpsSiteThemeLight, primary: styles.fpsSiteThemePrimary };
 
@@ -192,13 +195,14 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     const all: boolean = sources.indexOf( '*' ) > -1 ? true : false;
 
-    const [ site, committee, coordinators, maps, forms, tips,  ] = await Promise.all([
-      all === true || sources.indexOf( 'site' ) > -1 ? this.getSource( this._SourceInfo.site ) : this.state.site,
-      all === true || sources.indexOf( 'committee' ) > -1 ? this.getSource( this._SourceInfo.committee ) : this.state.committee,
-      all === true || sources.indexOf( 'coordinators' ) > -1 ? this.getSource( this._SourceInfo.coordinators ) : this.state.coordinators,
-      all === true || sources.indexOf( 'maps' ) > -1 ? this.getSource( this._SourceInfo.maps ) : this.state.maps,
-      all === true || sources.indexOf( 'forms' ) > -1 ? this.getSource( this._SourceInfo.forms ) : this.state.forms,
-      all === true || sources.indexOf( 'tips' ) > -1 ? this.getSource( this._SourceInfo.tips ) : this.state.tips,
+    // NOTE:  The vars in the array must be in same order they are called in the Promise.all
+    const [ site, committee, coordinators, maps, forms, tips, ] = await Promise.all([
+      all === true || sources.indexOf( 'site' ) > -1 ? this.getSource( this._SourceInfo.site, this._performance ) : this.state.site,
+      all === true || sources.indexOf( 'committee' ) > -1 ? this.getSource( this._SourceInfo.committee, this._performance ) : this.state.committee,
+      all === true || sources.indexOf( 'coordinators' ) > -1 ? this.getSource( this._SourceInfo.coordinators, this._performance ) : this.state.coordinators,
+      all === true || sources.indexOf( 'maps' ) > -1 ? this.getSource( this._SourceInfo.maps, this._performance ) : this.state.maps,
+      all === true || sources.indexOf( 'forms' ) > -1 ? this.getSource( this._SourceInfo.forms, this._performance ) : this.state.forms,
+      all === true || sources.indexOf( 'tips' ) > -1 ? this.getSource( this._SourceInfo.tips, this._performance ) : this.state.tips,
     ]);
 
     const endWas = Math.max(
@@ -227,13 +231,30 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
   }
 
-  private async getSource( sourceProps: ISourcePropsCOP ) : Promise<IStateSource> {
-    const stateSource = await getSourceItems( { ...sourceProps, ...{ editMode: this.props.bannerProps.displayMode } }, true, true ) as IStateSource;
+  private async getSource( sourceProps: ISourcePropsCOP, _performance: ILoadPerformance ) : Promise<IStateSource> {
+    const { displayMode } = this.props.bannerProps;
+
+    const stateSource = await getSourceItems( { ...sourceProps, ...{ editMode: displayMode } }, true, true ) as IStateSource;
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const _performanceOpsAny: any = this._performance.ops;
+    const _performanceOpsAny: any = _performance.ops;
     const op = sourceProps.performanceSettings.op;
+
+    if ( stateSource.loaded === true ) {
+
+      const idx = op ? `${op.replace('fetch', '')}` : makeid(4);      // Get Index of op... like for fetch4, idx = 4
+      const label = `p${idx} ${ sourceProps.performanceSettings.label }`;  // Get label of op... like for fetch4, idx = 4
+
+      let analyzePerf = startPerformOp( label , displayMode, true );
+      stateSource.items = addSearchMeta1( stateSource.items, sourceProps, null );
+      stateSource.items = addSearchMeta2( stateSource.items, SearchTypes );
+      analyzePerf = updatePerformanceEnd( analyzePerf , true, stateSource.items.length );
+      _performanceOpsAny[ `process${idx}` ] = analyzePerf; // Need to use just index here in order to save to correct object key
+    }
+
     if ( op && stateSource.loaded === true ) _performanceOpsAny[ op ] = stateSource.performanceOp;
     console.log('getSource', sourceProps, stateSource, _performanceOpsAny );
+
     return stateSource;
 
   }

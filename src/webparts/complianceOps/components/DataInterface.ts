@@ -5,9 +5,9 @@
 import { ISourceProps } from '@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/Interface';
 import { getSiteCollectionUrlFromLink } from '@mikezimm/fps-library-v2/lib/logic/Strings/urlServices';
 import { libraryColumns } from '@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/FileInterface';
-import { ModernSitePagesColumns, ModernSitePagesSearch, ExtraFetchModernPage } from '@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/SitePages/SitePagesSource';
-import { ISearchType, ISearchTypes } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/ISearchTypes';
-import { StdFileKeys, StdFileSearchTypes, StdSharePointKeys, StdSharePointSearchTypes } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/StandardTypes';
+import { ModernSitePagesColumns, ModernSitePagesSearch, ExtraFetchModernPage } from '@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/SitePages/ModernSitePagesColumns';
+import { ISearchType, ISearchTypes } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/Interfaces/ISearchTypes';
+import { StdFileKeys, StdFileSearchTypes, StdSharePointKeys, StdSharePointSearchTypes } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/Interfaces/StandardTypes';
 import { DisplayMode } from '@microsoft/sp-core-library';
 
 // import { ISeriesSort } from '../fpsReferences';
@@ -277,4 +277,20 @@ export function buildCurrentSourceInfo( editMode: DisplayMode ) : ISourceInfo {
   SourceInfo.tips.performanceSettings.editMode = editMode;
 
   return SourceInfo;
+}
+
+/**
+ * NOTE USE THIS FROM fps-library-v2.... THIS IS JUST FOR LOCAL TESTING
+ * Use SearchTypes for addSearchMeta1 && addSearchMeta2 function
+ *   -- if you do not have a consolidated search page (with multiple sources)
+ */
+export const SearchTypes: ISearchTypes = {
+  keys: [
+    ...StdSharePointKeys,
+    ...StdFileKeys,
+  ],
+  objs: [
+    ...StdSharePointSearchTypes,
+    ...StdFileSearchTypes,
+  ]
 }
