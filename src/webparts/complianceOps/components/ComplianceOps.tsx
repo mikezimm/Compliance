@@ -30,6 +30,9 @@ import SitePageHook from './Pages/Site/Page';
 import { addSearchMeta1 } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/functions/addSearchMeta1';
 import { addSearchMeta2 } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/functions/addSearchMeta2';
 import { SearchTypes } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/Interfaces/StandardTypes';
+import { createItemRow } from './Pages/Site/Row';
+import SourcePages from './Pages/SourcePages/SourcePages';
+import { divProperties } from 'office-ui-fabric-react';
 
 const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.fpsSiteThemeLight, primary: styles.fpsSiteThemePrimary };
 
@@ -247,6 +250,18 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
       let analyzePerf = startPerformOp( label , displayMode, true );
       stateSource.items = addSearchMeta1( stateSource.items, sourceProps, null );
+      stateSource.items.map( item => {
+        if ( item.JSONLists ) { 
+          try {
+            item.JSON = JSON.parse( item.JSONLists );
+            if ( item.JSON.url ) item.ListUrl = item.JSON.url;
+            if ( item.JSON.id ) item.ListId = item.JSON.id;
+            if ( item.JSON.id ) item.ListSettings = `${item.Subsite}/_layouts/15/Hold.aspx?Tag=true&List={${item.ListId}}`;
+          } catch (e) {
+            console.log('UNABLE TO PARSE JSONLists field')
+          }
+        }
+      });
       stateSource.items = addSearchMeta2( stateSource.items, SearchTypes );
       analyzePerf = updatePerformanceEnd( analyzePerf , true, stateSource.items.length );
       _performanceOpsAny[ `process${idx}` ] = analyzePerf; // Need to use just index here in order to save to correct object key
@@ -341,24 +356,36 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     const homePage = <HomePageHook
       debugMode={ this.state.debugMode }
       mainPivotKey={ this.state.mainPivotKey }
-      // appLinks={ this.state.appLinks }
-      // news={ this.state.news }
       wpID={ '' }
       refreshID= { this.state.refreshId }
-      // wpID={ this.props.bannerProps.refreshId }
     />;
 
     const sitePage = <SitePageHook
-      primarySource={ this._SourceInfo.site }
-      stateSource={ this.state.site }
       debugMode={ this.state.debugMode }
       mainPivotKey={ this.state.mainPivotKey }
-      // appLinks={ this.state.appLinks }
-      // news={ this.state.news }
       wpID={ '' }
-      refreshID= { this.state.refreshId }
-      // wpID={ this.props.bannerProps.refreshId }
     />;
+
+      const enforcementItems = <SourcePages
+        // source={ SourceInfo }
+        primarySource={ this._SourceInfo.site }
+        itemsPerPage={ 20 }
+        pageWidth={ 1000 }
+        topButtons={ [ 'Collection','Current' ] }
+
+        stateSource={ this.state.site }
+        startQty={ 20 }
+        showItemType={ false }
+        debugMode={ this.state.debugMode }
+        renderRow={ createItemRow }
+        // bumpDeepLinks= { this.bumpDeepStateFromComponent.bind(this) }
+        deepProps={ null } //this.state.deepProps
+        // canvasOptions={ this.props.canvasOptions }
+
+        onParentCall={ () => { alert('Hey, parent was called!')} }
+        headingElement={ sitePage }
+        footerElement={ <div style={{color: 'red', fontWeight: 600 }}>THIS IS the FOOTER ELEMENT</div> }
+      />;
 
     return (
       <section className={`${styles.complianceOps} ${hasTeamsContext ? styles.teams : ''}`}>
@@ -366,7 +393,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { Banner }
         { mainPivot }
         { homePage }
-        { sitePage }
+        { enforcementItems }
         <h2>Fetch Status: { this.state.fullAnalyticsSaved === true ? 'Finished!' : 'working' } { this.state.fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' }</h2>
 
 

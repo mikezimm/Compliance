@@ -7,17 +7,7 @@ import stylesSP from '../SourcePages.module.scss';
 import { getHighlightedText, IAnySourceItem } from '../../../../fpsReferences';
 import { SourceIconElement } from '../IconElement';
 import { SearchTypesCOP } from '../../../DataInterface';
-
-
-export interface ISourceRowRender {
-  // onClick : ( item : IAnySourceItem, searchText: string, onClick: void , details: boolean, showItemType: boolean ) => JSX.Element;
-  item : IAnySourceItem;
-  searchText: string;
-  onClick:  ( Id: number, type: string, item : IAnySourceItem ) => void;
-  details: boolean;
-  showItemType: boolean;
-}
-
+import { ISourceRowRender } from '../ISourceRowRender';
 
 
 export function createAccountRow( props: ISourceRowRender ): JSX.Element { // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -30,20 +20,20 @@ export function createAccountRow( props: ISourceRowRender ): JSX.Element { // es
     const description: any = !item.Description ? '---' : getHighlightedText( `${ item.Description }`, searchText );
 
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    const descElement: JSX.Element = <div className={ details === true ? stylesSP.showDetails : stylesSP.textEllipse }>
-      { description }
-    </div>;
+    // const descElement: JSX.Element = <div className={ details === true ? stylesSP.showDetails : stylesSP.textEllipse }>
+    //   { description }
+    // </div>;
 
     const row = <div className={ styles.genericItem } style={{cursor: 'pointer' }} onClick = { () => onClick( item.ID, 'generic', item ) }>
 
         { SourceIconElement( SearchTypesCOP.objs[item.typeIdx].icon, showItemType && item.File_x0020_Type ? item.File_x0020_Type : showItemType && item.type ? item.type : '' )}
         <div className={ styles.genericDetails}>
           <div className={ styles.genericRow1 }>
-              { title }
-              { accountName }
-              { RCM }
+            { title }
+            { accountName }
+            { RCM }
           </div>
-          { descElement }
+          {/* { descElement } */}
         </div>
     </div>;
 

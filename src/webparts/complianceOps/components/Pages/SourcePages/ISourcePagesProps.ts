@@ -3,7 +3,7 @@ import { IAnySourceItem } from "../../../fpsReferences";
 // import { ICanvasContentOptions } from "../INTERFACES/IModernPage";
 // import { IFinManSearch } from "../INTERFACES/IFinManSearch";
 import { IMinPageArrowsState, IPageArrowsParentProps } from '@mikezimm/fps-library-v2/lib/components/molecules/Arrows/PageArrows';
-import { ISourceRowRender } from "./GenericItem/Row";
+import { ISourceRowRender } from "./ISourceRowRender";
 import { IStateSource } from "../../IComplianceOpsProps";
 
 export interface ISourcePagesProps extends IPageArrowsParentProps {
@@ -29,12 +29,19 @@ export interface ISourcePagesProps extends IPageArrowsParentProps {
   stateSource: IStateSource;
   renderRow( props: ISourceRowRender ): JSX.Element;
 
+  // onParentCall is a pass down from the parent web part component and SHOULD look for this signature.
+  onParentCall(command: string, Id: number, type: string, item: IAnySourceItem) : void;
+
   // fetchTime: number;
 
   // canvasOptions: ICanvasContentOptions;
 
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
 
+  showGoToList?: boolean; // shows the 'Go to full list' link next to the label.  Default === true
+
+  headingElement?: JSX.Element; //Element visible above the list
+  footerElement?: JSX.Element; //Element visible below the list
 }
 
 export type ISort = 'asc' | 'dec' | '-';

@@ -201,6 +201,7 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
           onClick:  this.clickListItem.bind( this ),
           details: this.state.detailToggle,
           showItemType: showItemType,
+          onParentCall: this.props.onParentCall,
         }));
 
         // switch ( primarySource.key  ) {
@@ -352,11 +353,13 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
           <div className={ styles.storagePage }>
             {/* <div className={ styles.column }> */}
               { debugContent }
+              { this.props.headingElement }
               { searchSourceDesc }
               {/* { this.state.searchTime } */}
               { searchBox }
               { topSearchContent }
               { filtered }
+              { this.props.footerElement }
               {/* { FetchingSpinner } */}
               {/* { deepHistory }
               { thePanel } */}

@@ -9,6 +9,8 @@ import { SourceIconElement } from '../SourcePages/IconElement';
 import { SearchTypesCOP } from '../../DataInterface';
 import { ISourceRowRender } from '../SourcePages/ISourceRowRender';
 
+import { buildClickableIcon } from '@mikezimm/fps-library-v2/lib/components/atoms/Icons/stdIconsBuildersV02';
+
 export interface IThisItemInterface extends IAnySourceItem {
   ID: number;
   Title: string;
@@ -17,10 +19,14 @@ export interface IThisItemInterface extends IAnySourceItem {
   NoRecordsDeclared: string;
   DocumentsHosted: number;
   JSONLists: string;
+  ListUrl: string;
+  ListId: string;
+  ListSettings: string;
+
 }
 
 export function createItemRow( props: ISourceRowRender ): JSX.Element { // eslint-disable-line @typescript-eslint/no-explicit-any
-  const { item, searchText, onClick, details, showItemType } = props;
+  const { item, searchText, onClick, details, showItemType, onParentCall, onOpenPanel } = props;
 
   const thisItem: IThisItemInterface = item as IThisItemInterface;
 
@@ -28,16 +34,20 @@ export function createItemRow( props: ISourceRowRender ): JSX.Element { // eslin
 
     // const jsonElement: any = !thisItem.JSONLists ? '---' : getHighlightedText( `${ thisItem.JSONLists }`, searchText );
 
-    const webLink: string = thisItem.URL;
-    const libLink: string = thisItem.URL;
+    const webLink: string = thisItem.Subsite;
+    const { ListUrl, ListSettings } = item;
+
     /* eslint-disable @typescript-eslint/no-explicit-any */
     const title: any = <div title={webLink} onClick = { () => { window.open( webLink, '_blank' )} } style={{cursor: 'pointer' }} >
-        { getHighlightedText( `${ thisItem.Title }`, searchText )  }</div>;
+        { getHighlightedText( `${ webLink.replace('/sites', '' ) }`, searchText )  }</div>;
 
     // const URL: any = getHighlightedText( `${ webLink }`, searchText ) ; // eslint-disable-line dot-notation 
-    const libraries: any = <div title="Libraries" onClick = { () => { window.open( libLink, '_blank' )} } style={{cursor: 'pointer' }} >
+    const libraries: any = <div title="Libraries" onClick = { () => { window.open( ListUrl, '_blank' )} } style={{cursor: 'pointer' }} >
         {  getHighlightedText( `${ thisItem.NoRecordsDeclared }`, searchText )  }</div>;  // 
 
+    const folderIcon = buildClickableIcon( 'PivotTiles' , 'Folder', 'Go to Library', null, () => { window.open( ListUrl ,'_blank')}, item.ListId, item.ListId, )
+    const settingsIcon = buildClickableIcon( 'PivotTiles' , 'Tag', 'Apply Label to Library - OWNER ACCESS REQUIRED', 'red', () => { window.open( ListSettings ,'_blank')}, item.ListId, item.ListId, )
+    const detailsIcon = buildClickableIcon( 'PivotTiles' , 'ProcessingRun', 'Run live analysis', null, () => { onParentCall( 'Test from below',0, '', item ) }, item.ListId, item.ListId, )
 
     /* eslint-disable @typescript-eslint/no-explicit-any */
     // const descElement: JSX.Element = <div className={ details === true ? stylesSP.showDetails : stylesSP.textEllipse }>
@@ -52,6 +62,9 @@ export function createItemRow( props: ISourceRowRender ): JSX.Element { // eslin
               { title }
               {/* { URL } */}
               { thisItem.DocumentsHosted }
+              { folderIcon }
+              { settingsIcon }
+              { detailsIcon }
               { libraries }
           {/* </div> */}
           {/* { descElement } */}
