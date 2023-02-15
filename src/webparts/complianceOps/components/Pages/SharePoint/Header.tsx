@@ -79,9 +79,18 @@ const SharePointPageHook: React.FC<ISharePointPageProps> = ( props ) => {
   const SharePointPageElement: JSX.Element = contactPivotKey !== 'SharePoint' ? null : <div className = { styles.page } style={ null }>
     <div style={{ marginRight: '50px' }}>If you need assistance with this web part or setting labels on your site, you have come to the right place!</div>
     <div className={ styles.shareLab }>
-      <div className={ styles.lab }>Join ShareLab here - EU Every other week</div>
-      <div className={ styles.lab }>Join ShareLab here - NA Every week</div>
-      <div className={ styles.lab }>Join ShareLab here - Asia ????</div>
+      <div className={ styles.lab }>
+        <div className={ styles.title }>Join ShareLab here - EU</div>
+        <div className={ styles.desc }>Every other week</div>
+      </div>
+      <div className={ styles.lab }>
+        <div className={ styles.title }>Join ShareLab here - NA</div>
+        <div className={ styles.desc }>Every week</div>
+      </div>
+      <div className={ styles.lab }>
+        <div className={ styles.title }>Join ShareLab here - Asia</div>
+        <div className={ styles.desc }> ??? </div>
+      </div>
     </div>
 
     {/* <div id={ 'ComplSharePointStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
