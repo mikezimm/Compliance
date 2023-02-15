@@ -17,16 +17,16 @@ export interface IThisMapInterface extends IAnySourceItem {
 }
 
 export function createMapRow( props: ISourceRowRender ): JSX.Element { // eslint-disable-line @typescript-eslint/no-explicit-any
-  const { item, onClick, } = props; // details, showItemType, onOpenPanel
+  const { item, onClick, searchText } = props; // details, showItemType, onOpenPanel
 
   const thisItem: IThisMapInterface = item as IThisMapInterface;
 
   const row = <div className={ styles.genericItem } onClick = { () => onClick( thisItem.ID, 'generic', item ) }>
     <div title={ null } >{ thisItem.ID }</div>
-    <div title={ null } >{ getHighlightedText( thisItem.Region, props.searchText ) }</div>
-    <div title={ null } >{ getHighlightedText( thisItem.Facility, props.searchText ) }</div>
+    <div title={ null } >{ getHighlightedText( thisItem.Region, searchText ) }</div>
+    <div title={ null } >{ getHighlightedText( thisItem.Facility, searchText ) }</div>
     <div title={ `${thisItem.FileRef}`} onClick={ () => window.open( thisItem.ServerRedirectedEmbedUrl, '_blank' )}
-      style={{ cursor: 'pointer' }}>{ getHighlightedText( thisItem.FileLeafRef, props.searchText ) }</div>
+      style={{ cursor: 'pointer' }}>{ getHighlightedText( thisItem.FileLeafRef, searchText ) }</div>
   </div>;
 
   return row;

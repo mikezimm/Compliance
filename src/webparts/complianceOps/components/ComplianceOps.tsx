@@ -1,10 +1,10 @@
 import * as React from 'react';
 import styles from './ComplianceOps.module.scss';
-import { IComplianceOpsProps, IComplianceOpsState, IStateSource, ITabMain } from './IComplianceOpsProps';
+import { IComplianceOpsProps, IComplianceOpsState, IStateSource, ITabContactPivots, ITabMain } from './IComplianceOpsProps';
 
 
 import { Pivot, PivotItem, PivotLinkFormat, PivotLinkSize,} from 'office-ui-fabric-react/lib/Pivot';
-import { ISpinnerStyles, Spinner, SpinnerSize, } from 'office-ui-fabric-react/lib/Spinner';
+// import { ISpinnerStyles, Spinner, SpinnerSize, } from 'office-ui-fabric-react/lib/Spinner';
 
 import { saveViewAnalytics } from '../CoreFPS/Analytics';
 
@@ -40,15 +40,27 @@ import { createMapRow } from './Pages/Maps/Row';
 import FormPageHook from './Pages/Forms/Header';
 import { createFormRow } from './Pages/Forms/Row';
 
+import CoordinatorsPageHook from './Pages/Coordinators/Header';
+import { createCoordinatorsRow } from './Pages/Coordinators/Row';
+
+import CommitteePageHook from './Pages/Committee/Header';
+import { createCommitteeRow } from './Pages/Committee/Row';
+
 const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.fpsSiteThemeLight, primary: styles.fpsSiteThemePrimary };
 
 //Use this to add more console.logs for this component
 const consolePrefix: string = 'fpsconsole: FpsCore115Banner';
 
 const mainKeys: ITabMain[] = [ 'Home', 'Site', 'Maps', 'Forms', 'Tips', 'Instructions', 'Contacts', 'Details'];
-const mainPivots: any[] = mainKeys.map( ( key: string, idx: number ) => {
+const mainPivots: JSX.Element[] = mainKeys.map( ( key: string, idx: number ) => {
   return <PivotItem key={ idx } headerText={ mainKeys[idx] } ariaLabel={mainKeys[idx]} title={mainKeys[idx]} itemKey={ key }/>;
 });
+
+const contactKeys: ITabContactPivots[] = [ 'Coordinators', 'SharePoint', 'Committee', ];
+const contactPivots: JSX.Element[] = contactKeys.map( ( key: string, idx: number ) => {
+  return <PivotItem key={ idx } headerText={ contactKeys[idx] } ariaLabel={contactKeys[idx]} title={contactKeys[idx]} itemKey={ key }/>;
+});
+
 
 export default class ComplianceOps extends React.Component<IComplianceOpsProps, IComplianceOpsState> {
 
@@ -132,6 +144,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       showSpinner: false,
 
       mainPivotKey: 'Home',
+      contactPivotKey: 'Coordinators',
 
       fullAnalyticsSaved: false,
 
@@ -280,6 +293,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       hasTeamsContext,
     } = this.props;
 
+    const { mainPivotKey, contactPivotKey, fullAnalyticsSaved } = this.state;
+
 
     const devHeader = this.state.showDevHeader === true ? <div><b>Props: </b> { `this.props.lastPropChange , this.props.lastPropDetailChange` } - <b>State: lastStateChange: </b> { this.state.lastStateChange  } </div> : null ;
 
@@ -344,7 +359,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
           // styles={ mainPivotStyles }
           linkFormat={PivotLinkFormat.links}
           linkSize={PivotLinkSize.normal}
-          selectedKey={ this.state.mainPivotKey }
+          selectedKey={ mainPivotKey }
           // onLinkClick={this.pivotMainClick.bind(this)}
           onLinkClick={ this.pivotMainClick.bind(this) }
       > 
@@ -356,45 +371,66 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     const homePage = <HomePageHook
       debugMode={ this.state.debugMode }
-      mainPivotKey={ this.state.mainPivotKey }
+      mainPivotKey={ mainPivotKey }
       wpID={ '' }
       refreshID= { this.state.refreshId }
     />;
 
     const sitePageHeader = <SitePageHook
-      debugMode={ this.state.debugMode }
-      mainPivotKey={ this.state.mainPivotKey }
-      wpID={ '' }
-    />;
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
 
     const enforcementItems = this.createItemsElement( sitePageHeader, 'Site' );
 
     const mapPageHeader = <MapPageHook
-      debugMode={ this.state.debugMode }
-      mainPivotKey={ this.state.mainPivotKey }
-      wpID={ '' }
-    />;
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
 
     const mapItems = this.createItemsElement( mapPageHeader, 'Maps' );
 
     const formPageHeader = <FormPageHook
-      debugMode={ this.state.debugMode }
-      mainPivotKey={ this.state.mainPivotKey }
-      wpID={ '' }
-    />;
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
 
     const formItems = this.createItemsElement( formPageHeader, 'Forms' );
 
+    const coordinatorsPageHeader = <CoordinatorsPageHook
+      debugMode={ this.state.debugMode } contactPivotKey={ contactPivotKey } wpID={ '' } />;
+
+    const coordinatorsItems = this.createItemsElement( coordinatorsPageHeader, 'Coordinators' );
+
+    const committeePageHeader = <CommitteePageHook
+      debugMode={ this.state.debugMode } contactPivotKey={ contactPivotKey } wpID={ '' } />;
+
+    const committeeItems = this.createItemsElement( committeePageHeader, 'Committee' );
+
+    const contactsPivot = 
+    <div id={ `ContactPivot${this.props.bannerProps.refreshId}` }>
+      <Pivot
+          getTabId={ ( itemKey, index ) => { return `ContactPivot${itemKey}`} }
+          // styles={ mainPivotStyles }
+          linkFormat={PivotLinkFormat.tabs}
+          linkSize={PivotLinkSize.normal}
+          selectedKey={ contactPivotKey }
+          // onLinkClick={this.pivotMainClick.bind(this)}
+          onLinkClick={ this.pivotContactClick.bind(this) }
+      >
+       { contactPivots } 
+      </Pivot>
+
+    </div>
     return (
       <section className={`${styles.complianceOps} ${hasTeamsContext ? styles.teams : ''}`}>
         { devHeader }
         { Banner }
         { mainPivot }
-        { this.state.mainPivotKey !== 'Home' ? undefined : homePage  }
-        { this.state.mainPivotKey !== 'Site' ? undefined : enforcementItems }
-        { this.state.mainPivotKey !== 'Maps' ? undefined : mapItems }
-        { this.state.mainPivotKey !== 'Forms' ? undefined : formItems }
-        <h2>Fetch Status: { this.state.fullAnalyticsSaved === true ? 'Finished!' : 'working' } { this.state.fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' }</h2>
+        { mainPivotKey !== 'Home' ? undefined : homePage  }
+        { mainPivotKey !== 'Site' ? undefined : enforcementItems }
+        { mainPivotKey !== 'Maps' ? undefined : mapItems }
+        { mainPivotKey !== 'Forms' ? undefined : formItems }
+        { mainPivotKey !== 'Contacts' ? undefined : contactsPivot }
+        { mainPivotKey === 'Contacts' && contactPivotKey === 'Coordinators' ? coordinatorsItems : undefined }
+        { mainPivotKey === 'Contacts' && contactPivotKey === 'Committee' ? committeeItems : undefined }
+        { mainPivotKey === 'Contacts' && contactPivotKey === 'SharePoint' ? coordinatorsItems : undefined }
+
+        <h2>Fetch Status: { fullAnalyticsSaved === true ? 'Finished!' : 'working' } { fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' }</h2>
 
       </section>
     );
@@ -405,6 +441,14 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     //This will force state update first, to show spinner, then will update the info.   https://stackoverflow.com/a/38245851
     this.setState({ 
       mainPivotKey: temp.props.itemKey,
+    });
+  }
+
+  private pivotContactClick( temp: any ): void {
+    console.log('pivotContactClick:', temp.props.itemKey );
+    //This will force state update first, to show spinner, then will update the info.   https://stackoverflow.com/a/38245851
+    this.setState({ 
+      contactPivotKey: temp.props.itemKey,
     });
   }
 
@@ -431,7 +475,16 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         stateSource = this.state.forms;
         renderRow = createFormRow;
       break;
-
+      case 'Coordinators':
+        primarySource = this._SourceInfo.coordinators;
+        stateSource = this.state.coordinators;
+        renderRow = createCoordinatorsRow;
+      break;
+      case 'Committee':
+        primarySource = this._SourceInfo.committee;
+        stateSource = this.state.committee;
+        renderRow = createCommitteeRow;
+      break;
     }
 
     const itemsElement = <SourcePages

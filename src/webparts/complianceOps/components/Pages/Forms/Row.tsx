@@ -16,14 +16,15 @@ export interface IThisFormInterface extends IAnySourceItem {
 }
 
 export function createFormRow( props: ISourceRowRender ): JSX.Element { // eslint-disable-line @typescript-eslint/no-explicit-any
-  const { item, onClick, } = props; // details, showItemType, onOpenPanel
+  const { item, onClick, searchText } = props; // details, showItemType, onOpenPanel
 
   const thisItem: IThisFormInterface = item as IThisFormInterface;
 
   const row = <div className={ styles.genericItem } onClick = { () => onClick( thisItem.ID, 'generic', item ) }>
     <div title={ null } >{ thisItem.ID }</div>
-    <div title={ null } >{ getHighlightedText( thisItem.Status, props.searchText ) }</div>
-    <div title={ `${thisItem.FileRef}`} onClick={ () => window.open( thisItem.ServerRedirectedEmbedUrl, '_blank' )}>{ getHighlightedText( thisItem.FileLeafRef, props.searchText )  }</div>
+    <div title={ null } >{ getHighlightedText( thisItem.Status, searchText ) }</div>
+    <div title={ `${thisItem.FileRef}`} onClick={ () => window.open( thisItem.ServerRedirectedEmbedUrl, '_blank' )}
+      style={{ cursor: 'pointer' }}>{ getHighlightedText( thisItem.FileLeafRef, searchText )  }</div>
   </div>;
 
   return row;

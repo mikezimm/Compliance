@@ -150,7 +150,7 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
     const { showThisItem , showItemPanel, searchText } = this.state;
     // const topButtons = this.props.topButtons;
 
-    const topSearch: any[] = [];  //All major future to be grid components
+    const topSearch: JSX.Element[] = [];  //All major future to be grid components
 
     topButtons.map( searchObjectFull => {
       const searchObjectArray = searchObjectFull.split('==');
