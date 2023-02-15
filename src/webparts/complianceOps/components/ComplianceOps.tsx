@@ -46,6 +46,9 @@ import { createCoordinatorsRow } from './Pages/Coordinators/Row';
 import CommitteePageHook from './Pages/Committee/Header';
 import { createCommitteeRow } from './Pages/Committee/Row';
 
+import SharePointPageHook from './Pages/SharePoint/Header';
+// import { createSharePointRow } from './Pages/SharePoint/Row';
+
 const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.fpsSiteThemeLight, primary: styles.fpsSiteThemePrimary };
 
 //Use this to add more console.logs for this component
@@ -396,6 +399,9 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     const coordinatorsItems = this.createItemsElement( coordinatorsPageHeader, 'Coordinators' );
 
+    const sharePointPageHeader = <SharePointPageHook
+      debugMode={ this.state.debugMode } contactPivotKey={ contactPivotKey } wpID={ '' } />;
+
     const committeePageHeader = <CommitteePageHook
       debugMode={ this.state.debugMode } contactPivotKey={ contactPivotKey } wpID={ '' } />;
 
@@ -428,7 +434,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { mainPivotKey !== 'Contacts' ? undefined : contactsPivot }
         { mainPivotKey === 'Contacts' && contactPivotKey === 'Coordinators' ? coordinatorsItems : undefined }
         { mainPivotKey === 'Contacts' && contactPivotKey === 'Committee' ? committeeItems : undefined }
-        { mainPivotKey === 'Contacts' && contactPivotKey === 'SharePoint' ? coordinatorsItems : undefined }
+        { mainPivotKey === 'Contacts' && contactPivotKey === 'SharePoint' ? sharePointPageHeader : undefined }
 
         <h2>Fetch Status: { fullAnalyticsSaved === true ? 'Finished!' : 'working' } { fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' }</h2>
 
