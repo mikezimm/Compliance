@@ -25,7 +25,8 @@ export function createMapRow( props: ISourceRowRender ): JSX.Element { // eslint
     <div title={ null } >{ thisItem.ID }</div>
     <div title={ null } >{ getHighlightedText( thisItem.Region, props.searchText ) }</div>
     <div title={ null } >{ getHighlightedText( thisItem.Facility, props.searchText ) }</div>
-    <div title={ `${thisItem.FileRef}`} onClick={ () => window.open( thisItem.ServerRedirectedEmbedUrl, '_blank' )}>{ getHighlightedText( thisItem.FileLeafRef, props.searchText ) }</div>
+    <div title={ `${thisItem.FileRef}`} onClick={ () => window.open( thisItem.ServerRedirectedEmbedUrl, '_blank' )}
+      style={{ cursor: 'pointer' }}>{ getHighlightedText( thisItem.FileLeafRef, props.searchText ) }</div>
   </div>;
 
   return row;

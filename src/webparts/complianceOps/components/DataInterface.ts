@@ -157,7 +157,7 @@ export const SourceInfo: ISourceInfo = {
     searchSource: 'Maps',
     searchSourceDesc:  'Facility Record Maps in LifeNET',
     columns: MapsColumns,
-    searchProps: Divisions,
+    searchProps: [ ...[ 'FileLeafRef'], ...MapsColumns, ],
     selectThese: [ ...libraryColumns, ...MapsColumns ],
     expandThese: [ 'Author', 'Editor' ],
     itemFetchCol: [],

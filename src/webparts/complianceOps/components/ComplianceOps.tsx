@@ -37,6 +37,8 @@ import { createSiteRow } from './Pages/Site/Row';
 import MapPageHook from './Pages/Maps/Header';
 import { createMapRow } from './Pages/Maps/Row';
 
+import FormPageHook from './Pages/Forms/Header';
+import { createFormRow } from './Pages/Forms/Row';
 
 const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.fpsSiteThemeLight, primary: styles.fpsSiteThemePrimary };
 
@@ -375,6 +377,14 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     const mapItems = this.createItemsElement( mapPageHeader, 'Maps' );
 
+    const formPageHeader = <FormPageHook
+      debugMode={ this.state.debugMode }
+      mainPivotKey={ this.state.mainPivotKey }
+      wpID={ '' }
+    />;
+
+    const formItems = this.createItemsElement( formPageHeader, 'Forms' );
+
     return (
       <section className={`${styles.complianceOps} ${hasTeamsContext ? styles.teams : ''}`}>
         { devHeader }
@@ -383,6 +393,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { this.state.mainPivotKey !== 'Home' ? undefined : homePage  }
         { this.state.mainPivotKey !== 'Site' ? undefined : enforcementItems }
         { this.state.mainPivotKey !== 'Maps' ? undefined : mapItems }
+        { this.state.mainPivotKey !== 'Forms' ? undefined : formItems }
         <h2>Fetch Status: { this.state.fullAnalyticsSaved === true ? 'Finished!' : 'working' } { this.state.fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' }</h2>
 
       </section>
