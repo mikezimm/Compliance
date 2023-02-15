@@ -426,6 +426,11 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         stateSource = this.state.site;
         renderRow = createSiteRow;
       break;
+      case 'Forms':
+        primarySource = this._SourceInfo.forms;
+        stateSource = this.state.forms;
+        renderRow = createFormRow;
+      break;
 
     }
 
@@ -434,7 +439,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       primarySource={ primarySource }
       itemsPerPage={ 20 }
       pageWidth={ 1000 }
-      topButtons={ primarySource.defSearchButtons }
+      topButtons={ primarySource ? primarySource.defSearchButtons : [] }
 
       stateSource={ stateSource }
       startQty={ 20 }
