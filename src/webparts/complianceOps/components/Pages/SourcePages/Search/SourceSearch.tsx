@@ -10,12 +10,13 @@ import PageArrows from '@mikezimm/fps-library-v2/lib/components/molecules/Arrows
 export interface ISourceSearchHookProps {
   searchText: string;
   searchTime: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  _onSearchChange: any;  // Callback for search box updates
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  _updateFirstLastVisible: any;  // Callback for search box updates
+
+  _onSearchChange( event?: React.ChangeEvent<HTMLInputElement>, NewSearch?: string  ): void;  // Callback for search box updates
+  _updateFirstLastVisible( firstVisible: number, lastVisible: number ) : void;  // Callback for search box updates
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resetArrows: any;  // Callback for resetting arrows
+  
   itemsPerPage: number;
   debugMode: boolean;
   itemCount: number;

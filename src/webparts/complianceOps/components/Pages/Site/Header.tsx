@@ -2,22 +2,17 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
 import { ITabMain } from '../../IComplianceOpsProps';
-import { Icon } from 'office-ui-fabric-react/lib/Icon';
 
-// import FadeCarousel from '@mikezimm/fps-library-v2/lib/components/molecules/FadeCarousel/component';
-
-import styles from './page.module.scss';
+import styles from './header.module.scss';
 
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
 
-export interface IHomePageProps {
+export interface ISitePageProps {
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
   mainPivotKey: ITabMain;
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
-  refreshID: string;
-
 }
 
 /***
@@ -31,13 +26,13 @@ export interface IHomePageProps {
  *                                                                                     
  */
 
-const HomePageHook: React.FC<IHomePageProps> = ( props ) => {
+const SitePageHook: React.FC<ISitePageProps> = ( props ) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { debugMode, mainPivotKey, wpID, } = props; //appLinks, news 
 
-    const [ teachBubble, setTeachBubble ] = useState<number>( null );
-    const [ lastBubble, setLastBubble ] = useState<number>( 0 );
+  const [ teachBubble, setTeachBubble ] = useState<number>( null );
+  const [ lastBubble, setLastBubble ] = useState<number>( 0 );
 
   /***
  *     .d88b.  d8b   db       .o88b. db      d888888b  .o88b. db   dD .d8888. 
@@ -76,36 +71,19 @@ const HomePageHook: React.FC<IHomePageProps> = ( props ) => {
  *                                                                 
  *                                                                 
  */
-  const bannerImage: string = `https://www.tenant.com/sites/default/files/2022-04/background%402x.jpg`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
-  const backgroundImage: string = `url("${bannerImage}")`;
- 
-  const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles , '', 'MainPivot' ), updateTour, closeTour );
+  // const bannerImage: string = `https://www.tenant.com/sites/default/files/2022-04/background%402x.jpg`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
+  // const backgroundImage: string = `url("${bannerImage}")`;
 
-  const HomePageElement: JSX.Element = mainPivotKey !== 'Home' ? null : <div className = { styles.page } style={ null }>
-    {/* <div className={ styles.homeBanner } style={{ backgroundImage: backgroundImage }} onClick={ () => { updateTour( lastBubble ); } } id='ComplHomeBanner'> */}
-    <div className={ styles.homeBanner } style={{ backgroundImage: backgroundImage }} id='ComplHomeBanner'>
-      {/* <img src='https://png.pngtree.com/back_origin_pic/00/01/50/d365b272b0e2127046411b5f93c750c6.jpg'/> */}
-      <div className={ styles.homeTitle } onClick={ () => { updateTour( lastBubble ); } } id='ComplHomeBanner'>
-          <div style={{ marginRight: '50px' }}>Start Tour</div>
-          <div id={ 'ComplHomeStartTour' } ><Icon iconName={ 'MapPin' }/></div>
-      </div>
-    </div>
+  const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Site' ), updateTour, closeTour );
 
-    <div className={ styles.keyButtons }>
-      <div id='ComplHomeSummary' >Summary</div>
-      <div id='ComplHomeSummary' >Committee</div>
-      <div id='ComplHomeSummary' >Coordinators</div>
-      <div id='ComplHomeSummary' >Summary</div>
-      <div id='ComplHomeReporting' >Maps</div>
-      <div id='ComplHomeTopics' >Forms</div>
-      <div id='ComplHomeLinkButton' >Tips</div>
-      <div id='ComplHomeHelp' >Committee</div>
-    </div>
+  const SitePageElement: JSX.Element = mainPivotKey !== 'Site' ? null : <div className = { styles.page } style={ null }>
+    <div style={{ marginRight: '50px' }}>This shows libraries on the current site collection.</div>
+    {/* <div id={ 'ComplSiteStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
     { TeachMe }
   </div>;
 
-  return ( HomePageElement );
+  return ( SitePageElement );
 
 }
 
-export default HomePageHook;
+export default SitePageHook;

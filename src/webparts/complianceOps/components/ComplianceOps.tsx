@@ -1,7 +1,6 @@
 import * as React from 'react';
 import styles from './ComplianceOps.module.scss';
 import { IComplianceOpsProps, IComplianceOpsState, IStateSource, ITabMain } from './IComplianceOpsProps';
-import { escape } from '@microsoft/sp-lodash-subset';
 
 
 import { Pivot, PivotItem, PivotLinkFormat, PivotLinkSize,} from 'office-ui-fabric-react/lib/Pivot';
@@ -9,7 +8,6 @@ import { ISpinnerStyles, Spinner, SpinnerSize, } from 'office-ui-fabric-react/li
 
 import { saveViewAnalytics } from '../CoreFPS/Analytics';
 
-// import FetchBanner from '../CoreFPS/FetchBannerElement';
 import FetchBannerX from '@mikezimm/fps-library-v2/lib/banner/bannerX/FetchBannerX';
 // import { createSpecialElement } from '@mikezimm/fps-library-v2/lib/banner/components/SpecialBanner/component';
 // import { ISpecialMessage, } from '@mikezimm/fps-library-v2/lib/banner/components/SpecialBanner/interface';
@@ -25,14 +23,20 @@ import { getSourceItems } from '@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/g
 import { ISiteThemes } from "@mikezimm/fps-library-v2/lib/common/commandStyles/ISiteThemeChoices";
 import { buildCurrentSourceInfo, IDefSourceType, ISourceInfo, ISourcePropsCOP } from './DataInterface';
 
-import HomePageHook from './Pages/Home/Page';
-import SitePageHook from './Pages/Site/Page';
 import { addSearchMeta1 } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/functions/addSearchMeta1';
 import { addSearchMeta2 } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/functions/addSearchMeta2';
 import { SearchTypes } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/Interfaces/StandardTypes';
-import { createItemRow } from './Pages/Site/Row';
+
 import SourcePages from './Pages/SourcePages/SourcePages';
-import { divProperties } from 'office-ui-fabric-react';
+
+import HomePageHook from './Pages/Home/Page';
+
+import SitePageHook from './Pages/Site/Header';
+import { createSiteRow } from './Pages/Site/Row';
+
+import MapPageHook from './Pages/Maps/Header';
+import { createMapRow } from './Pages/Maps/Row';
+
 
 const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.fpsSiteThemeLight, primary: styles.fpsSiteThemePrimary };
 
@@ -142,12 +146,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
   public async componentDidMount(): Promise<void> {
       if ( check4Gulp() === true )  console.log( `${consolePrefix} ~ componentDidMount` );
 
-      //Start tracking performance
-      // this._performance.ops.fetch1 = startPerformOp( 'fetch1 TitleText', this.props.bannerProps.displayMode );
-      //Do async code here
       await this.updateTheseSources( this._missingFetches() );
-      //End tracking performance
-      // this._performance.ops.fetch1 = updatePerformanceEnd( this._performance.ops.fetch1, true, 777 );
 
       const analyticsWasExecuted = saveViewAnalytics( 'Compliance mount', 'didMount' , this.props, this.state.analyticsWasExecuted, this._performance );
 
@@ -360,67 +359,32 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       refreshID= { this.state.refreshId }
     />;
 
-    const sitePage = <SitePageHook
+    const sitePageHeader = <SitePageHook
       debugMode={ this.state.debugMode }
       mainPivotKey={ this.state.mainPivotKey }
       wpID={ '' }
     />;
 
-      const enforcementItems = <SourcePages
-        // source={ SourceInfo }
-        primarySource={ this._SourceInfo.site }
-        itemsPerPage={ 20 }
-        pageWidth={ 1000 }
-        topButtons={ [ 'Collection','Current' ] }
+    const enforcementItems = this.createItemsElement( sitePageHeader, 'Site' );
 
-        stateSource={ this.state.site }
-        startQty={ 20 }
-        showItemType={ false }
-        debugMode={ this.state.debugMode }
-        renderRow={ createItemRow }
-        // bumpDeepLinks= { this.bumpDeepStateFromComponent.bind(this) }
-        deepProps={ null } //this.state.deepProps
-        // canvasOptions={ this.props.canvasOptions }
+    const mapPageHeader = <MapPageHook
+      debugMode={ this.state.debugMode }
+      mainPivotKey={ this.state.mainPivotKey }
+      wpID={ '' }
+    />;
 
-        onParentCall={ () => { alert('Hey, parent was called!')} }
-        headingElement={ sitePage }
-        footerElement={ <div style={{color: 'red', fontWeight: 600 }}>THIS IS the FOOTER ELEMENT</div> }
-      />;
+    const mapItems = this.createItemsElement( mapPageHeader, 'Maps' );
 
     return (
       <section className={`${styles.complianceOps} ${hasTeamsContext ? styles.teams : ''}`}>
         { devHeader }
         { Banner }
         { mainPivot }
-        { homePage }
-        { enforcementItems }
+        { this.state.mainPivotKey !== 'Home' ? undefined : homePage  }
+        { this.state.mainPivotKey !== 'Site' ? undefined : enforcementItems }
+        { this.state.mainPivotKey !== 'Maps' ? undefined : mapItems }
         <h2>Fetch Status: { this.state.fullAnalyticsSaved === true ? 'Finished!' : 'working' } { this.state.fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' }</h2>
 
-
-{/* 
-        <div className={styles.welcome}>
-          <img  onClick={ this._doSomething.bind(this)} alt="" src={isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />
-          <h2>Fetch Status: { this.state.fullAnalyticsSaved === true ? 'Finished!' : 'working' } { this.state.fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' }</h2>
-          <h2>Well done, {escape(userDisplayName)}!</h2>
-          <div>{environmentMessage}</div>
-          <div>Web part property value: <strong>{escape(description)}</strong></div>
-        </div>
-        <div>
-          <h3>Welcome to SharePoint Framework!</h3>
-          <p>
-            The SharePoint Framework (SPFx) is a extensibility model for Microsoft Viva, Microsoft Teams and SharePoint. It&#39;s the easiest way to extend Microsoft 365 with automatic Single Sign On, automatic hosting and industry standard tooling.
-          </p>
-          <h4>Learn more about SPFx development:</h4>
-          <ul className={styles.links}>
-            <li><a href="https://aka.ms/spfx" target="_blank" rel="noreferrer">SharePoint Framework Overview</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-graph" target="_blank" rel="noreferrer">Use Microsoft Graph in your solution</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-teams" target="_blank" rel="noreferrer">Build for Microsoft Teams using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-viva" target="_blank" rel="noreferrer">Build for Microsoft Viva Connections using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-store" target="_blank" rel="noreferrer">Publish SharePoint Framework applications to the marketplace</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-api" target="_blank" rel="noreferrer">SharePoint Framework API reference</a></li>
-            <li><a href="https://aka.ms/m365pnp" target="_blank" rel="noreferrer">Microsoft 365 Developer Community</a></li>
-          </ul>
-        </div> */}
       </section>
     );
   }
@@ -431,6 +395,52 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     this.setState({ 
       mainPivotKey: temp.props.itemKey,
     });
+  }
+
+  private createItemsElement( pageHeader: JSX.Element , tab: ITabMain ): JSX.Element {
+
+    let primarySource = null;
+    let stateSource = null;
+    let renderRow = null;
+    switch ( tab ) {
+      case 'Home':
+      break;
+      case 'Maps':
+        primarySource = this._SourceInfo.maps;
+        stateSource = this.state.maps;
+        renderRow = createMapRow;
+      break;
+      case 'Site':
+        primarySource = this._SourceInfo.site;
+        stateSource = this.state.site;
+        renderRow = createSiteRow;
+      break;
+
+    }
+
+    const itemsElement = <SourcePages
+      // source={ SourceInfo }
+      primarySource={ primarySource }
+      itemsPerPage={ 20 }
+      pageWidth={ 1000 }
+      topButtons={ primarySource.defSearchButtons }
+
+      stateSource={ stateSource }
+      startQty={ 20 }
+      showItemType={ false }
+      debugMode={ this.state.debugMode }
+      renderRow={ renderRow }
+      // bumpDeepLinks= { this.bumpDeepStateFromComponent.bind(this) }
+      deepProps={ null } //this.state.deepProps
+      // canvasOptions={ this.props.canvasOptions }
+
+      onParentCall={ () => { alert('Hey, parent was called!')} }
+      headingElement={ pageHeader }
+      // footerElement={ <div style={{color: 'red', fontWeight: 600 }}>THIS IS the FOOTER ELEMENT</div> }
+    />;
+
+    return itemsElement;
+
   }
 
 }

@@ -1,4 +1,4 @@
-import { ISourceInfo, ISourcePropsCOP } from "../../DataInterface";
+import { ISourcePropsCOP } from "../../DataInterface";
 import { IAnySourceItem } from "../../../fpsReferences";
 // import { ICanvasContentOptions } from "../INTERFACES/IModernPage";
 // import { IFinManSearch } from "../INTERFACES/IFinManSearch";
@@ -15,7 +15,6 @@ export interface ISourcePagesProps extends IPageArrowsParentProps {
 
   showItemType: boolean; // was previously - search: IFinManSearch ;
 
-  // source: ISourceInfo;
   primarySource: ISourcePropsCOP;
   topButtons: string[];
 
@@ -31,8 +30,6 @@ export interface ISourcePagesProps extends IPageArrowsParentProps {
 
   // onParentCall is a pass down from the parent web part component and SHOULD look for this signature.
   onParentCall(command: string, Id: number, type: string, item: IAnySourceItem) : void;
-
-  // fetchTime: number;
 
   // canvasOptions: ICanvasContentOptions;
 

@@ -6,12 +6,6 @@ import { Icon, } from 'office-ui-fabric-react/lib/Icon';
 import stylesSP from './SourcePages.module.scss';
 import { IAnySourceItem } from '../../../fpsReferences';
 
-
-// import { SearchTypes } from '../DataInterface';
-// import { IAnySourceItem } from "../INTERFACES/IAnySource";
-// import { getHighlightedText } from '../../fpsReferences';
-
-
 export function SourceIconElement( iconName: string, typeLabel: string, onClick?: any, item?: IAnySourceItem , labelSide: 'left' | 'right' = 'left' ) : JSX.Element {
 
   const ele : JSX.Element = <div className={ stylesSP.itemIcon } title={ typeLabel } onClick = { () => onClick( item.ID, 'appLinks', item ) }>

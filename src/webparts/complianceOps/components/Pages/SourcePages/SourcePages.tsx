@@ -8,28 +8,6 @@ import { ISourcePagesProps, ISourcePagesState, } from './ISourcePagesProps';
 
 import { Icon, } from 'office-ui-fabric-react/lib/Icon'; 
 
-// import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
-
-// import ReactJson from "react-json-view";
-
-// import { createEntityRow } from './Entities/EntityItem';
-// import { createAcronymRow } from './Acronyms/AcronymItem';
-// import { createAccountRow } from './Accounts/AccountItem';
-// import { createHistoryRow } from './History/HistoryItem';
-// import { createModernRow } from './Modern/ModernItem';
-// import { createFormRow } from './Forms/FormItem';
-
-// import PageArrows from '@mikezimm/fps-library-v2/lib/components/molecules/Arrows/PageArrows';
-
-// import { IEntityContent, IAcronymContent, IFormContent } from "../INTERFACES/IAlvFinManContent";
-// import { IDeepLink } from "../INTERFACES/IDeepLogic";
-// import { IPagesContent } from "../INTERFACES/IPagesContent";
-// import { IAnySourceItem } from "../INTERFACES/IAnySource";
-
-// import { getDocWiki } from '../ModernPages/SinglePage/getModernContent';
-
-// import { createFileRow } from './Files/FileItem';
-
 import { IAnySourceItem, makeid } from '../../../fpsReferences';
 import { getFilteredItems } from './Search/functions';
 // import { ContentPanel, } from './SourcePanelContent';
@@ -203,39 +181,11 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
           showItemType: showItemType,
           onParentCall: this.props.onParentCall,
         }));
-
-        // switch ( primarySource.key  ) {
-
-        //   case 'site':
-        //   filtered.push( createEntityRow( item as IEntityContent, searchText, this.clickListItem.bind( this ), search.showItemType )); break;
-
-        //   case 'maps':
-        //   filtered.push( createAcronymRow( item as IAcronymContent, searchText, this.clickListItem.bind( this ), search.showItemType )); break;
-
-        //   case 'forms':
-        //   filtered.push( createFormRow( item as IFormContent, searchText, this.clickListItem.bind( this ) , this.state.detailToggle, search.showItemType )); break;
-
-        //   case 'coordinators':
-        //   // filtered.push( this.createModernRowHere( item, searchText, this.clickModernItem.bind(this) )); break;
-        //   // filtered.push( createModernRow( item as IPagesContent, searchText, this.clickModernItem.bind( this ), null , this.state.detailToggle, search.showItemType )); break;
-        //   filtered.push( createModernRow( item as IPagesContent, searchText, this.clickModernItem.bind( this ), null , this.state.detailToggle, search.showItemType )); break;
-
-        //   case 'committee':
-        //   // filtered.push( this.createModernRowHere( item, searchText, this.clickModernItem.bind(this) )); break;
-        //   // filtered.push( createModernRow( item as IPagesContent, searchText, this.clickModernItem.bind( this ), null , this.state.detailToggle, search.showItemType )); break;
-        //   filtered.push( createModernRow( item as IPagesContent, searchText, this.clickModernItem.bind( this ), null , this.state.detailToggle, search.showItemType )); break;
-
-        //   case 'tips':
-        //   // filtered.push( this.createModernRowHere( item, searchText, this.clickModernItem.bind(this) )); break;
-        //   // filtered.push( createFileRow( item as IPagesContent, searchText, this.clickFileItem.bind( this ), search.showItemType )); break;
-        //   filtered.push( createFileRow( item as IPagesContent, searchText, this.clickFileItem.bind( this ), search.showItemType )); break;
-
-        // }
       }
     });
 
     if ( this.props.stateSource.items.length === 0 ) {
-      //This is duplicated in SearchPage.tsx and SourcePages.tsx as well
+      // This is duplicated in SearchPage.tsx and SourcePages.tsx as well
       // const FetchingSpinner = this.props.showSpinner === false ? null : <div style={{display: 'inline'}}><Spinner size={SpinnerSize.large} label={"Fetching more information ..."} style={{ padding: 30 }} /></div>;
       // const spinnerStyles : ISpinnerStyles = { label: {fontSize: '20px', fontWeight: '600',  }};
       // const FetchingSpinner =  this.props.showSpinner === false ? null : <div style={{display: 'inline', top: -10, position: 'relative'}}>
@@ -263,48 +213,6 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
       </div>
       )
     }
-
-    // const DetailsToggle: any = <Toggle 
-    //   onText={ 'Details' } 
-    //   offText={ 'Minimal' } 
-    //   onChange={ () => this._detailsToggle() } 
-    //   checked={ this.state.detailToggle }
-    //   styles={ { root: { width: 160, } } }
-    //   disabled = { [ 'forms', 'manual', 'accounts'].indexOf( primarySource.key ) === -1 ? true : false }
-    // />
-
-    // const pageArrows = <PageArrows 
-    //   itemCount={ this.state.filtered.length }
-    //   itemsPerPage={ this._itemsPerPage }
-    //   setParentStateFirstLast={ this._updateFirstLastVisible.bind(this) }
-    //   debugMode = { this.props.debugMode }
-    //   fontSize = { 20 }
-    //   resetArrows = { this.state.resetArrows }
-    // />;
-
-    // /*https://developer.microsoft.com/en-us/fabric#/controls/web/searchbox*/
-    // const searchBox =  
-    // <div className={ [stylesS.searchContainer ].join(' ') } >
-    //   <SearchBox
-    //     className={stylesS.searchBox}
-    //     styles={ { root: { maxWidth:250 } } }
-    //     placeholder="Search"
-    //     value={ searchText }
-    //     onSearch={ this._onSearchChange.bind(this) }
-    //     onFocus={ () => console.log('this.state',  this.state) }
-    //     onBlur={ () => console.log('onBlur called') }
-    //     onChange={ this._onSearchChange.bind(this) }
-    //     onClear={ this._onSearchChange.bind(this) }
-    //   />
-    //   <div className={stylesS.searchStatus}>
-    //     { 'Searching ' + this.state.filtered.length + ' items' }
-    //     { this.state.searchTime === null ? '' : ' ~ Time ' + this.state.searchTime + ' ms' }
-
-    //     { /* 'Searching ' + (this.state.searchType !== 'all' ? this.state.filteredTiles.length : ' all' ) + ' items' */ }
-    //   </div>
-    //   { DetailsToggle }
-    //   { pageArrows }
-    // </div>;
 
     const searchBox =  <SourceSearchHook 
       _onSearchChange={ this._onSearchChange.bind( this ) }
@@ -351,11 +259,9 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
 
     return (
           <div className={ styles.storagePage }>
-            {/* <div className={ styles.column }> */}
               { debugContent }
               { this.props.headingElement }
               { searchSourceDesc }
-              {/* { this.state.searchTime } */}
               { searchBox }
               { topSearchContent }
               { filtered }
@@ -369,10 +275,7 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
     );
   }
   
-  // private _clickTop( item: string, event: React.MouseEventHandler<HTMLDivElement> ): void {
   private _clickTop( item: string, event: React.MouseEvent<HTMLDivElement, MouseEvent> ): void {
-  // Need to keep as any to not have error on event.ctrlKey
-  // private _clickTop( item: string, event: any ): void {
 
     const selected: string[] = this.toggleSearchInArray( this.state.topSearch, item , event.ctrlKey === true ? 'multi' : 'single' );
     console.log('_clickTop:', item, selected );
@@ -491,7 +394,7 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
    * (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string)
    */
 
-  private _onSearchChange ( event?: React.ChangeEvent<HTMLInputElement>, NewSearch?: string  ): void{
+  private _onSearchChange ( event?: React.ChangeEvent<HTMLInputElement>, NewSearch?: string  ): void {
 
     const startTime = new Date();
     const SearchValue = NewSearch;

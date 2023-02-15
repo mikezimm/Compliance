@@ -89,7 +89,7 @@ export const SourceInfo: ISourceInfo = {
     selectThese: [ ...['*'], ...EnforcementColumns ],
     isModern: true,
     restFilter: `URL eq '${collectionUrl}'`,
-    defSearchButtons: [ 'SiteCollection','ThisSubSite' ],
+    defSearchButtons: [ 'Collection','Current' ],
     orderBy: { //Including even though it does not seem to do anything
       prop: 'Title',
       order: 'asc',
