@@ -75,7 +75,7 @@ const SharePointPageHook: React.FC<ISharePointPageProps> = ( props ) => {
   // const bannerImage: string = `https://www.tenant.com/sites/default/files/2022-04/background%402x.jpg`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   // const backgroundImage: string = `url("${bannerImage}")`;
 
-  const RotatingGlobeCSS: String = `https://stackoverflow.com/questions/27781634/rotating-globe-in-css`;
+  const RotatingGlobeCSS: string = `https://stackoverflow.com/questions/27781634/rotating-globe-in-css`;
 
   const linkNa: string = `https://teams.microsoft.com/l/channel/19%3a8a8e728d1e3f445a95e928ccf934c7ca%40thread.skype/North%2520America?groupId=c428246e-f757-47bb-a04e-e9ec3f461df8&tenantId=${goToMeetingId}`;
   const linkEu: string = `https://teams.microsoft.com/l/channel/19%3adcb0a78bc660473eb0d7c0ea6dd216b9%40thread.skype/Europe?groupId=c428246e-f757-47bb-a04e-e9ec3f461df8&tenantId=${goToMeetingId}`;
