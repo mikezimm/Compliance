@@ -9,6 +9,7 @@ import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/compo
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
 
+const goToMeetingId : string = 'f3603cca-3b48-4625-afd2-2eb0587bf1d6';
 export interface ISharePointPageProps {
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
   contactPivotKey: ITabContactPivots;
@@ -74,16 +75,24 @@ const SharePointPageHook: React.FC<ISharePointPageProps> = ( props ) => {
   // const bannerImage: string = `https://www.tenant.com/sites/default/files/2022-04/background%402x.jpg`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   // const backgroundImage: string = `url("${bannerImage}")`;
 
+  const RotatingGlobeCSS: String = `https://stackoverflow.com/questions/27781634/rotating-globe-in-css`;
+
+  const linkNa: string = `https://teams.microsoft.com/l/channel/19%3a8a8e728d1e3f445a95e928ccf934c7ca%40thread.skype/North%2520America?groupId=c428246e-f757-47bb-a04e-e9ec3f461df8&tenantId=${goToMeetingId}`;
+  const linkEu: string = `https://teams.microsoft.com/l/channel/19%3adcb0a78bc660473eb0d7c0ea6dd216b9%40thread.skype/Europe?groupId=c428246e-f757-47bb-a04e-e9ec3f461df8&tenantId=${goToMeetingId}`;
+  // const linkAP: string = `https://teams.microsoft.com/l/channel/19%3a8a8e728d1e3f445a95e928ccf934c7ca%40thread.skype/North%2520America?groupId=c428246e-f757-47bb-a04e-e9ec3f461df8&tenantId=${goToMeetingId}`;
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'SharePoint' ), updateTour, closeTour );
 
   const SharePointPageElement: JSX.Element = contactPivotKey !== 'SharePoint' ? null : <div className = { styles.page } style={ null }>
     <div style={{ marginRight: '50px' }}>If you need assistance with this web part or setting labels on your site, you have come to the right place!</div>
+
+    <li onClick={ () => window.open( RotatingGlobeCSS, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}>Rotating Globe CSS for Buttons?: { RotatingGlobeCSS} </li>
+
     <div className={ styles.shareLab }>
-      <div className={ styles.lab }>
+      <div className={ styles.lab } onClick={ () => window.open( linkNa, '_blank')}>
         <div className={ styles.title }>Join ShareLab here - EU</div>
         <div className={ styles.desc }>Every other week</div>
       </div>
-      <div className={ styles.lab }>
+      <div className={ styles.lab } onClick={ () => window.open( linkEu, '_blank')}>
         <div className={ styles.title }>Join ShareLab here - NA</div>
         <div className={ styles.desc }>Every week</div>
       </div>
