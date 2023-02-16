@@ -465,12 +465,15 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { mainPivotKey !== 'Labels' ? undefined : labelsPageHeader }
         { mainPivotKey !== 'Site' ? undefined : enforcementItems }
         { mainPivotKey !== 'Details' ? undefined : detailsPageHeader }
-        { mainPivotKey === 'Contacts' && contactPivotKey === 'SharePoint' ? sharePointPageHeader : undefined }
-        { mainPivotKey !== 'Maps' ? undefined : mapItems }
-        { mainPivotKey !== 'Forms' ? undefined : formItems }
+
+        {/* These next 4 items need to be in order where contactsPivot is above the other items */}
         { mainPivotKey !== 'Contacts' ? undefined : contactsPivot }
+        { mainPivotKey === 'Contacts' && contactPivotKey === 'SharePoint' ? sharePointPageHeader : undefined }
         { mainPivotKey === 'Contacts' && contactPivotKey === 'Coordinators' ? coordinatorsItems : undefined }
         { mainPivotKey === 'Contacts' && contactPivotKey === 'Committee' ? committeeItems : undefined }
+
+        { mainPivotKey !== 'Maps' ? undefined : mapItems }
+        { mainPivotKey !== 'Forms' ? undefined : formItems }
 
         <h2>Fetch Status: { fullAnalyticsSaved === true ? 'Finished!' : 'working' } { fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' } ms</h2>
 
