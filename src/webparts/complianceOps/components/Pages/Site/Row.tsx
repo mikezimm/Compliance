@@ -14,7 +14,10 @@ export interface IThisItemInterface extends IAnySourceItem {
   ID: number;
   Title: string;
   URL: string;
+  // 'SubTitle', 'SPOwner'
   Subsite: string;
+  SubTitle: string;
+  SPOwner: string;
   NoRecordsDeclared: string;
   DocumentsHosted: number;
   JSONLists: string;
@@ -24,20 +27,25 @@ export interface IThisItemInterface extends IAnySourceItem {
 }
 
 export function createSiteRow( props: ISourceRowRender ): JSX.Element { // eslint-disable-line @typescript-eslint/no-explicit-any
-  const { item, searchText, onClick, onParentCall,  } = props; // details, showItemType, onOpenPanel
+  const { item, searchText, onClick, onParentCall, } = props; // details, showItemType, onOpenPanel
 
   const thisItem: IThisItemInterface = item as IThisItemInterface;
 
   const webLink: string = thisItem.Subsite;
-  const { ListUrl, ListSettings } = item;
+  const { ListUrl, ListSettings, SubTitle, SPOwner  } = item;
+  
+  const OwnerName = SPOwner ? SPOwner.split('@')[0] : 'Unknown';
 
   const id: JSX.Element = <div>{ thisItem.ID }</div>;
 
-  const title: JSX.Element = <div title={webLink} onClick = { () => { window.open( webLink, '_blank' )} } style={{cursor: 'pointer' }} >
+  const title: JSX.Element = <div title={SubTitle} onClick = { () => { window.open( webLink, '_blank' )} } style={{cursor: 'pointer' }} >
       { getHighlightedText( `${ webLink.replace('/sites', '' ) }`, searchText )  }</div>;
 
   const libraries: JSX.Element = <div title="Libraries" onClick = { () => { window.open( ListUrl, '_blank' )} } style={{cursor: 'pointer' }} >
       {  getHighlightedText( `${ thisItem.NoRecordsDeclared }`, searchText )  }</div>;  // 
+
+  const owner: JSX.Element = <div title="Site Owner">
+      {  getHighlightedText( `${ OwnerName }`, searchText )  }</div>;  // 
 
   const folderIcon = buildClickableIcon( 'PivotTiles' , FolderIcon, 'Go to Library', null, () => { window.open( ListUrl ,'_blank')}, thisItem.ListId, thisItem.ListId, )
   const settingsIcon = buildClickableIcon( 'PivotTiles' , TagIcon, 'Apply Label to Library - OWNER ACCESS REQUIRED', 'red', () => { window.open( ListSettings ,'_blank')}, thisItem.ListId, thisItem.ListId, )
@@ -51,6 +59,7 @@ export function createSiteRow( props: ISourceRowRender ): JSX.Element { // eslin
     { settingsIcon }
     { detailsIcon }
     { libraries }
+    { owner }
   </div>;
 
   return row;

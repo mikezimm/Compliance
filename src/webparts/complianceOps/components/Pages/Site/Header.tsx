@@ -83,7 +83,7 @@ const SitePageHook: React.FC<ISitePageProps> = ( props ) => {
   const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
     <ul>
       <li>The Site tab will show you all the libraries in your site <b>that do not have a retention label set</b>.</li>
-      <li>The summary shown here is only updated once per week.</li>
+      <li>This summary shown <b>is only updated once per week</b>.</li>
       <li>If you make changes and want to verify them, you can press the gear icon and let the web part analyize it live.</li>
       <div style={{ height: '8px' }}/>
       <li>The number shows how many items are in that library.</li>
