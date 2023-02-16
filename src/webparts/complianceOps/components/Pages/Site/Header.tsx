@@ -11,7 +11,7 @@ import styles from './header.module.scss';
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
-import { FolderIcon, ProcessingRunIcon, TagIcon } from './Row';
+import { FolderIcon, OrgIcon, ProcessingRunIcon, TagIcon } from './Row';
 
 export interface ISitePageProps {
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
@@ -85,7 +85,8 @@ const SitePageHook: React.FC<ISitePageProps> = ( props ) => {
       <li>The Site tab will show you all the libraries in your site <b>that do not have a retention label set</b>.</li>
       <li>This summary shown <b>is only updated once per week</b>.</li>
       <li>If you make changes and want to verify them, you can press the gear icon and let the web part analyize it live.</li>
-      <div style={{ height: '8px' }}/>
+      <div style={{ height: '12px' }}/>
+      <li>The <Icon iconName={ OrgIcon }/> icon indicates this is a library on a SubSite.</li>
       <li>The number shows how many items are in that library.</li>
       <li>Press the <Icon iconName={ FolderIcon }/> icon to open that library in a new tab.</li>
       <li>Press the <Icon iconName={ TagIcon }/> icon to set a default label on that library. <b>{`( Requires Owner permissions )`}</b></li>
@@ -98,7 +99,7 @@ const SitePageHook: React.FC<ISitePageProps> = ( props ) => {
     defaultIcon = 'Help'
     showAccordion = { true }
     content = { MainContent }
-    contentStyles = { { height: '180px' } }
+    contentStyles = { { height: '200px' } }
   />;
 
   const SitePageElement: JSX.Element = mainPivotKey !== 'Site' ? null : <div className = { styles.page } style={ null }>
