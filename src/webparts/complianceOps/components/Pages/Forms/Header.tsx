@@ -3,6 +3,9 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { ITabMain } from '../../IComplianceOpsProps';
 
+import { Icon  } from 'office-ui-fabric-react/lib/Icon';
+import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
+
 import styles from './header.module.scss';
 
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
@@ -74,10 +77,25 @@ const FormPageHook: React.FC<IFormPageProps> = ( props ) => {
   // const bannerImage: string = `https://www.tenant.com/sites/default/files/2022-04/background%402x.jpg`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   // const backgroundImage: string = `url("${bannerImage}")`;
 
+  const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
+    <ul>
+      <li>These are forms that the XYZ Team uses for XYZ</li>
+      <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li>
+    </ul>
+  </div>
+
+  const InfoElement: JSX.Element = <Accordion 
+    title = { 'More information about this tab'}
+    defaultIcon = 'Help'
+    showAccordion = { true }
+    content = { MainContent }
+    contentStyles = { { height: '100px' } }
+  />;
+
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Forms' ), updateTour, closeTour );
 
   const FormPageElement: JSX.Element = mainPivotKey !== 'Forms' ? null : <div className = { styles.page } style={ null }>
-    <div style={{ marginRight: '50px' }}>This shows FORMS on LifeNET.</div>
+    { InfoElement }
     {/* <div id={ 'ComplSiteStartTour' } ><Icon iconName={ 'FormPin' }/></div> */}
     { TeachMe }
   </div>;

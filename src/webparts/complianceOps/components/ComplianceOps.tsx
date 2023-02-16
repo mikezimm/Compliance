@@ -46,6 +46,18 @@ import { createCoordinatorsRow } from './Pages/Coordinators/Row';
 import CommitteePageHook from './Pages/Committee/Header';
 import { createCommitteeRow } from './Pages/Committee/Row';
 
+import DetailsPageHook from './Pages/Details/Header';
+import { createDetailsRow } from './Pages/Details/Row';
+
+import TipsPageHook from './Pages/Tips/Header';
+import { createTipsRow } from './Pages/Tips/Row';
+
+import InstructionsPageHook from './Pages/Instructions/Header';
+import { createInstructionsRow } from './Pages/Instructions/Row';
+
+import LabelsPageHook from './Pages/Labels/Header';
+import { createLabelsRow } from './Pages/Labels/Row';
+
 import SharePointPageHook from './Pages/SharePoint/Header';
 // import { createSharePointRow } from './Pages/SharePoint/Row';
 
@@ -54,7 +66,7 @@ const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.f
 //Use this to add more console.logs for this component
 const consolePrefix: string = 'fpsconsole: FpsCore115Banner';
 
-const mainKeys: ITabMain[] = [ 'Home', 'Site', 'Maps', 'Forms', 'Tips', 'Instructions', 'Contacts', 'Details'];
+const mainKeys: ITabMain[] = [ 'Home', 'Instructions', 'Tips', 'Labels', 'Site', 'Details', 'Contacts', 'Maps', 'Forms'];
 const mainPivots: JSX.Element[] = mainKeys.map( ( key: string, idx: number ) => {
   return <PivotItem key={ idx } headerText={ mainKeys[idx] } ariaLabel={mainKeys[idx]} title={mainKeys[idx]} itemKey={ key }/>;
 });
@@ -407,6 +419,26 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     const committeeItems = this.createItemsElement( committeePageHeader, 'Committee' );
 
+    const tipsPageHeader = <TipsPageHook
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
+
+    const tipsItems = this.createItemsElement( tipsPageHeader, 'Tips' );
+
+    const instructionsPageHeader = <InstructionsPageHook
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
+
+    const instructionsItems = this.createItemsElement( instructionsPageHeader, 'Instructions' );
+
+    const detailsPageHeader = <DetailsPageHook
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
+
+    const detailsItems = this.createItemsElement( detailsPageHeader, 'Details' );
+
+    const labelsPageHeader = <LabelsPageHook
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
+
+    const labelsItems = this.createItemsElement( labelsPageHeader, 'Labels' );
+
     const contactsPivot = 
     <div id={ `ContactPivot${this.props.bannerProps.refreshId}` }>
       <Pivot
@@ -428,15 +460,19 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { Banner }
         { mainPivot }
         { mainPivotKey !== 'Home' ? undefined : homePage  }
+        { mainPivotKey !== 'Instructions' ? undefined : instructionsPageHeader }
+        { mainPivotKey !== 'Tips' ? undefined : tipsPageHeader }
+        { mainPivotKey !== 'Labels' ? undefined : labelsPageHeader }
         { mainPivotKey !== 'Site' ? undefined : enforcementItems }
+        { mainPivotKey !== 'Details' ? undefined : detailsPageHeader }
+        { mainPivotKey === 'Contacts' && contactPivotKey === 'SharePoint' ? sharePointPageHeader : undefined }
         { mainPivotKey !== 'Maps' ? undefined : mapItems }
         { mainPivotKey !== 'Forms' ? undefined : formItems }
         { mainPivotKey !== 'Contacts' ? undefined : contactsPivot }
         { mainPivotKey === 'Contacts' && contactPivotKey === 'Coordinators' ? coordinatorsItems : undefined }
         { mainPivotKey === 'Contacts' && contactPivotKey === 'Committee' ? committeeItems : undefined }
-        { mainPivotKey === 'Contacts' && contactPivotKey === 'SharePoint' ? sharePointPageHeader : undefined }
 
-        <h2>Fetch Status: { fullAnalyticsSaved === true ? 'Finished!' : 'working' } { fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' }</h2>
+        <h2>Fetch Status: { fullAnalyticsSaved === true ? 'Finished!' : 'working' } { fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' } ms</h2>
 
       </section>
     );

@@ -29,6 +29,7 @@ export type ITabSite = `Site`;
 export type ITabMaps = `Maps`;
 export type ITabForms = `Forms`;
 export type ITabTips = `Tips`;
+export type ITabLabels = `Labels`;
 export type ITabInstructions = `Instructions`;
 export type ITabContacts = `Contacts`;
 export type ITabDetails = `Details`;
@@ -36,7 +37,7 @@ export type ITabCommittee = `Committee`;
 export type ITabCoordinators = `Coordinators`;
 export type ITabSharePoint = `SharePoint`;
 
-export type ITabMain = ITabHome | ISearchSource | ITabInstructions | ITabContacts | ITabDetails;
+export type ITabMain = ITabHome | ISearchSource | ITabInstructions | ITabContacts | ITabDetails | ITabLabels;
 export type ITabContactPivots = ITabCommittee | ITabCoordinators | ITabSharePoint;
 
 /**

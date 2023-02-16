@@ -12,26 +12,14 @@ export const AllTeachBubbles: IMinTeachBubble[] =     [
     // step: 0,
     // target: `#ComplHomeBanner${wpId}`,
     target: `#${MainPivot}Home${ReplaceWpId}`,
-    headline: `Quick summary of your site`,
-    message: `This provides a quick overview of what a recent audit found on your site.`,
+    headline: `Webpart landing page`,
+    message: `Explains the big picture of what this webpart does.`,
   }, {
     // step: 0,
-    // target: `#ComplHomeBanner${wpId}`,
-    target: `#${MainPivot}Site${ReplaceWpId}`,
-    headline: `Quick summary of your site`,
-    message: `This provides a quick overview of what a recent audit found on your site.`,
-  }, {
-    // step: 0,
-    target: `#${MainPivot}Maps${ReplaceWpId}`,
-    headline: `Facility Record Maps`,
-    // message: ``,
-    message: `${defaultMessage}`,
-  }, {
-    // step: 0,
-    target: `#${MainPivot}Forms${ReplaceWpId}`,
-    headline: `Appendices to AS303 and Commonly Used Forms`,
-    // message: ``,
-    message: `${defaultMessage}`,
+    target: `#${MainPivot}Instructions${ReplaceWpId}`,
+    headline: `Get instructions`,
+    message: `Step by step instructions and video on how to set records retention on your libraries.`,
+    // message: `${defaultMessage}`,
   }, {
     // step: 0,
     target: `#${MainPivot}Tips${ReplaceWpId}`,
@@ -40,10 +28,24 @@ export const AllTeachBubbles: IMinTeachBubble[] =     [
     message: `${defaultMessage}`,
   }, {
     // step: 0,
-    target: `#${MainPivot}Instructions${ReplaceWpId}`,
-    headline: `Get instructions`,
-    message: `Step by step instructions and video on how to set records retention on your libraries.`,
+    target: `#${MainPivot}Labels${ReplaceWpId}`,
+    headline: `Search the Retention Schedule`,
+    message: `Search (AS-303) Labels and determine what types of records you might have.`,
     // message: `${defaultMessage}`,
+  }, {
+    // step: 0,
+    // target: `#ComplHomeBanner${wpId}`,
+    target: `#${MainPivot}Site${ReplaceWpId}`,
+    headline: `Quick summary of your site`,
+    message: `This provides a quick overview of what a recent audit found on your site.`,
+  }, {
+    // step: 0,
+    target: `#${MainPivot}Details${ReplaceWpId}`,
+    headline: `'Details' Tab`,
+    message: `In depth real time analysis of your current site.`,
+    // message: `${defaultMessage}`,
+
+
   }, {
     // step: 0,
     target: `#${MainPivot}${Contacts}${ReplaceWpId}`,
@@ -63,10 +65,17 @@ export const AllTeachBubbles: IMinTeachBubble[] =     [
     message: ``,
     // message: `${defaultMessage}`,
   },{
+
     // step: 0,
-    target: `#${MainPivot}Details${ReplaceWpId}`,
-    headline: `'Details' Tab`,
-    message: `In depth real time analysis of your current site.`,
-    // message: `${defaultMessage}`,
-  },
+    target: `#${MainPivot}Maps${ReplaceWpId}`,
+    headline: `Facility Record Maps`,
+    // message: ``,
+    message: `${defaultMessage}`,
+  }, {
+    // step: 0,
+    target: `#${MainPivot}Forms${ReplaceWpId}`,
+    headline: `Appendices to AS303 and Commonly Used Forms`,
+    // message: ``,
+    message: `${defaultMessage}`,
+  }
 ]

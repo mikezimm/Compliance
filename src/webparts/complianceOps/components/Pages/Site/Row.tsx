@@ -6,6 +6,10 @@ import { getHighlightedText, IAnySourceItem } from '../../../fpsReferences';
 import { ISourceRowRender } from '../SourcePages/ISourceRowRender';
 import { buildClickableIcon } from '@mikezimm/fps-library-v2/lib/components/atoms/Icons/stdIconsBuildersV02';
 
+export const FolderIcon : string = 'Folder';
+export const TagIcon : string = 'Tag';
+export const ProcessingRunIcon : string = 'ProcessingRun';
+
 export interface IThisItemInterface extends IAnySourceItem {
   ID: number;
   Title: string;
@@ -35,9 +39,9 @@ export function createSiteRow( props: ISourceRowRender ): JSX.Element { // eslin
   const libraries: JSX.Element = <div title="Libraries" onClick = { () => { window.open( ListUrl, '_blank' )} } style={{cursor: 'pointer' }} >
       {  getHighlightedText( `${ thisItem.NoRecordsDeclared }`, searchText )  }</div>;  // 
 
-  const folderIcon = buildClickableIcon( 'PivotTiles' , 'Folder', 'Go to Library', null, () => { window.open( ListUrl ,'_blank')}, thisItem.ListId, thisItem.ListId, )
-  const settingsIcon = buildClickableIcon( 'PivotTiles' , 'Tag', 'Apply Label to Library - OWNER ACCESS REQUIRED', 'red', () => { window.open( ListSettings ,'_blank')}, thisItem.ListId, thisItem.ListId, )
-  const detailsIcon = buildClickableIcon( 'PivotTiles' , 'ProcessingRun', 'Run live analysis', null, () => { onParentCall( 'Test from below',0, '', item ) }, thisItem.ListId, thisItem.ListId, )
+  const folderIcon = buildClickableIcon( 'PivotTiles' , FolderIcon, 'Go to Library', null, () => { window.open( ListUrl ,'_blank')}, thisItem.ListId, thisItem.ListId, )
+  const settingsIcon = buildClickableIcon( 'PivotTiles' , TagIcon, 'Apply Label to Library - OWNER ACCESS REQUIRED', 'red', () => { window.open( ListSettings ,'_blank')}, thisItem.ListId, thisItem.ListId, )
+  const detailsIcon = buildClickableIcon( 'PivotTiles' , ProcessingRunIcon, 'Run live analysis', null, () => { onParentCall( 'Test from below',0, '', item ) }, thisItem.ListId, thisItem.ListId, )
 
   const row = <div className={ styles.genericItem } onClick = { () => onClick( thisItem.ID, 'generic', item ) }>
     { id }

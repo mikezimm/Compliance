@@ -43,7 +43,7 @@ export const WPPresetEverywhere : IPreConfigSettings = {
     source: 'WPPresetEverywhere',
     location: '*',
     props: {
-        bannerTitle: "FPS Compliance Opportunities",
+        bannerTitle: "ALV Compliance Opportunities",
         defPinState: 'disabled',
     }
 };

@@ -38,15 +38,18 @@ export default class SourcePages extends React.Component<ISourcePagesProps, ISou
 public constructor(props:ISourcePagesProps){
   super(props);
 
+  const { stateSource, } = this.props; 
+  const refreshId = stateSource ? stateSource.refreshId : 'mzWasHere'; 
+
   const searchText = this.props.deepProps && this.props.deepProps.length >=1 && this.props.deepProps[0] ? decodeURIComponent( this.props.deepProps[0] ) : '';
   const topSearchStr = this.props.deepProps && this.props.deepProps.length >=2 && this.props.deepProps[1] ? decodeURIComponent( this.props.deepProps[1] ) : '[]';
   const topSearch = !topSearchStr ? [] : JSON.parse( topSearchStr );
 
-  const filtered: IAnySourceItem[] = getFilteredItems( this.props.stateSource.items , searchText, [], [], [], topSearch  );
+  const filtered: IAnySourceItem[] = stateSource ? getFilteredItems( stateSource.items , searchText, [], [], [], topSearch  ) : [];
   this._itemsPerPage = this.props.itemsPerPage ? this.props.itemsPerPage : this._itemsPerPage ;
 
   this.state = {
-    refreshId: this.props.stateSource.refreshId,
+    refreshId: refreshId ? refreshId : 'mzWasHere',
     filtered: filtered,
     topSearch: topSearch,
     sortNum: 'asc',
@@ -62,7 +65,7 @@ public constructor(props:ISourcePagesProps){
 
     firstVisible: 0,
     lastVisible: this._itemsPerPage - 1,
-    resetArrows: this.props.stateSource.refreshId,
+    resetArrows: refreshId ? refreshId : 'mzWasHere',
 
     detailToggle: false, // this.props.search.showDetails,
 
@@ -76,7 +79,8 @@ public async componentDidMount(): Promise<void> {
 
 public componentDidUpdate(prevProps: ISourcePagesProps): void {
     //Just rebuild the component
-    const itemsLength = this.props.stateSource.items.length;
+    const { stateSource } = this.props; 
+    const itemsLength = stateSource ? stateSource.items.length : 0;
     let resetArrows = false;
     if ( prevProps.resetArrows !== this.props.resetArrows ) {
       // updateViewFields = true;
@@ -88,10 +92,20 @@ public componentDidUpdate(prevProps: ISourcePagesProps): void {
 
     if ( itemsLength < lastVisible ) lastVisible = itemsLength;
 
-    if ( this.props.primarySource !== prevProps.primarySource ) {
+    if ( !this.props.stateSource ) {
       this.setState({ 
         // refreshId: this.props.stateSource.refreshId, 
-        filtered: this.props.stateSource.items,
+        filtered: [],
+        firstVisible: 0,
+        lastVisible: lastVisible - 1,
+        refreshId: makeid(4),
+        resetArrows: makeid(4),
+      });
+
+    } else if ( this.props.primarySource !== prevProps.primarySource ) {
+      this.setState({ 
+        // refreshId: this.props.stateSource.refreshId, 
+        filtered: stateSource ? this.props.stateSource.items : [],
         firstVisible: 0,
         lastVisible: lastVisible - 1,
         refreshId: makeid(4),
@@ -101,7 +115,7 @@ public componentDidUpdate(prevProps: ISourcePagesProps): void {
     } else if ( this.props.stateSource.items.length !== prevProps.stateSource.items.length ) {
       this.setState({ 
         // refreshId: this.props.stateSource.refreshId, 
-        filtered: this.props.stateSource.items,
+        filtered: stateSource.items,
         firstVisible: 0,
         lastVisible: lastVisible - 1,
         refreshId: makeid(4),
@@ -184,7 +198,7 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
       }
     });
 
-    if ( this.props.stateSource.items.length === 0 ) {
+    if ( !this.props.stateSource || this.props.stateSource.items.length === 0 ) {
       // This is duplicated in SearchPage.tsx and SourcePages.tsx as well
       // const FetchingSpinner = this.props.showSpinner === false ? null : <div style={{display: 'inline'}}><Spinner size={SpinnerSize.large} label={"Fetching more information ..."} style={{ padding: 30 }} /></div>;
       // const spinnerStyles : ISpinnerStyles = { label: {fontSize: '20px', fontWeight: '600',  }};

@@ -3,6 +3,9 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { ITabContactPivots, } from '../../IComplianceOpsProps';
 
+import { Icon  } from 'office-ui-fabric-react/lib/Icon';
+import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
+
 import styles from './header.module.scss';
 
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
@@ -74,10 +77,27 @@ const CoordinatorsPageHook: React.FC<ICoordinatorsPageProps> = ( props ) => {
   // const bannerImage: string = `https://www.tenant.com/sites/default/files/2022-04/background%402x.jpg`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   // const backgroundImage: string = `url("${bannerImage}")`;
 
+  const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
+    <ul>
+      <li>These are Records coordinators from around the world.</li>
+      <li>They can help guide you in determining what records label or retention is required for your content.</li>
+      <li>If you have any questions about what retention your files should have, they are a good place to start.</li>
+      <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li>
+    </ul>
+  </div>
+
+  const InfoElement: JSX.Element = <Accordion 
+    title = { 'More information about this tab'}
+    defaultIcon = 'Help'
+    showAccordion = { true }
+    content = { MainContent }
+    contentStyles = { { height: '130px' } }
+  />;
+
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Coordinators' ), updateTour, closeTour );
 
   const CoordinatorsPageElement: JSX.Element = contactPivotKey !== 'Coordinators' ? null : <div className = { styles.page } style={ null }>
-    <div style={{ marginRight: '50px' }}>This shows Records Coordinators from around the world.</div>
+    { InfoElement }
     {/* <div id={ 'ComplCoordinatorsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
     { TeachMe }
   </div>;

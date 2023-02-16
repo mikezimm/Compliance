@@ -1,9 +1,9 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
-import { ITabMain } from '../../IComplianceOpsProps';
-import { Icon  } from 'office-ui-fabric-react/lib/Icon';
+import { ITabMain, } from '../../IComplianceOpsProps';
 
+// import { Icon  } from 'office-ui-fabric-react/lib/Icon';
 import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
 
 import styles from './header.module.scss';
@@ -11,9 +11,8 @@ import styles from './header.module.scss';
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
-import { FolderIcon, ProcessingRunIcon, TagIcon } from './Row';
 
-export interface ISitePageProps {
+export interface ILabelsPageProps {
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
   mainPivotKey: ITabMain;
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
@@ -30,7 +29,7 @@ export interface ISitePageProps {
  *                                                                                     
  */
 
-const SitePageHook: React.FC<ISitePageProps> = ( props ) => {
+const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { debugMode, mainPivotKey, wpID, } = props; //appLinks, news 
@@ -75,21 +74,19 @@ const SitePageHook: React.FC<ISitePageProps> = ( props ) => {
  *                                                                 
  *                                                                 
  */
-  // const bannerImage: string = `https://www.tenant.com/sites/default/files/2022-04/background%402x.jpg`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
+  const bannerIframeHref: string =`https://alvweb.alv.tenant.int/RIG/RetentionSchedule.aspx?Search=`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
+  const rigAPIDocs: string =`https://alvweb.alv.tenant.int/RIG/rest/RIG/`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
+  const otherIframeHref: string =`https://alvweb.alv.tenant.int/RIG/ItemGovernance.aspx`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   // const backgroundImage: string = `url("${bannerImage}")`;
-
-  const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Site' ), updateTour, closeTour );
 
   const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
     <ul>
-      <li>The Site tab will show you all the libraries in your site <b>that do not have a retention label set</b>.</li>
-      <li>The summary shown here is only updated once per week.</li>
-      <li>If you make changes and want to verify them, you can press the gear icon and let the web part analyize it live.</li>
-      <div style={{ height: '8px' }}/>
-      <li>The number shows how many items are in that library.</li>
-      <li>Press the <Icon iconName={ FolderIcon }/> icon to open that library in a new tab.</li>
-      <li>Press the <Icon iconName={ TagIcon }/> icon to set a default label on that library. <b>{`( Requires Owner permissions )`}</b></li>
-      <li>Press the <Icon iconName={ ProcessingRunIcon }/> icon to get a live analysis of the library.  <b>{`( In order to verify any updates )`}</b></li>
+      <li>The first step to applying records retention to your files, is understanding what kinds of records you have.</li>
+      <li>This page will eventually tie in to the Retention schedule and let you search right here in the web part</li>
+      <li onClick={ () => window.open( bannerIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}>IFrame Url1: { bannerIframeHref} </li>
+      <li onClick={ () => window.open( otherIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>IFrame Url2: { otherIframeHref} </li>
+      <li onClick={ () => window.open( rigAPIDocs, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>API Docs: { rigAPIDocs} </li>
+      <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'purple', fontWeight: 600 }}>MIKE to provide further description here</li>
     </ul>
   </div>
 
@@ -98,17 +95,19 @@ const SitePageHook: React.FC<ISitePageProps> = ( props ) => {
     defaultIcon = 'Help'
     showAccordion = { true }
     content = { MainContent }
-    contentStyles = { { height: '180px' } }
+    contentStyles = { { height: '115px' } }
   />;
 
-  const SitePageElement: JSX.Element = mainPivotKey !== 'Site' ? null : <div className = { styles.page } style={ null }>
-    { InfoElement }
-    {/* <div id={ 'ComplSiteStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
+  const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Labels' ), updateTour, closeTour );
+
+  const LabelsPageElement: JSX.Element = mainPivotKey !== 'Labels' ? null : <div className = { styles.page } style={ null }>
+    { InfoElement}
+    {/* <div id={ 'ComplLabelsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
     { TeachMe }
   </div>;
 
-  return ( SitePageElement );
+  return ( LabelsPageElement );
 
 }
 
-export default SitePageHook;
+export default LabelsPageHook;
