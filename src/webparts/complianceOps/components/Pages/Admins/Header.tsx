@@ -2,7 +2,7 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
 import { IStateSource, ITabMain } from '../../IComplianceOpsProps';
-import { Icon  } from 'office-ui-fabric-react/lib/Icon';
+// import { Icon  } from 'office-ui-fabric-react/lib/Icon';
 
 import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
 
@@ -11,7 +11,7 @@ import styles from './header.module.scss';
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
-import EasyPagesPageHook, { IEasyPagesSourceProps, ISourceName, InfoTab, InfoIcon, IEasyPagesPageProps } from '@mikezimm/fps-library-v2/lib/banner/components/EasyPages/componentPage';
+import EasyPagesPageHook, { IEasyPagesSourceProps, IEasyPagesPageProps } from '@mikezimm/fps-library-v2/lib/banner/components/EasyPages/componentPage'; //ISourceName, InfoTab, InfoIcon, 
 import { ISourcePropsCOP } from '../../DataInterface';
 import { IEasyIcons } from '@mikezimm/fps-library-v2/lib/components/atoms/EasyIcons/eiTypes';
 import { PivotLinkFormat } from 'office-ui-fabric-react/lib/Pivot';

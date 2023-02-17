@@ -1,19 +1,22 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
-import { ITabMain, } from '../../IComplianceOpsProps';
+import { IStateSource, ITabMain, } from '../../IComplianceOpsProps';
 
 // import { Icon  } from 'office-ui-fabric-react/lib/Icon';
 import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
+import { getRandomFromArray } from '@mikezimm/fps-library-v2/lib/logic/Randomize/functions';
 
 import styles from './header.module.scss';
 
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
+import { IAnySourceItem } from '../../../fpsReferences';
 
 export interface ITipsPageProps {
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
+  stateSource: IStateSource;
   mainPivotKey: ITabMain;
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
 }
@@ -77,17 +80,13 @@ const TipsPageHook: React.FC<ITipsPageProps> = ( props ) => {
   // const bannerImage: string = `https://www.tenant.com/sites/default/files/2022-04/background%402x.jpg`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   // const backgroundImage: string = `url("${bannerImage}")`;
 
-  const bannerIframeHref: string =`https://tenant.sharepoint.com/sites/SP_GlobalPpqRecords`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
+  // const bannerIframeHref: string =`https://tenant.sharepoint.com/sites/SP_GlobalPpqRecords`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   // const backgroundImage: string = `url("${bannerImage}")`;
 
+  const randomItem: IAnySourceItem = getRandomFromArray( props.stateSource.items );
+
   const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
-    <ul>
-      <li>This tab will show a list of Records Tips from Terri.</li>
-      <li>The goal is to show them on a Carousel or something.</li>
-      <li>Terri has a list on QALifeNET which we will copy over to the new Records Info site.</li>
-      <li onClick={ () => window.open( bannerIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>{ bannerIframeHref} </li>
-      <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>TERRI to provide further description here</li>
-    </ul>
+    <div dangerouslySetInnerHTML={{__html: randomItem.Tip}} />
   </div>
 
   const InfoElement: JSX.Element = <Accordion 

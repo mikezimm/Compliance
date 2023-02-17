@@ -90,14 +90,13 @@ const HomePageHook: React.FC<IHomePageProps> = ( props ) => {
 
   const filtered = props.fpsItemsReturn.items.filter( item => { return item.WebPartTab === 'Home' && item.Active === 'Public' } ); //"Home"
 
-  const InstructionsPageElement: JSX.Element = mainPivotKey !== 'Home' ? null : <div className = { styles.page } style={ null }>
+  const HomeLinksElement: JSX.Element = mainPivotKey !== 'Home' ? null : <div className = { styles.page } style={ null }>
     {/* { InfoElement} */}
     <div className = { 'easy-container' } style={ {} }>
       { 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filtered.map( link => { return easyLinkElement( link as any, '_blank'  ) } ) }
     </div>
-    { TeachMe }
   </div>;
 
   const HomePageElement: JSX.Element = mainPivotKey !== 'Home' ? null : <div className = { styles.page } style={ null }>
@@ -110,7 +109,7 @@ const HomePageHook: React.FC<IHomePageProps> = ( props ) => {
       </div>
     </div>
 
-    { InstructionsPageElement }
+    { HomeLinksElement }
     { TeachMe }
   </div>;
 

@@ -466,7 +466,9 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     const committeeItems = this.createItemsElement( committeePageHeader, 'Committee' );
 
     const tipsPageHeader = <TipsPageHook
-      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
+      stateSource={ this.state.tips }
+      />;
 
     const tipsItems = this.createItemsElement( tipsPageHeader, 'Tips' );
 
@@ -475,17 +477,17 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       primarySource={ this._SourceInfo.admins }
       fpsItemsReturn={ this.state.admins } />;
 
-    const instructionsItems = this.createItemsElement( instructionsPageHeader, 'Instructions' );
+    // const instructionsItems = this.createItemsElement( instructionsPageHeader, 'Instructions' );
 
     const detailsPageHeader = <DetailsPageHook
       debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
 
-    const detailsItems = this.createItemsElement( detailsPageHeader, 'Details' );
+    // const detailsItems = this.createItemsElement( detailsPageHeader, 'Details' );
 
     const labelsPageHeader = <LabelsPageHook
       debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
 
-    const labelsItems = this.createItemsElement( labelsPageHeader, 'Labels' );
+    // const labelsItems = this.createItemsElement( labelsPageHeader, 'Labels' );
 
     const adminsPageHeader = <AdminsPageHook
       debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
@@ -525,9 +527,9 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { devHeader }
         { Banner }
         { mainPivot }
-        { mainPivotKey !== 'Home' ? undefined : homePage  }
+        { mainPivotKey !== 'Home' ? undefined : homePage }
         { mainPivotKey !== 'Instructions' ? undefined : instructionsPageHeader }
-        { mainPivotKey !== 'Tips' ? undefined : tipsPageHeader }
+        { mainPivotKey !== 'Tips' ? undefined : tipsItems }
         { mainPivotKey !== 'Labels' ? undefined : labelsPageHeader }
         { mainPivotKey !== 'Site' ? undefined : enforcementItems }
         { mainPivotKey !== 'Details' ? undefined : detailsPageHeader }
@@ -596,6 +598,11 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         primarySource = this._SourceInfo.committee;
         stateSource = this.state.committee;
         renderRow = createCommitteeRow;
+      break;
+      case 'Tips':
+        primarySource = this._SourceInfo.tips;
+        stateSource = this.state.tips;
+        renderRow = createTipsRow;
       break;
     }
 
