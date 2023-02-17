@@ -93,7 +93,9 @@ const HomePageHook: React.FC<IHomePageProps> = ( props ) => {
   const InstructionsPageElement: JSX.Element = mainPivotKey !== 'Home' ? null : <div className = { styles.page } style={ null }>
     {/* { InfoElement} */}
     <div className = { 'easy-container' } style={ {} }>
-      { filtered.map( link => { return easyLinkElement( link as any, '_blank'  ) } ) }
+      { 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      filtered.map( link => { return easyLinkElement( link as any, '_blank'  ) } ) }
     </div>
     { TeachMe }
   </div>;
