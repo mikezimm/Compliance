@@ -14,14 +14,14 @@ import FetchBannerX from '@mikezimm/fps-library-v2/lib/banner/bannerX/FetchBanne
 
 import { getWebPartHelpElementBoxTiles } from '../PropPaneHelp/PropPaneHelp';
 import { getBannerPages, } from './HelpPanel/AllContent';
-import { check4Gulp, IBannerPages, IPinMeState, makeid } from "../fpsReferences";
+import { check4Gulp, IBannerPages, IPinMeState, makeid, sortObjectArrayByNumberKey } from "../fpsReferences";
 
 import { ILoadPerformance, startPerformOp, updatePerformanceEnd } from "../fpsReferences";
 
 import { getSourceItems } from '@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/getSourceItems';
 
 import { ISiteThemes } from "@mikezimm/fps-library-v2/lib/common/commandStyles/ISiteThemeChoices";
-import { buildCurrentSourceInfo, IDefSourceType, ISourceInfo, ISourcePropsCOP } from './DataInterface';
+import { buildCurrentSourceInfo, IDefSourceType, IntraNetHome, ISourceInfo, ISourcePropsCOP } from './DataInterface';
 
 import { addSearchMeta1 } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/functions/addSearchMeta1';
 import { addSearchMeta2 } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/functions/addSearchMeta2';
@@ -58,6 +58,10 @@ import { createInstructionsRow } from './Pages/Instructions/Row';
 import LabelsPageHook from './Pages/Labels/Header';
 import { createLabelsRow } from './Pages/Labels/Row';
 
+import AdminsPageHook from './Pages/Admins/Header';
+import { createAdminsRow } from './Pages/Admins/Row';
+import { addEasyIcons } from '@mikezimm/fps-library-v2/lib/components/atoms/EasyIcons/getEasyIcon';
+
 import SharePointPageHook from './Pages/SharePoint/Header';
 // import { createSharePointRow } from './Pages/SharePoint/Row';
 
@@ -66,10 +70,7 @@ const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.f
 //Use this to add more console.logs for this component
 const consolePrefix: string = 'fpsconsole: FpsCore115Banner';
 
-const mainKeys: ITabMain[] = [ 'Home', 'Instructions', 'Tips', 'Labels', 'Site', 'Details', 'Contacts', 'Maps', 'Forms'];
-const mainPivots: JSX.Element[] = mainKeys.map( ( key: string, idx: number ) => {
-  return <PivotItem key={ idx } headerText={ mainKeys[idx] } ariaLabel={mainKeys[idx]} title={mainKeys[idx]} itemKey={ key }/>;
-});
+const mainKeys: ITabMain[] = [ 'Home', 'Instructions', 'Tips', 'Labels', 'Site', 'Details', 'Contacts', 'Maps', 'Forms', 'Admins' ];
 
 const contactKeys: ITabContactPivots[] = [ 'Coordinators', 'SharePoint', 'Committee', ];
 const contactPivots: JSX.Element[] = contactKeys.map( ( key: string, idx: number ) => {
@@ -97,6 +98,30 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
   private _SourceInfo : ISourceInfo = null;
 
+  private _mainPivots: JSX.Element[] = [];
+
+  // Determines main Pivots depending on user
+  private _setMainPivots() : void {
+    const pivots: JSX.Element[] = [];
+    mainKeys.map( ( key: ITabMain, idx: number ) => {
+      if ( key !== 'Admins' || this._isAdmin === true ) pivots.push ( <PivotItem key={ idx } headerText={ mainKeys[idx] } ariaLabel={mainKeys[idx]} title={mainKeys[idx]} itemKey={ key }/> );
+    });
+    this._mainPivots = pivots;
+  }
+
+  private _isAdmin: boolean = false;
+
+  private _setIsAdmin() : boolean { // True if you get tricks or are on the Records site and are a site admin
+    let isAdmin : boolean = false;
+    if ( this.props.bannerProps.beAUser === true ) { // doNothing 
+    } else if ( this.props.bannerProps.showTricks || (
+      window.location.href.toLowerCase().indexOf( IntraNetHome.toLocaleLowerCase() ) > 0 && this.props.bannerProps.FPSUser.isSiteAdmin === true 
+    )) { isAdmin = true; }
+    this._isAdmin = isAdmin;
+    this._setMainPivots();
+    return isAdmin;
+  }
+
   private _missingFetches() : IDefSourceType[] {
 
     const loads: IDefSourceType[] = [];
@@ -106,6 +131,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     if ( this.state.maps.loaded !== true ) loads.push( 'maps' );
     if ( this.state.forms.loaded !== true ) loads.push( 'forms' );
     if ( this.state.tips.loaded !== true ) loads.push( 'tips' );
+    if ( this.state.admins.loaded !== true ) loads.push( 'admins' );
 
     if ( loads.length === 0 ) loads.push( '*' );
 
@@ -146,9 +172,12 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
   public constructor(props:IComplianceOpsProps){
     super(props);
 
-    this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode );
+    const isAdmin: boolean = this._setIsAdmin();
+    this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, isAdmin );
+
     if ( this._performance === null ) { this._performance = this.props.performance;  }
     const constId: string = this._newRefreshId();
+
     this.state = {
       pinState: this.props.bannerProps.fpsPinMenu.defPinState ? this.props.bannerProps.fpsPinMenu.defPinState : 'normal',
       showDevHeader: false,
@@ -163,6 +192,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
       fullAnalyticsSaved: false,
 
+      admins : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       site : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       committee : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       coordinators : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
@@ -215,10 +245,15 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     //refresh these privates when the prop changes warrent it
     if ( refresh === true ) {
-      this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode );
+      this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, this._isAdmin );
       await this.updateTheseSources( this._missingFetches() );
       this._contentPages = getBannerPages( this.props.bannerProps );
     }
+
+    if ( this.props.bannerProps.beAUser !== prevProps.bannerProps.beAUser ) {
+      this._setIsAdmin();
+      this.setState({ refreshId: this._newRefreshId() });
+    } 
   }
 
   private async updateTheseSources( sources: IDefSourceType[] ): Promise<void> {
@@ -228,13 +263,14 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     const all: boolean = sources.indexOf( '*' ) > -1 ? true : false;
 
     // NOTE:  The vars in the array must be in same order they are called in the Promise.all
-    const [ site, committee, coordinators, maps, forms, tips, ] = await Promise.all([
+    const [ site, committee, coordinators, maps, forms, tips, admins ] = await Promise.all([
       all === true || sources.indexOf( 'site' ) > -1 ? this.getSource( this._SourceInfo.site, this._performance ) : this.state.site,
       all === true || sources.indexOf( 'committee' ) > -1 ? this.getSource( this._SourceInfo.committee, this._performance ) : this.state.committee,
       all === true || sources.indexOf( 'coordinators' ) > -1 ? this.getSource( this._SourceInfo.coordinators, this._performance ) : this.state.coordinators,
       all === true || sources.indexOf( 'maps' ) > -1 ? this.getSource( this._SourceInfo.maps, this._performance ) : this.state.maps,
       all === true || sources.indexOf( 'forms' ) > -1 ? this.getSource( this._SourceInfo.forms, this._performance ) : this.state.forms,
       all === true || sources.indexOf( 'tips' ) > -1 ? this.getSource( this._SourceInfo.tips, this._performance ) : this.state.tips,
+      all === true || sources.indexOf( 'admins' ) > -1 ? this.getSource( this._SourceInfo.admins, this._performance ) : this.state.admins,
     ]);
 
     const endWas = Math.max(
@@ -244,6 +280,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       ops.fetch3 && ops.fetch3.end ? ops.fetch3.end.getTime() : -1,
       ops.fetch4 && ops.fetch4.end ? ops.fetch4.end.getTime() : -1,
       ops.fetch5 && ops.fetch5.end ? ops.fetch5.end.getTime() : -1,
+      ops.fetch6 && ops.fetch6.end ? ops.fetch6.end.getTime() : -1,
     );
 
     ops.fetch = updatePerformanceEnd( ops.fetch, true, 999999 );
@@ -252,6 +289,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     console.log('Total fetch time was:', totalTime );
 
     this.setState({
+      admins: admins,
       site: site,
       maps: maps,
       committee: committee,
@@ -279,6 +317,12 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
       let analyzePerf = startPerformOp( label , displayMode, true );
       stateSource.items = addSearchMeta1( stateSource.items, sourceProps, null );
+
+      if ( sourceProps.key === 'admins' ) { 
+        stateSource.items = addEasyIcons( stateSource.items, sourceProps, this.props.bannerProps.EasyIconsObject ); 
+        stateSource.items = sortObjectArrayByNumberKey( stateSource.items, 'asc', 'SortOrder' );
+      }
+
       stateSource.items.map( item => {
         if ( item.JSONLists ) { 
           try {
@@ -378,7 +422,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
           // onLinkClick={this.pivotMainClick.bind(this)}
           onLinkClick={ this.pivotMainClick.bind(this) }
       > 
-        { mainPivots }
+        { this._mainPivots }
 
       </Pivot>
     </div>
@@ -389,6 +433,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       mainPivotKey={ mainPivotKey }
       wpID={ '' }
       refreshID= { this.state.refreshId }
+      primarySource={ this._SourceInfo.admins }
+      fpsItemsReturn={ this.state.admins }
     />;
 
     const sitePageHeader = <SitePageHook
@@ -425,7 +471,9 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     const tipsItems = this.createItemsElement( tipsPageHeader, 'Tips' );
 
     const instructionsPageHeader = <InstructionsPageHook
-      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
+      primarySource={ this._SourceInfo.admins }
+      fpsItemsReturn={ this.state.admins } />;
 
     const instructionsItems = this.createItemsElement( instructionsPageHeader, 'Instructions' );
 
@@ -438,6 +486,24 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
 
     const labelsItems = this.createItemsElement( labelsPageHeader, 'Labels' );
+
+    const adminsPageHeader = <AdminsPageHook
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
+      easyPagesPageProps= {{
+        expandedState: true,
+        parentUrl: '',
+        sourceName: 'Alternate',
+        source: this._SourceInfo.admins,
+        tabs: this._SourceInfo.admins.defSearchButtons,
+      }}
+      easyPagesSourceProps={ this.props.bannerProps.easyPagesSourceProps }
+      EasyIconsObject={ this.props.bannerProps.EasyIconsObject }
+      primarySource={ this._SourceInfo.admins }
+      fpsItemsReturn={ this.state.admins }
+
+    />;
+
+    const adminsItems = this.createItemsElement( adminsPageHeader, 'Admins' );
 
     const contactsPivot = 
     <div id={ `ContactPivot${this.props.bannerProps.refreshId}` }>
@@ -474,6 +540,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
         { mainPivotKey !== 'Maps' ? undefined : mapItems }
         { mainPivotKey !== 'Forms' ? undefined : formItems }
+        { mainPivotKey !== 'Admins' ? undefined : adminsPageHeader }
 
         <h2>Fetch Status: { fullAnalyticsSaved === true ? 'Finished!' : 'working' } { fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' } ms</h2>
 

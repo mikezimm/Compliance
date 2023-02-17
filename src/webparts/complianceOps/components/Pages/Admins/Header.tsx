@@ -1,7 +1,7 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
-import { ITabMain } from '../../IComplianceOpsProps';
+import { IStateSource, ITabMain } from '../../IComplianceOpsProps';
 import { Icon  } from 'office-ui-fabric-react/lib/Icon';
 
 import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
@@ -11,9 +11,32 @@ import styles from './header.module.scss';
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
-import { FolderIcon, ProcessingRunIcon, TagIcon } from './Row';
+import EasyPagesPageHook, { IEasyPagesSourceProps, ISourceName, InfoTab, InfoIcon, IEasyPagesPageProps } from '@mikezimm/fps-library-v2/lib/banner/components/EasyPages/componentPage';
+import { ISourcePropsCOP } from '../../DataInterface';
+import { IEasyIcons } from '@mikezimm/fps-library-v2/lib/components/atoms/EasyIcons/eiTypes';
+import { PivotLinkFormat } from 'office-ui-fabric-react/lib/Pivot';
 
-export interface ISitePageProps {
+
+export interface IAdminsPageProps {
+
+  easyPagesPageProps: IEasyPagesPageProps;  // Props specific to this Source/Page component
+  easyPagesSourceProps: IEasyPagesSourceProps;  // General props which apply to all Sources/Pages
+  EasyIconsObject: IEasyIcons;
+
+  primarySource: ISourcePropsCOP;
+  fpsItemsReturn : IStateSource;
+
+  // topButtons: string[];
+
+  // pageWidth: number;
+
+  // deepProps: string[];
+
+  // bumpDeepLinks: any;
+  // jumpToDeepLink?: any;
+
+  // stateSource: IStateSource;
+
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
   mainPivotKey: ITabMain;
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
@@ -30,10 +53,10 @@ export interface ISitePageProps {
  *                                                                                     
  */
 
-const SitePageHook: React.FC<ISitePageProps> = ( props ) => {
+const AdminsPageHook: React.FC<IAdminsPageProps> = ( props ) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { debugMode, mainPivotKey, wpID, } = props; //appLinks, news 
+  const { debugMode, mainPivotKey, wpID, primarySource, easyPagesPageProps } = props; //appLinks, news 
 
   const [ teachBubble, setTeachBubble ] = useState<number>( null );
   const [ lastBubble, setLastBubble ] = useState<number>( 0 );
@@ -78,37 +101,49 @@ const SitePageHook: React.FC<ISitePageProps> = ( props ) => {
   // const bannerImage: string = `https://www.tenant.com/sites/default/files/2022-04/background%402x.jpg`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   // const backgroundImage: string = `url("${bannerImage}")`;
 
-  const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Site' ), updateTour, closeTour );
+  const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Admins' ), updateTour, closeTour );
 
-  const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
+  const EasyPages: JSX.Element = <EasyPagesPageHook
+    easyPagesPageProps = {{
+      expandedState: true,
+      tabs: primarySource.defSearchButtons,
+      source: primarySource,
+      sourceName: 'Alternate',
+      parentUrl: '',
+    }}
+    easyPagesSourceProps={ props.easyPagesSourceProps }  // General props which apply to all Sources/Pages
+    EasyIconsObject = { props.EasyIconsObject }
+    fpsItemsReturn={ props.fpsItemsReturn }
+    linkFormat={ PivotLinkFormat.tabs }
+  />
+
+  const AccordionContent: JSX.Element = <div>
+    <div>You are special!</div>
     <ul>
-      <li>The Site tab will show you all the libraries in your site <b>that do not have a retention label set</b>.</li>
-      <li>This summary shown <b>is only updated once per week</b>.</li>
-      <li>If you make changes and want to verify them, you can press the gear icon and let the web part analyize it live.</li>
-      <div style={{ height: '8px' }}/>
-      <li>The number shows how many items are in that library.</li>
-      <li>Press the <Icon iconName={ FolderIcon }/> icon to open that library in a new tab.</li>
-      <li>Press the <Icon iconName={ TagIcon }/> icon to set a default label on that library. <b>{`( Requires Owner permissions )`}</b></li>
-      <li>Press the <Icon iconName={ ProcessingRunIcon }/> icon to get a live analysis of the library.  <b>{`( In order to verify any updates )`}</b></li>
+      <li>You have access to the Admins tab so you must be a Records site admin.</li>
+      <li>This tab gives you easy access to all of your site pages from any Compliance web part in the company.</li>
+      <li>Click the buttons to filter all your site pages by the WebPart Tab they fall under (like Instructions).</li>
+      <li>The Admin tab has information about how this web part and site are designed to work.</li>
     </ul>
-  </div>
+  </div>;
 
   const InfoElement: JSX.Element = <Accordion 
     title = { 'More information about this tab'}
     defaultIcon = 'Help'
     showAccordion = { true }
-    content = { MainContent }
-    contentStyles = { { height: '180px' } }
+    content = { AccordionContent }
+    contentStyles = { { height: '135px' } }
   />;
 
-  const SitePageElement: JSX.Element = mainPivotKey !== 'Site' ? null : <div className = { styles.page } style={ null }>
+  const AdminsPageElement: JSX.Element = mainPivotKey !== 'Admins' ? null : <div className = { styles.page } style={ null }>
     { InfoElement }
-    {/* <div id={ 'ComplSiteStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
+    { EasyPages }
+    {/* <div id={ 'ComplAdminStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
     { TeachMe }
   </div>;
 
-  return ( SitePageElement );
+  return ( AdminsPageElement );
 
 }
 
-export default SitePageHook;
+export default AdminsPageHook;

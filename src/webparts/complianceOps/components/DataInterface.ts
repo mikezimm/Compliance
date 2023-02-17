@@ -14,14 +14,14 @@ import { DisplayMode } from '@microsoft/sp-core-library';
 // import { IAppFormat } from './INTERFACES/ILayoutsPage';
 
 // NOTE:  IAppFormat must be very similar to StdComplianceKeys... except history vs unknown
-export type IAppFormat = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'history';
+export type IAppFormat = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'history' | 'admins';
 
-export const IntraNetRecs = ['/sites','/lif','enet','_reco','rds_','home/']; //Just so this is not searchable easily
+export const IntraNetRecs = ['/sites','/SP_Glob','alPpqRec','ords']; //Just so this is not searchable easily
 export const IntraNetHome: string =`${IntraNetRecs.join('')}`;
 
-export type IDefSourceType = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'history' | 'unknown' | '*';
+export type IDefSourceType = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'admins' | 'history' | 'unknown' | '*';
 
-export type ISearchSource = 'Site' | 'Committee' | 'Coordinators' | 'Maps' | 'Forms' | 'Tips' | 'History';
+export type ISearchSource = 'Site' | 'Committee' | 'Coordinators' | 'Maps' | 'Forms' | 'Tips' | 'Admins' | 'History';
 
 /**
  * Added  { prop: string; asc: boolean; } to fix the orderBy? Lint Error.
@@ -51,8 +51,11 @@ export interface ISourceInfo {
   maps: ISourcePropsCOP;
   forms: ISourcePropsCOP;
   tips: ISourcePropsCOP;
+  admins: ISourcePropsCOP;
   history: ISourcePropsCOP;
 }
+
+export const RecordsSitePagesColumns: string[] = [ 'Active', 'WebPartTab', 'SortOrder' ];
 
 export const EnforcementColumns: string[] = [ 'ID', 'Title', 'URL', 'Subsite', 'SubTitle', 'SPOwner', 'NoRecordsDeclared', 'DocumentsHosted', 'JSONLists' ];
 
@@ -74,6 +77,33 @@ console.log( collectionUrl );
 
 export const SourceInfo: ISourceInfo = {
 
+  admins: {
+    key: 'admins',
+    defType: 'admins',
+    performanceSettings: {  label: 'admins', updateMiliseconds: true, includeMsStr: true, op: 'fetch6'  },
+    webUrl: `${IntraNetHome}`,
+    listTitle: 'Site Pages',
+    webRelativeLink: 'SitePages',
+    searchSource: 'Admins',
+    searchSourceDesc:  'Site Pages library in Help Subsite',
+    columns: [ ...ModernSitePagesColumns, ...RecordsSitePagesColumns ],
+    searchProps: [ ...ModernSitePagesSearch, ...RecordsSitePagesColumns ],
+    selectThese: [ ...ModernSitePagesColumns, ...RecordsSitePagesColumns ],
+    itemFetchCol: ExtraFetchModernPage,
+    isModern: true,
+    restFilter: `Active eq 'Public'`,
+
+    defSearchButtons: [ 'Home', 'Instructions', 'Admin', 'Contents', 'Others', ],
+    // meta1 should be same as defSearchButtons and is used to build Admins tab
+    meta1:            [ 'Home', 'Instructions', 'Admin', 'Contents', 'Others', ],
+
+    orderBy: { //Including even though it does not seem to do anything
+      prop: 'Title',
+      order: 'asc',
+      asc: true,
+    },
+    fetchCount: 5000,
+  },
   site: {
     key: 'site',
     defType: 'site',
@@ -199,14 +229,14 @@ export const SourceInfo: ISourceInfo = {
     defType: 'tips',
     performanceSettings: {  label: 'tips', updateMiliseconds: true, includeMsStr: true, op: 'fetch5'  },
     webUrl: `${IntraNetHome}`,
-    listTitle: 'Site Pages',
-    webRelativeLink: 'SitePages',
+    listTitle: 'Tip of the Day',
+    webRelativeLink: '/lists/Tip%20of%20the%20Day',
     searchSource: 'Tips',
-    searchSourceDesc:  'Site Pages library in Help Subsite',
-    columns: ModernSitePagesColumns,
-    searchProps: ModernSitePagesSearch,
-    selectThese: [ ...ModernSitePagesColumns ],
-    itemFetchCol: ExtraFetchModernPage,
+    searchSourceDesc:  'Tip of the day list',
+    columns: ['*'],
+    searchProps: ['Tip'],
+    selectThese: [ '*' ],
+    itemFetchCol: [],
     isModern: true,
     restFilter: `Id ne 'X' and ContentTypeId ne '0x012000F6C75276DBE501468CA3CC575AD8E159' and Title ne 'Home'`,
     defSearchButtons: [],
@@ -241,7 +271,7 @@ export interface ISearchTypeCOP extends ISearchType { }
 export interface ISearchTypesCOP extends ISearchTypes { }
 
 // MUST MATCH THE keys order in StdComplianceSearchTypes
-export const StdComplianceKeys: IDefSourceType[] = [ 'committee' , 'coordinators' , 'maps' , 'forms' , 'tips' , 'history', 'unknown' ];
+export const StdComplianceKeys: IDefSourceType[] = [ 'committee' , 'coordinators' , 'maps' , 'forms' , 'tips' , 'admins', 'history', 'unknown' ];
 
 export const StdComplianceSearchTypes: ISearchTypeCOP[] = [
   //NOTE:  key must be exact match to strings in keys array above.
@@ -251,6 +281,8 @@ export const StdComplianceSearchTypes: ISearchTypeCOP[] = [
   { key: 'maps', title: 'maps', icon: 'FontColor', style: '', count: 0 },
   { key: 'forms', title: 'forms', icon: 'Link12', style: '', count: 0 },
   { key: 'tips', title: 'tips', icon: 'BookAnswers', style: '', count: 0 },
+
+  { key: 'admins', title: 'admins', icon: 'Badge', style: '', count: 0 },
 
   { key: 'unknown', title: 'unkown', icon: 'Help', style: '', count: 0 },
 ];
@@ -269,7 +301,7 @@ export const SearchTypesCOP:ISearchTypesCOP  = {
     ]
 };
 
-export function buildCurrentSourceInfo( editMode: DisplayMode ) : ISourceInfo {
+export function buildCurrentSourceInfo( editMode: DisplayMode, getsAdmin: boolean ) : ISourceInfo {
 
   SourceInfo.site.performanceSettings.editMode = editMode;
   SourceInfo.committee.performanceSettings.editMode = editMode;
@@ -277,6 +309,10 @@ export function buildCurrentSourceInfo( editMode: DisplayMode ) : ISourceInfo {
   SourceInfo.maps.performanceSettings.editMode = editMode;
   SourceInfo.forms.performanceSettings.editMode = editMode;
   SourceInfo.tips.performanceSettings.editMode = editMode;
+  SourceInfo.admins.performanceSettings.editMode = editMode;
+
+  // Give Admins of Records site and Tricky Users the Admins tab and Admins pages
+  if ( getsAdmin === true ) { SourceInfo.admins.restFilter = ''; }
 
   return SourceInfo;
 }

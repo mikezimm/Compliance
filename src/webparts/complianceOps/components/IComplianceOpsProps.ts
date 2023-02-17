@@ -50,6 +50,7 @@ export interface IComplianceOpsState extends IFPSCorePinMeReactComponentState {
 
   fullAnalyticsSaved: boolean;
 
+  admins : IStateSource;
   site : IStateSource;
   committee : IStateSource;
   coordinators : IStateSource;

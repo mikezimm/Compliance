@@ -85,6 +85,7 @@ import { runFPSWebPartRender } from '@mikezimm/fps-library-v2/lib/banner/FPSWebP
 import { onFPSPropPaneCHanged } from '@mikezimm/fps-library-v2/lib/banner/FPSWebPartClass/runOnPropChange';
 import { FPSBaseClass } from '@mikezimm/fps-library-v2/lib/banner/FPSWebPartClass/FPSBaseClass';
 import { IThisFPSWebPartClass } from '@mikezimm/fps-library-v2/lib/banner/FPSWebPartClass/IThisFPSWebPartClass';
+import { allCompliance } from '@mikezimm/fps-library-v2/lib/banner/features/Tricky/constants';
 
 
 export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWebPartProps> {
@@ -99,7 +100,7 @@ export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWeb
     this._exportIgnorePropsWP = exportIgnorePropsWP;
     this._importBlockPropsWP = importBlockPropsWP;
     this._trickyApp = 'FPS UPDATE FPSBaseClass';
-    this._trickyEmailsWP = []; // These are emails that get tricky functionality for this specific web part
+    this._trickyEmailsWP = allCompliance; // These are emails that get tricky functionality for this specific web part
     this._allowShowSearch = false;  //Set to true if you want 'Toggle Search option' in property pane
     this._allowSiteThemeChoice = true;  // Should be set true by default in fps-library-v2 1.0.78
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
-import { ITabMain } from '../../IComplianceOpsProps';
+import { IStateSource, ITabMain } from '../../IComplianceOpsProps';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 
 // import FadeCarousel from '@mikezimm/fps-library-v2/lib/components/molecules/FadeCarousel/component';
@@ -10,13 +10,18 @@ import styles from './page.module.scss';
 
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
+import { easyLinkElement } from '@mikezimm/fps-library-v2/lib/banner/components/EasyPages/elements';
 import { AllTeachBubbles } from '../Teaching/bubbles';
+import { ISourcePropsCOP } from '../../DataInterface';
 
 export interface IHomePageProps {
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
   mainPivotKey: ITabMain;
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
   refreshID: string;
+
+  primarySource: ISourcePropsCOP;
+  fpsItemsReturn : IStateSource;
 
 }
 
@@ -80,8 +85,18 @@ const HomePageHook: React.FC<IHomePageProps> = ( props ) => {
   const fullBannerImage: string = `https://tenant.sharepoint.com/_api/v2.1/sites/tenant.sharepoint.com,1559a4bd-ef22-4efa-9902-8914647da26e,5ee8b77b-b4a2-400d-aaa7-76cf05ec1712/lists/330921c3-6222-4640-b3f7-3b724f4a2680/items/1e80df9d-3d67-4262-ad94-57e6eec74ac4/driveItem/thumbnails/0/c960x99999/content?preferNoRedirect=true&prefer=extendCacheMaxAge&clientType=modernWebPart`;
   const bannerImage: string = fullBannerImage.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   const backgroundImage: string = `url("${bannerImage}")`;
- 
+
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles , '', 'MainPivot' ), updateTour, closeTour );
+
+  const filtered = props.fpsItemsReturn.items.filter( item => { return item.WebPartTab === 'Home' && item.Active === 'Public' } ); //"Home"
+
+  const InstructionsPageElement: JSX.Element = mainPivotKey !== 'Home' ? null : <div className = { styles.page } style={ null }>
+    {/* { InfoElement} */}
+    <div className = { 'easy-container' } style={ {} }>
+      { filtered.map( link => { return easyLinkElement( link as any, '_blank'  ) } ) }
+    </div>
+    { TeachMe }
+  </div>;
 
   const HomePageElement: JSX.Element = mainPivotKey !== 'Home' ? null : <div className = { styles.page } style={ null }>
     {/* <div className={ styles.homeBanner } style={{ backgroundImage: backgroundImage }} onClick={ () => { updateTour( lastBubble ); } } id='ComplHomeBanner'> */}
@@ -93,16 +108,7 @@ const HomePageHook: React.FC<IHomePageProps> = ( props ) => {
       </div>
     </div>
 
-    {/* <div className={ styles.keyButtons }>
-      <div id='ComplHomeSummary' >Summary</div>
-      <div id='ComplHomeSummary' >Committee</div>
-      <div id='ComplHomeSummary' >Coordinators</div>
-      <div id='ComplHomeSummary' >Summary</div>
-      <div id='ComplHomeReporting' >Maps</div>
-      <div id='ComplHomeTopics' >Forms</div>
-      <div id='ComplHomeLinkButton' >Tips</div>
-      <div id='ComplHomeHelp' >Committee</div>
-    </div> */}
+    { InstructionsPageElement }
     { TeachMe }
   </div>;
 

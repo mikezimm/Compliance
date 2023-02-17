@@ -1,21 +1,28 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
-import { ITabMain, } from '../../IComplianceOpsProps';
+import { IStateSource, ITabMain, } from '../../IComplianceOpsProps';
 
 // import { Icon  } from 'office-ui-fabric-react/lib/Icon';
-import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
+// import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
 
 import styles from './header.module.scss';
 
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
+import { easyLinkElement } from '@mikezimm/fps-library-v2/lib/banner/components/EasyPages/elements';
 import { AllTeachBubbles } from '../Teaching/bubbles';
+import { ISourcePropsCOP } from '../../DataInterface';
+// import { IEasyLink } from '@mikezimm/fps-library-v2/lib/banner/components/EasyPages/componentPage';
 
 export interface IInstructionsPageProps {
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
   mainPivotKey: ITabMain;
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
+
+  primarySource: ISourcePropsCOP;
+  fpsItemsReturn : IStateSource;
+
 }
 
 /***
@@ -77,31 +84,34 @@ const InstructionsPageHook: React.FC<IInstructionsPageProps> = ( props ) => {
   // const bannerImage: string = `https://www.tenant.com/sites/default/files/2022-04/background%402x.jpg`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   // const backgroundImage: string = `url("${bannerImage}")`;
 
-  const bannerIframeHref: string =`https://tenant.sharepoint.com/sites/SP_GlobalPpqRecords`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
+  // const bannerIframeHref: string =`https://tenant.sharepoint.com/sites/SP_GlobalPpqRecords`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   // const backgroundImage: string = `url("${bannerImage}")`;
 
-  const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
-    <ul>
-      <li>This tab show step by step instructions on how to set retention.</li>
-      <li>Ideally, will have a site page AND also a shot video.</li>
-      <li onClick={ () => window.open( bannerIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>{ bannerIframeHref} </li>
-      <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'purple', fontWeight: 600 }}>MIKE to provide further description here</li>
-    </ul>
-  </div>
+  // const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
+  //   <ul>
+  //     <li>This tab show step by step instructions on how to set retention.</li>
+  //     <li>Ideally, will have a site page AND also a shot video.</li>
+  //     <li onClick={ () => window.open( bannerIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>{ bannerIframeHref} </li>
+  //     <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'purple', fontWeight: 600 }}>MIKE to provide further description here</li>
+  //   </ul>
+  // </div>
 
-  const InfoElement: JSX.Element = <Accordion 
-    title = { 'More information about this tab'}
-    defaultIcon = 'Help'
-    showAccordion = { true }
-    content = { MainContent }
-    contentStyles = { { height: '135px' } }
-  />;
+  // const InfoElement: JSX.Element = <Accordion 
+  //   title = { 'More information about this tab'}
+  //   defaultIcon = 'Help'
+  //   showAccordion = { true }
+  //   content = { MainContent }
+  //   contentStyles = { { height: '135px' } }
+  // />;
 
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Instructions' ), updateTour, closeTour );
 
+  const filtered = props.fpsItemsReturn.items.filter( item => { return item.WebPartTab === 'Instructions' && item.Active === 'Public' } ); //"Instructions"
   const InstructionsPageElement: JSX.Element = mainPivotKey !== 'Instructions' ? null : <div className = { styles.page } style={ null }>
-    { InfoElement}
-    {/* <div id={ 'ComplInstructionsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
+    {/* { InfoElement} */}
+    <div className = { 'easy-container' } style={ {} }>
+      { filtered.map( link => { return easyLinkElement( link as any, '_blank'  ) } ) }
+    </div>
     { TeachMe }
   </div>;
 
