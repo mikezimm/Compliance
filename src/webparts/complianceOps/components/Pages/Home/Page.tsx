@@ -81,7 +81,7 @@ const HomePageHook: React.FC<IHomePageProps> = ( props ) => {
  *                                                                 
  *                                                                 
  */
-  const originalBannerImage: string = `https://www.tenant.com/sites/lifenet_Records_Home/SiteAssets/SitePages/lifenet_Records_Home/1209836016-LifeCycle.jpg`;
+  // const originalBannerImage: string = `https://www.tenant.com/sites/lifenet_Records_Home/SiteAssets/SitePages/lifenet_Records_Home/1209836016-LifeCycle.jpg`;
   const fullBannerImage: string = `https://tenant.sharepoint.com/_api/v2.1/sites/tenant.sharepoint.com,1559a4bd-ef22-4efa-9902-8914647da26e,5ee8b77b-b4a2-400d-aaa7-76cf05ec1712/lists/330921c3-6222-4640-b3f7-3b724f4a2680/items/1e80df9d-3d67-4262-ad94-57e6eec74ac4/driveItem/thumbnails/0/c960x99999/content?preferNoRedirect=true&prefer=extendCacheMaxAge&clientType=modernWebPart`;
   const bannerImage: string = fullBannerImage.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   const backgroundImage: string = `url("${bannerImage}")`;
