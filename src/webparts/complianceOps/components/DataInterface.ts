@@ -62,12 +62,12 @@ export const EnforcementColumns: string[] = [ 'ID', 'Title', 'URL', 'Subsite', '
 export const CoordinatorColumns: string[] = [ 'ID','Facility', 'Division', 'Name/Title', 'AlternateContact/Title', 'Datelastverified', 'MapComplete' ];
 export const MapsColumns: string[] = [ 'ID','Region', 'Facility', ];
 
-export const CommitteeColumns: string[] = [ 'ID','Title', 'Name/Title', 'MemberPosition' ];
+export const CommitteeColumns: string[] = [ 'ID','Title', 'Name/Title', 'Contact/Title', 'ExpertContact', 'MemberPosition' ];
 export const CommitteeSearch: string[] = [ 'Corporate', 'Global', 'Divisional', 'Quality', 'Legal', 'IT', 'Data Privacy' ];
 
 export const Divisions: string[] = [ 'AAM','AEU','AJA','ASA','Global','TCH', 'TKR','TND' ];
 
-const collectionUrl: string = getSiteCollectionUrlFromLink( window.location.pathname );
+export const collectionUrl: string = getSiteCollectionUrlFromLink( window.location.pathname );
 console.log( collectionUrl );
 
 /**
@@ -140,7 +140,7 @@ export const SourceInfo: ISourceInfo = {
     itemFetchCol: [],
     searchProps: [ ...CommitteeColumns ],
     selectThese: [ ...['*'], ...CommitteeColumns ],
-    expandThese: [ 'Name', ],
+    expandThese: [ 'Name', 'Contact' ],
     isModern: true,
     restFilter: '',
     defSearchButtons: CommitteeSearch,
@@ -210,8 +210,8 @@ export const SourceInfo: ISourceInfo = {
     performanceSettings: {  label: 'forms', updateMiliseconds: true, includeMsStr: true, op: 'fetch4'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Appendices toAS303 and Commonly Used Forms',
-    webRelativeLink: '/lists/Commonly Used Forms',
-    viewItemLink: `${IntraNetHome}Manual/lists/Commonly Used Forms/DispForm.aspx?ID={{item.ID}}`,
+    webRelativeLink: '/Commonly%20Used%20Forms',
+    viewItemLink: `${IntraNetHome}/Commonly%20Used%20Forms/DispForm.aspx?ID={{item.ID}}`,
     searchSource: 'Forms',
     searchSourceDesc:  'Facility Record Forms',
     columns: [ ...libraryColumns, ...[ 'Status' ]  ],
@@ -301,7 +301,7 @@ export const SearchTypesCOP:ISearchTypesCOP  = {
     ]
 };
 
-export function buildCurrentSourceInfo( editMode: DisplayMode, getsAdmin: boolean ) : ISourceInfo {
+export function buildCurrentSourceInfo( editMode: DisplayMode, getsAdmin: boolean, webUrl: string ) : ISourceInfo {
 
   SourceInfo.site.performanceSettings.editMode = editMode;
   SourceInfo.committee.performanceSettings.editMode = editMode;
@@ -313,6 +313,7 @@ export function buildCurrentSourceInfo( editMode: DisplayMode, getsAdmin: boolea
 
   // Give Admins of Records site and Tricky Users the Admins tab and Admins pages
   if ( getsAdmin === true ) { SourceInfo.admins.restFilter = ''; }
+  if ( webUrl ) { SourceInfo.site.restFilter =`URL eq '${ webUrl }'`; }
 
   return SourceInfo;
 }

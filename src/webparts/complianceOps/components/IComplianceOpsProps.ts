@@ -36,13 +36,13 @@ export type ITabDetails = `Details`;
 export type ITabCommittee = `Committee`;
 export type ITabCoordinators = `Coordinators`;
 export type ITabSharePoint = `SharePoint`;
+export type ITabExperts = `Experts`;
 export type ITabAdmins = `Admins`;
 export type ITabTesting = `Testing`;
 
 
-
 export type ITabMain = ITabHome | ISearchSource | ITabInstructions | ITabContacts | ITabDetails | ITabLabels | ITabAdmins | ITabTesting;
-export type ITabContactPivots = ITabCommittee | ITabCoordinators | ITabSharePoint;
+export type ITabContactPivots = ITabCommittee | ITabCoordinators | ITabSharePoint | ITabExperts;
 
 /**
  * Extends IFPSCorePinMeReactComponentState with all basics required for FPS Banner
@@ -51,6 +51,9 @@ export interface IComplianceOpsState extends IFPSCorePinMeReactComponentState {
 
   mainPivotKey: ITabMain;
   contactPivotKey: ITabContactPivots;
+
+  targetSite: string;
+  targetStatus: string;
 
   fullAnalyticsSaved: boolean;
 

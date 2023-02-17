@@ -15,7 +15,7 @@ export interface IThisItemInterface extends IAnySourceItem {
 //export const CoordinatorColumns: string[] = [ 'ID','Facility', 'Division', 'Name/Title', 'AlternateContact/Title', 'Datelastverified', 'MapComplete' ];
 
 export function createDetailsRow( props: ISourceRowRender ): JSX.Element { // eslint-disable-line @typescript-eslint/no-explicit-any
-  const { item, searchText, onClick, onParentCall,  } = props; // details, showItemType, onOpenPanel
+  const { item, searchText, onClick,  } = props; // details, showItemType, onOpenPanel, onParentCall, 
 
   const thisItem: IThisItemInterface = item as IThisItemInterface;
 

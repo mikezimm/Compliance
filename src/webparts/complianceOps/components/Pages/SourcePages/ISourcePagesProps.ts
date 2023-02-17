@@ -48,6 +48,7 @@ export interface ISourcePagesState extends IMinPageArrowsState {
 
   resetArrows?: string; //unique Id used to reset arrows to starting position
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filtered: any[];
   topSearch: string[];
 

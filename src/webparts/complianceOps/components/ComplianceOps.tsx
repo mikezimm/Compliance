@@ -21,7 +21,7 @@ import { ILoadPerformance, startPerformOp, updatePerformanceEnd } from "../fpsRe
 import { getSourceItems } from '@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/getSourceItems';
 
 import { ISiteThemes } from "@mikezimm/fps-library-v2/lib/common/commandStyles/ISiteThemeChoices";
-import { buildCurrentSourceInfo, IDefSourceType, IntraNetHome, ISourceInfo, ISourcePropsCOP } from './DataInterface';
+import { buildCurrentSourceInfo, collectionUrl, IDefSourceType, IntraNetHome, ISourceInfo, ISourcePropsCOP } from './DataInterface';
 
 import { addSearchMeta1 } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/functions/addSearchMeta1';
 import { addSearchMeta2 } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/functions/addSearchMeta2';
@@ -47,22 +47,28 @@ import CommitteePageHook from './Pages/Committee/Header';
 import { createCommitteeRow } from './Pages/Committee/Row';
 
 import DetailsPageHook from './Pages/Details/Header';
-import { createDetailsRow } from './Pages/Details/Row';
+// import { createDetailsRow } from './Pages/Details/Row';
 
-import TipsPageHook from './Pages/Tips/Header';
+// import TipsPageHook from './Pages/Tips/Header';
 import { createTipsRow } from './Pages/Tips/Row';
 
 import InstructionsPageHook from './Pages/Instructions/Header';
-import { createInstructionsRow } from './Pages/Instructions/Row';
+// import { createInstructionsRow } from './Pages/Instructions/Row';
 
 import LabelsPageHook from './Pages/Labels/Header';
-import { createLabelsRow } from './Pages/Labels/Row';
+// import { createLabelsRow } from './Pages/Labels/Row';
+
+import WebUrlHook from './WebUrlBox/component';
+
+import ExpertsPageHook from './Pages/Experts/Header';
 
 import AdminsPageHook from './Pages/Admins/Header';
-import { createAdminsRow } from './Pages/Admins/Row';
+
+// import { createAdminsRow } from './Pages/Admins/Row';
 import { addEasyIcons } from '@mikezimm/fps-library-v2/lib/components/atoms/EasyIcons/getEasyIcon';
 
 import SharePointPageHook from './Pages/SharePoint/Header';
+import { getSiteCollectionUrlFromLink } from '@mikezimm/fps-library-v2/lib/logic/Strings/urlServices';
 // import { createSharePointRow } from './Pages/SharePoint/Row';
 
 const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.fpsSiteThemeLight, primary: styles.fpsSiteThemePrimary };
@@ -173,7 +179,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     super(props);
 
     const isAdmin: boolean = this._setIsAdmin();
-    this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, isAdmin );
+    this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, isAdmin, collectionUrl );
 
     if ( this._performance === null ) { this._performance = this.props.performance;  }
     const constId: string = this._newRefreshId();
@@ -186,6 +192,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       refreshId: this._newRefreshId(),
       debugMode: false,
       showSpinner: false,
+      targetSite: collectionUrl,
+      targetStatus: '',
 
       mainPivotKey: 'Home',
       contactPivotKey: 'Coordinators',
@@ -245,7 +253,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     //refresh these privates when the prop changes warrent it
     if ( refresh === true ) {
-      this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, this._isAdmin );
+      this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, this._isAdmin, this.state.targetSite );
       await this.updateTheseSources( this._missingFetches() );
       this._contentPages = getBannerPages( this.props.bannerProps );
     }
@@ -349,7 +357,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
   public render(): React.ReactElement<IComplianceOpsProps> {
     const {
-      hasTeamsContext,
+      hasTeamsContext, bannerProps
     } = this.props;
 
     const { mainPivotKey, contactPivotKey, fullAnalyticsSaved } = this.state;
@@ -460,6 +468,9 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     const sharePointPageHeader = <SharePointPageHook
       debugMode={ this.state.debugMode } contactPivotKey={ contactPivotKey } wpID={ '' } />;
 
+    const expertsPageHeader = <ExpertsPageHook
+      debugMode={ this.state.debugMode } contactPivotKey={ contactPivotKey } wpID={ '' } />;
+
     const committeePageHeader = <CommitteePageHook
       debugMode={ this.state.debugMode } contactPivotKey={ contactPivotKey } wpID={ '' } />;
 
@@ -506,7 +517,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     />;
 
-    const adminsItems = this.createItemsElement( adminsPageHeader, 'Admins' );
+    // const adminsItems = this.createItemsElement( adminsPageHeader, 'Admins' );
 
     const contactsPivot = 
     <div id={ `ContactPivot${this.props.bannerProps.refreshId}` }>
@@ -523,8 +534,21 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       </Pivot>
 
     </div>
+
+    const WebUrl: JSX.Element = bannerProps.showTricks && bannerProps.beAUser !== true ? <WebUrlHook 
+      mainPivotKey={ mainPivotKey }
+      showInput={ true }
+      inputLabel={ 'Target Site Url' }
+      textInput={ this.state.targetSite }
+      // updateInputCallback={ ( url: string, targetStatus: string ) => { this.setState({ targetSite: url, targetStatus: targetStatus }) }}
+      updateInputCallback= { this._updateWebUrl.bind( this )}
+      wpID={ '' }
+    /> : undefined ;
+
     return (
       <section className={`${styles.complianceOps} ${hasTeamsContext ? styles.teams : ''}`}>
+
+        { WebUrl }
         { devHeader }
         { Banner }
         { mainPivot }
@@ -540,6 +564,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { mainPivotKey === 'Contacts' && contactPivotKey === 'SharePoint' ? sharePointPageHeader : undefined }
         { mainPivotKey === 'Contacts' && contactPivotKey === 'Coordinators' ? coordinatorsItems : undefined }
         { mainPivotKey === 'Contacts' && contactPivotKey === 'Committee' ? committeeItems : undefined }
+        { mainPivotKey === 'Contacts' && contactPivotKey === 'Experts' ? expertsPageHeader : undefined }
 
         { mainPivotKey !== 'Maps' ? undefined : mapItems }
         { mainPivotKey !== 'Forms' ? undefined : formItems }
@@ -550,6 +575,18 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       </section>
     );
   }
+
+  private async _updateWebUrl( url: string, targetStatus: string ) : Promise<void>  { 
+    const webUrl: string = getSiteCollectionUrlFromLink( url );
+    // const site: IStateSource = JSON.parse(JSON.stringify( this.state.site ));
+    // site.loaded = false;
+    // this.setState({ targetSite: webUrl, targetStatus: targetStatus, site: site });
+    this.setState({ targetSite: webUrl, targetStatus: targetStatus, site: { ...this.state.site, ...{ loaded: false } } });
+    this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, this._isAdmin, this.state.targetSite );
+    await this.updateTheseSources( this._missingFetches() );
+  }
+
+
 
   private pivotMainClick( temp: any ): void {
     console.log('pivotMainClick:', temp.props.itemKey );

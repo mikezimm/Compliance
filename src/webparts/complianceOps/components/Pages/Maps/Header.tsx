@@ -1,8 +1,8 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 import { ITabMain } from '../../IComplianceOpsProps';
-import { Icon  } from 'office-ui-fabric-react/lib/Icon';
+// import { Icon  } from 'office-ui-fabric-react/lib/Icon';
 
 import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
 import styles from './header.module.scss';

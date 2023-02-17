@@ -1,23 +1,20 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
-import { IStateSource, ITabMain, } from '../../IComplianceOpsProps';
+import { ITabContactPivots, } from '../../IComplianceOpsProps';
 
 // import { Icon  } from 'office-ui-fabric-react/lib/Icon';
-// import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
-// import { getRandomFromArray } from '@mikezimm/fps-library-v2/lib/logic/Randomize/functions';
+import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
 
 import styles from './header.module.scss';
 
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
-// import { IAnySourceItem } from '../../../fpsReferences';
 
-export interface ITipsPageProps {
+export interface IExpertsPageProps {
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
-  stateSource: IStateSource;
-  mainPivotKey: ITabMain;
+  contactPivotKey: ITabContactPivots;
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
 }
 
@@ -32,10 +29,10 @@ export interface ITipsPageProps {
  *                                                                                     
  */
 
-const TipsPageHook: React.FC<ITipsPageProps> = ( props ) => {
+const ExpertsPageHook: React.FC<IExpertsPageProps> = ( props ) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { debugMode, mainPivotKey, wpID, } = props; //appLinks, news 
+  const { debugMode, contactPivotKey, wpID, } = props; //appLinks, news 
 
   const [ teachBubble, setTeachBubble ] = useState<number>( null );
   const [ lastBubble, setLastBubble ] = useState<number>( 0 );
@@ -80,33 +77,33 @@ const TipsPageHook: React.FC<ITipsPageProps> = ( props ) => {
   // const bannerImage: string = `https://www.tenant.com/sites/default/files/2022-04/background%402x.jpg`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   // const backgroundImage: string = `url("${bannerImage}")`;
 
-  // const bannerIframeHref: string =`https://tenant.sharepoint.com/sites/SP_GlobalPpqRecords`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
-  // const backgroundImage: string = `url("${bannerImage}")`;
+  const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
+    <ul>
+      <li>If you want to ask an expert about your site...</li>
+      <li>Contact one of these experts.</li>
+      <li>They can help you determine what types of records your files might be.</li>
+      <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li>
+    </ul>
+  </div>
 
-  // const randomItem: IAnySourceItem = getRandomFromArray( props.stateSource.items );
+  const InfoElement: JSX.Element = <Accordion 
+    title = { 'More information about this tab'}
+    defaultIcon = 'Help'
+    showAccordion = { true }
+    content = { MainContent }
+    contentStyles = { { height: '115px' } }
+  />;
 
-  // const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
-  //   <div dangerouslySetInnerHTML={{__html: randomItem.Tip}} />
-  // </div>
+  const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Experts' ), updateTour, closeTour );
 
-  // const InfoElement: JSX.Element = <Accordion 
-  //   title = { 'More information about this tab'}
-  //   defaultIcon = 'Help'
-  //   showAccordion = { true }
-  //   content = { MainContent }
-  //   contentStyles = { { height: '145px' } }
-  // />;
-
-  const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Tips' ), updateTour, closeTour );
-
-  const TipsPageElement: JSX.Element = mainPivotKey !== 'Tips' ? null : <div className = { styles.page } style={ null }>
-    {/* { InfoElement} */}
-    {/* <div id={ 'ComplTipsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
+  const ExpertsPageElement: JSX.Element = contactPivotKey !== 'Experts' ? null : <div className = { styles.page } style={ null }>
+    { InfoElement}
+    {/* <div id={ 'ComplExpertsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
     { TeachMe }
   </div>;
 
-  return ( TipsPageElement );
+  return ( ExpertsPageElement );
 
 }
 
-export default TipsPageHook;
+export default ExpertsPageHook;
