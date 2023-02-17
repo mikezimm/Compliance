@@ -465,10 +465,11 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     const committeeItems = this.createItemsElement( committeePageHeader, 'Committee' );
 
-    const tipsPageHeader = <TipsPageHook
-      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
-      stateSource={ this.state.tips }
-      />;
+    const tipsPageHeader: JSX.Element = undefined; 
+    // <TipsPageHook
+    //   debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
+    //   stateSource={ this.state.tips }
+    //   />;
 
     const tipsItems = this.createItemsElement( tipsPageHeader, 'Tips' );
 
@@ -544,7 +545,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { mainPivotKey !== 'Forms' ? undefined : formItems }
         { mainPivotKey !== 'Admins' ? undefined : adminsPageHeader }
 
-        <h2>Fetch Status: { fullAnalyticsSaved === true ? 'Finished!' : 'working' } { fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' } ms</h2>
+        {/* <h2>Fetch Status: { fullAnalyticsSaved === true ? 'Finished!' : 'working' } { fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' } ms</h2> */}
 
       </section>
     );

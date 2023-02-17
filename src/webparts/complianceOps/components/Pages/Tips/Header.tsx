@@ -83,24 +83,24 @@ const TipsPageHook: React.FC<ITipsPageProps> = ( props ) => {
   // const bannerIframeHref: string =`https://tenant.sharepoint.com/sites/SP_GlobalPpqRecords`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
   // const backgroundImage: string = `url("${bannerImage}")`;
 
-  const randomItem: IAnySourceItem = getRandomFromArray( props.stateSource.items );
+  // const randomItem: IAnySourceItem = getRandomFromArray( props.stateSource.items );
 
-  const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
-    <div dangerouslySetInnerHTML={{__html: randomItem.Tip}} />
-  </div>
+  // const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
+  //   <div dangerouslySetInnerHTML={{__html: randomItem.Tip}} />
+  // </div>
 
-  const InfoElement: JSX.Element = <Accordion 
-    title = { 'More information about this tab'}
-    defaultIcon = 'Help'
-    showAccordion = { true }
-    content = { MainContent }
-    contentStyles = { { height: '145px' } }
-  />;
+  // const InfoElement: JSX.Element = <Accordion 
+  //   title = { 'More information about this tab'}
+  //   defaultIcon = 'Help'
+  //   showAccordion = { true }
+  //   content = { MainContent }
+  //   contentStyles = { { height: '145px' } }
+  // />;
 
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Tips' ), updateTour, closeTour );
 
   const TipsPageElement: JSX.Element = mainPivotKey !== 'Tips' ? null : <div className = { styles.page } style={ null }>
-    { InfoElement}
+    {/* { InfoElement} */}
     {/* <div id={ 'ComplTipsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
     { TeachMe }
   </div>;

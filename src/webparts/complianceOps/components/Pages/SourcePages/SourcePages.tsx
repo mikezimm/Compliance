@@ -161,6 +161,7 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
   public render(): React.ReactElement<ISourcePagesProps> {
 
     const { primarySource , topButtons, debugMode, showItemType,  } = this.props; // canvasOptions
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { showThisItem , showItemPanel, searchText } = this.state;
     // const topButtons = this.props.topButtons;
 
