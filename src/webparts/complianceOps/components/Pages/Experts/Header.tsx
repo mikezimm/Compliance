@@ -1,7 +1,9 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
-import { ITabContactPivots, } from '../../IComplianceOpsProps';
+import { IStateSource, ITabContactPivots, } from '../../IComplianceOpsProps';
+
+import { PersonaCard } from "../../PersonaCard/PersonaCard";
 
 // import { Icon  } from 'office-ui-fabric-react/lib/Icon';
 import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
@@ -11,11 +13,16 @@ import styles from './header.module.scss';
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
+import { IUserProperties } from '../../PersonaCard/IUserProperties';
 
 export interface IExpertsPageProps {
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
   contactPivotKey: ITabContactPivots;
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
+  users: IUserProperties[];
+  context: any;
+  webUrl: string;
+
 }
 
 /***
@@ -32,7 +39,7 @@ export interface IExpertsPageProps {
 const ExpertsPageHook: React.FC<IExpertsPageProps> = ( props ) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { debugMode, contactPivotKey, wpID, } = props; //appLinks, news 
+  const { debugMode, contactPivotKey, wpID, context, webUrl, users } = props; //appLinks, news 
 
   const [ teachBubble, setTeachBubble ] = useState<number>( null );
   const [ lastBubble, setLastBubble ] = useState<number>( 0 );
@@ -82,7 +89,7 @@ const ExpertsPageHook: React.FC<IExpertsPageProps> = ( props ) => {
       <li>If you want to ask an expert about your site...</li>
       <li>Contact one of these experts.</li>
       <li>They can help you determine what types of records your files might be.</li>
-      <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li>
+      {/* <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li> */}
     </ul>
   </div>
 
@@ -94,11 +101,33 @@ const ExpertsPageHook: React.FC<IExpertsPageProps> = ( props ) => {
     contentStyles = { { height: '115px' } }
   />;
 
+  const Experts = users.map( ( user: any ) => { <PersonaCard
+    context={ props.context}
+    size = { 24 }
+    iconSize = { 20 }
+    iconTextSize = { 16 }
+    profileProperties={{
+      isGuest: user.isGuest,
+      isSiteAdmin: user.IsSiteAdmin,
+      DisplayName: user.Title,
+      Title: user.JobTitle ? user.JobTitle : '',
+      PictureUrl: props.webUrl + '/_layouts/15/userphoto.aspx?size=M&accountname=' + user.Email ,
+      Email: user.Email,
+      //Department: user.Department ? user.Department : '',
+      Department: '',
+      WorkPhone: '',
+      Location: user.OfficeNumber
+        ? user.OfficeNumber
+        : user.BaseOfficeLocation
+    }}
+  />});
+
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Experts' ), updateTour, closeTour );
 
   const ExpertsPageElement: JSX.Element = contactPivotKey !== 'Experts' ? null : <div className = { styles.page } style={ null }>
     { InfoElement}
     {/* <div id={ 'ComplExpertsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
+    { Experts }
     { TeachMe }
   </div>;
 

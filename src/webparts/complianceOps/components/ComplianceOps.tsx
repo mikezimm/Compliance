@@ -69,6 +69,7 @@ import { addEasyIcons } from '@mikezimm/fps-library-v2/lib/components/atoms/Easy
 
 import SharePointPageHook from './Pages/SharePoint/Header';
 import { getSiteCollectionUrlFromLink } from '@mikezimm/fps-library-v2/lib/logic/Strings/urlServices';
+import { IUserProperties } from './PersonaCard/IUserProperties';
 // import { createSharePointRow } from './Pages/SharePoint/Row';
 
 const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.fpsSiteThemeLight, primary: styles.fpsSiteThemePrimary };
@@ -78,7 +79,7 @@ const consolePrefix: string = 'fpsconsole: FpsCore115Banner';
 
 const mainKeys: ITabMain[] = [ 'Home', 'Instructions', 'Tips', 'Labels', 'Site', 'Details', 'Contacts', 'Maps', 'Forms', 'Admins' ];
 
-const contactKeys: ITabContactPivots[] = [ 'Coordinators', 'SharePoint', 'Committee', ];
+const contactKeys: ITabContactPivots[] = [ 'Experts', 'Coordinators', 'SharePoint', 'Committee', ];
 const contactPivots: JSX.Element[] = contactKeys.map( ( key: string, idx: number ) => {
   return <PivotItem key={ idx } headerText={ contactKeys[idx] } ariaLabel={contactKeys[idx]} title={contactKeys[idx]} itemKey={ key }/>;
 });
@@ -196,9 +197,10 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       targetStatus: '',
 
       mainPivotKey: 'Home',
-      contactPivotKey: 'Coordinators',
+      contactPivotKey: 'Experts',
 
       fullAnalyticsSaved: false,
+      experts: [],
 
       admins : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       site : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
@@ -291,12 +293,23 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       ops.fetch6 && ops.fetch6.end ? ops.fetch6.end.getTime() : -1,
     );
 
-    ops.fetch = updatePerformanceEnd( ops.fetch, true, 999999 );
+    const experts: IUserProperties[] = [];
+    if ( coordinators.loaded === true ) {
+      coordinators.items.map( member => {
+        if ( member.ExpertContact === 'Yes' && member.Contact ) {
+          const expert = member.Contact;
+          expert.JobTitle = member.MemberPosition;
+          experts.push( expert );
+        } 
+      });
+    }
+    ops.fetch = updatePerformanceEnd( ops.fetch,   true, 999999 );
 
     const totalTime = endWas - ops.fetch.start.getTime();
     console.log('Total fetch time was:', totalTime );
 
     this.setState({
+      experts: experts,
       admins: admins,
       site: site,
       maps: maps,
@@ -469,7 +482,11 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       debugMode={ this.state.debugMode } contactPivotKey={ contactPivotKey } wpID={ '' } />;
 
     const expertsPageHeader = <ExpertsPageHook
-      debugMode={ this.state.debugMode } contactPivotKey={ contactPivotKey } wpID={ '' } />;
+      debugMode={ this.state.debugMode } contactPivotKey={ contactPivotKey } wpID={ '' }
+      context={ bannerProps.context }
+      users={ this.state.experts }
+      webUrl={ IntraNetHome }
+    />;
 
     const committeePageHeader = <CommitteePageHook
       debugMode={ this.state.debugMode } contactPivotKey={ contactPivotKey } wpID={ '' } />;

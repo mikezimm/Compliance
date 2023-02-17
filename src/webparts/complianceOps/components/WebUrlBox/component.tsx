@@ -94,7 +94,7 @@ const WebUrlHook: React.FC<IWebUrlProps> = ( props ) => {
 
   const WebUrlElement: JSX.Element = showInput !== true ? null : 
   <div style={{ display: 'inline-table', paddingBottom: '20px', paddingTop: '20px', width: '100%', background: 'lightgray' }}>
-    <span style={{ paddingLeft: '20px', paddingRight: '20px', fontSize: 'larger', fontWeight: 600, whiteSpace: 'nowrap' }}>{ InputLabel }</span>
+    <span style={{ paddingLeft: '20px', paddingRight: '20px', fontSize: 'larger', fontWeight: 600, whiteSpace: 'nowrap', cursor: 'default' }}>{ InputLabel }</span>
     <TextField
       className={ styles.textField }
       styles={ { fieldGroup: [ { width: '75%', maxWidth: '700px' }, { borderColor: 'lightgray', }, ] } } //this.getReportingStyles
@@ -111,7 +111,7 @@ const WebUrlHook: React.FC<IWebUrlProps> = ( props ) => {
       // onKeyDown={(ev)=> { this.onWebUrlKeyDown( ev ) ; } }
 
     />{ 
-      <span style={{ color: webURLStatus === WebUrlIsValidMessage ? 'green' : 'red', whiteSpace: 'nowrap', marginRight: '40px', fontSize: 'larger', fontWeight: 'bolder' }}>
+      <span style={{ color: webURLStatus === WebUrlIsValidMessage ? 'green' : 'red', whiteSpace: 'nowrap', marginRight: '40px', fontSize: 'larger', fontWeight: 'bolder', cursor: 'default' }}>
          { webURLStatus }
       </span> }
     </div>;
