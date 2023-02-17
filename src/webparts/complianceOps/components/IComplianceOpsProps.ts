@@ -7,6 +7,7 @@ import { IFpsItemsReturn } from '../fpsReferences';
 
 import { ILoadPerformance } from '../fpsReferences';
 import { ISearchSource } from './DataInterface';
+import { IUserProperties } from './PersonaCard/IUserProperties';
 
 export interface IComplianceOpsProps  extends IFPSCoreReactComponentProps {
   description: string;
@@ -56,6 +57,8 @@ export interface IComplianceOpsState extends IFPSCorePinMeReactComponentState {
   targetStatus: string;
 
   fullAnalyticsSaved: boolean;
+
+  experts: IUserProperties[];
 
   admins : IStateSource;
   site : IStateSource;

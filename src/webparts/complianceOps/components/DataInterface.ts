@@ -62,7 +62,7 @@ export const EnforcementColumns: string[] = [ 'ID', 'Title', 'URL', 'Subsite', '
 export const CoordinatorColumns: string[] = [ 'ID','Facility', 'Division', 'Name/Title', 'AlternateContact/Title', 'Datelastverified', 'MapComplete' ];
 export const MapsColumns: string[] = [ 'ID','Region', 'Facility', ];
 
-export const CommitteeColumns: string[] = [ 'ID','Title', 'Name/Title', 'Contact/Title', 'Contact/Email', 'Contact/JobTitle', 'ExpertContact', 'MemberPosition' ];
+export const CommitteeColumns: string[] = [ 'ID','Title', 'Name/Title', 'Contact/Title', 'Contact/Name', 'Contact/JobTitle', 'ExpertContact', 'MemberPosition' ];
 export const CommitteeSearch: string[] = [ 'Corporate', 'Global', 'Divisional', 'Quality', 'Legal', 'IT', 'Data Privacy' ];
 
 export const Divisions: string[] = [ 'AAM','AEU','AJA','ASA','Global','TCH', 'TKR','TND' ];

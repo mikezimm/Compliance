@@ -3,6 +3,8 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { IStateSource, ITabContactPivots, } from '../../IComplianceOpsProps';
 
+import {  PersonaSize,}  from 'office-ui-fabric-react';
+
 import { PersonaCard } from "../../PersonaCard/PersonaCard";
 
 // import { Icon  } from 'office-ui-fabric-react/lib/Icon';
@@ -86,9 +88,10 @@ const ExpertsPageHook: React.FC<IExpertsPageProps> = ( props ) => {
 
   const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
     <ul>
-      <li>If you want to ask an expert about your site...</li>
+      <li>If unsure if your files are considered { `'Records'`}</li>
+      <li>Or you are not sure what your files should be classified as...</li>
       <li>Contact one of these experts.</li>
-      <li>They can help you determine what types of records your files might be.</li>
+      <li>They can help you {`: )`} </li>
       {/* <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li> */}
     </ul>
   </div>
@@ -101,9 +104,13 @@ const ExpertsPageHook: React.FC<IExpertsPageProps> = ( props ) => {
     contentStyles = { { height: '115px' } }
   />;
 
-  const Experts = users.map( ( user: any ) => { <PersonaCard
-    context={ props.context}
-    size = { 24 }
+  const fullUrl: string  = props.webUrl.indexOf('http') === 0 ? props.webUrl : `${window.location.origin}${props.webUrl}`
+  const Experts = users.map( ( user: any ) => {  
+  
+  return ( <PersonaCard
+    key={ user.Email }
+    context={ props.context }
+    size = { PersonaSize.size72 }
     iconSize = { 20 }
     iconTextSize = { 16 }
     profileProperties={{
@@ -111,7 +118,7 @@ const ExpertsPageHook: React.FC<IExpertsPageProps> = ( props ) => {
       isSiteAdmin: user.IsSiteAdmin,
       DisplayName: user.Title,
       Title: user.JobTitle ? user.JobTitle : '',
-      PictureUrl: props.webUrl + '/_layouts/15/userphoto.aspx?size=M&accountname=' + user.Email ,
+      PictureUrl: fullUrl + '/_layouts/15/userphoto.aspx?size=M&accountname=' + user.Email ,
       Email: user.Email,
       //Department: user.Department ? user.Department : '',
       Department: '',
@@ -120,7 +127,8 @@ const ExpertsPageHook: React.FC<IExpertsPageProps> = ( props ) => {
         ? user.OfficeNumber
         : user.BaseOfficeLocation
     }}
-  />});
+  /> );
+ });
 
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Experts' ), updateTour, closeTour );
 

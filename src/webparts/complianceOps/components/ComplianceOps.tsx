@@ -26,6 +26,7 @@ import { buildCurrentSourceInfo, collectionUrl, IDefSourceType, IntraNetHome, IS
 import { addSearchMeta1 } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/functions/addSearchMeta1';
 import { addSearchMeta2 } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/functions/addSearchMeta2';
 import { SearchTypes } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/Interfaces/StandardTypes';
+import { getEmailFromLoginName } from '@mikezimm/fps-library-v2/lib/pnpjs/Users/logic/getEmailFromLoginName';
 
 import SourcePages from './Pages/SourcePages/SourcePages';
 
@@ -294,11 +295,12 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     );
 
     const experts: IUserProperties[] = [];
-    if ( coordinators.loaded === true ) {
-      coordinators.items.map( member => {
+    if ( committee.loaded === true ) {
+      committee.items.map( member => {
         if ( member.ExpertContact === 'Yes' && member.Contact ) {
           const expert = member.Contact;
           expert.JobTitle = member.MemberPosition;
+          expert.Email = getEmailFromLoginName( expert.Name );
           experts.push( expert );
         } 
       });
