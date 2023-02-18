@@ -8,12 +8,9 @@ import {
 import { SPComponentLoader } from '@microsoft/sp-loader';
 
 import {
-  // Persona,
-  // PersonaSize,
   DocumentCard,
   DocumentCardType,
-  // Icon,
-} from 'office-ui-fabric-react';
+} from 'office-ui-fabric-react/lib/DocumentCard';
 
 import { getAdminIcon, getGuestIcon } from './PersonaIcons';
 

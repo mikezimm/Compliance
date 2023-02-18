@@ -2,7 +2,7 @@ import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { IUserProperties } from "./IUserProperties";
 import {
   PersonaSize,
-} from 'office-ui-fabric-react';
+} from 'office-ui-fabric-react/lib/Persona';
 export interface IPersonaCardProps {
   context: WebPartContext;
   profileProperties: IUserProperties;

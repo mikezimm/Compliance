@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { IStateSource, ITabContactPivots, } from '../../IComplianceOpsProps';
 
-import {  PersonaSize,}  from 'office-ui-fabric-react';
+import {  PersonaSize,}  from 'office-ui-fabric-react/lib/Persona';
 
 import { PersonaCard } from "../../PersonaCard/PersonaCard";
 

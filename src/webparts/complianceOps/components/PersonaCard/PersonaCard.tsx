@@ -7,13 +7,9 @@ import {
 } from '@microsoft/sp-core-library';
 import { SPComponentLoader } from '@microsoft/sp-loader';
 
-import {
-  Persona,
-  PersonaSize,
-  DocumentCard,
-  DocumentCardType,
-  Icon,
-} from 'office-ui-fabric-react';
+import { Persona, PersonaSize} from 'office-ui-fabric-react/lib/Persona';
+import { DocumentCard, DocumentCardType } from 'office-ui-fabric-react/lib/DocumentCard';
+import { Icon } from 'office-ui-fabric-react/lib/Icon';
 
 import { GuestsIconName, SiteAdminIconName, } from './StandardPersonIconNames';
 
