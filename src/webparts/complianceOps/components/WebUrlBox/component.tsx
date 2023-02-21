@@ -23,7 +23,7 @@ export interface IWebUrlProps {
   showInput: boolean;
   inputLabel?: string;
   textInput: string;
-  updateInputCallback( url: string, targetStatus: string ) : void;
+  updateInputCallback( url: string, siteInfo: IFpsGetSiteReturn ) : void;
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
   mainPivotKey: ITabMain;
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
@@ -59,7 +59,7 @@ const WebUrlHook: React.FC<IWebUrlProps> = ( props ) => {
         const siteInfo: IFpsGetSiteReturn = await getSiteInfo( NewValue, false, true, );
         if ( siteInfo.status === 'Success' ) {
           setValidUrl( NewValue );
-          updateInputCallback( NewValue, siteInfo.status );
+          updateInputCallback( NewValue, siteInfo,  );
           setWebURLStatus( WebUrlIsValidMessage );
         } else {
           setValidUrl( '' );

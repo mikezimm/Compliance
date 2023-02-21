@@ -8,6 +8,7 @@ import { IFpsItemsReturn } from '../fpsReferences';
 import { ILoadPerformance } from '../fpsReferences';
 import { ISearchSource } from './DataInterface';
 import { IUserProperties } from './PersonaCard/IUserProperties';
+import { IFPSResultStatus } from "@mikezimm/fps-pnp2/lib/services/sp/IFPSResultStatus";
 
 export interface IComplianceOpsProps  extends IFPSCoreReactComponentProps {
   description: string;
@@ -17,6 +18,9 @@ export interface IComplianceOpsProps  extends IFPSCoreReactComponentProps {
   userDisplayName: string;
 
   performance: ILoadPerformance;
+
+  GroupId: string;  // Need Site Level ( that web part is on )to determine if this is a team or not, not subsite
+  GroupIdStatus: IFPSResultStatus;
 
 }
 
@@ -55,6 +59,9 @@ export interface IComplianceOpsState extends IFPSCorePinMeReactComponentState {
 
   targetSite: string;
   targetStatus: string;
+
+  targetGroupId: string; // Need Site Level of targetWeb to determine if this is a team or not, not subsite)
+  targetGroupIdStatus: IFPSResultStatus;
 
   fullAnalyticsSaved: boolean;
 

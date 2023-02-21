@@ -10,7 +10,7 @@ import { saveViewAnalytics } from '../CoreFPS/Analytics';
 
 import FetchBannerX from '@mikezimm/fps-library-v2/lib/banner/bannerX/FetchBannerX';
 // import { createSpecialElement } from '@mikezimm/fps-library-v2/lib/banner/components/SpecialBanner/component';
-// import { ISpecialMessage, } from '@mikezimm/fps-library-v2/lib/banner/components/SpecialBanner/interface';
+import { ISpecialMessage, } from '@mikezimm/fps-library-v2/lib/banner/components/SpecialBanner/interface';
 
 import { getWebPartHelpElementBoxTiles } from '../PropPaneHelp/PropPaneHelp';
 import { getBannerPages, } from './HelpPanel/AllContent';
@@ -71,6 +71,7 @@ import { addEasyIcons } from '@mikezimm/fps-library-v2/lib/components/atoms/Easy
 import SharePointPageHook from './Pages/SharePoint/Header';
 import { getSiteCollectionUrlFromLink } from '@mikezimm/fps-library-v2/lib/logic/Strings/urlServices';
 import { IUserProperties } from './PersonaCard/IUserProperties';
+import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
 // import { createSharePointRow } from './Pages/SharePoint/Row';
 
 const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.fpsSiteThemeLight, primary: styles.fpsSiteThemePrimary };
@@ -196,6 +197,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       showSpinner: false,
       targetSite: collectionUrl,
       targetStatus: '',
+      targetGroupId: this.props.GroupId,
+      targetGroupIdStatus: this.props.GroupIdStatus,
 
       mainPivotKey: 'Home',
       contactPivotKey: 'Experts',
@@ -405,9 +408,22 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     }
 
     // const FPSUser : IFPSUser = this.props.bannerProps.FPSUser;
-    // const showSpecial = FPSUser.manageWeb === true || FPSUser.managePermissions === true || FPSUser.manageLists === true ? true : false;
-    // const Special : ISpecialMessage = showSpecial === true ? specialUpgrade( 'warn', '/sites/TheSharePointHub/SitePages/DrillDown-WebPart-Upgrade---v2.aspx', ) : undefined;
-    // Special.style = { color: 'black', background: 'limegreen' };
+    // const showSpecial = this.state.targetGroupId === '00000000-0000-0000-0000-000000000000' ? true : false;
+    const showSpecial = this.state.targetGroupId === '00000000-0000-0000-0000-000000000000' ? false : true;
+    const WarningUrls = this.state.admins.items.filter( page => { return page.WebPartTab === 'TeamsWarning' && page.Status === 'Public' });
+    const specialProps: ISpecialMessage = {
+      message: 'This site is NOT allowed to store Records :(',
+      style:  { color: 'red', background: 'yellow' },
+      leftIcon:'WarningSolid',
+      rightIcon: 'WarningSolid',
+      link: {
+        Url: WarningUrls && WarningUrls.length > 0 ? WarningUrls[0]['File/ServerRelativeUrl'] : '',
+        Desc: `Click to see more details`,
+      }
+    }
+
+    const Special : ISpecialMessage = showSpecial === true ? specialProps : undefined;
+    // if ( Special ) Special.style = { color: 'red', background: 'yellow' };
 
     if ( check4Gulp() === true )  console.log('React Render - this._performance:', JSON.parse(JSON.stringify(this._performance)) );
 
@@ -427,7 +443,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       contentPages={ this._contentPages }
       WebPartHelpPivots= { this._webPartHelpElement }
 
-      // SpecialMessage = { Special }
+      SpecialMessage = { Special }
 
       updatePinState = { this._updatePinState.bind(this) }
       pinState = { this.state.pinState }
@@ -595,12 +611,15 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     );
   }
 
-  private async _updateWebUrl( url: string, targetStatus: string ) : Promise<void>  { 
+  private async _updateWebUrl( url: string, siteInfo: IFpsGetSiteReturn ) : Promise<void>  { 
     const webUrl: string = getSiteCollectionUrlFromLink( url );
     // const site: IStateSource = JSON.parse(JSON.stringify( this.state.site ));
     // site.loaded = false;
     // this.setState({ targetSite: webUrl, targetStatus: targetStatus, site: site });
-    this.setState({ targetSite: webUrl, targetStatus: targetStatus, site: { ...this.state.site, ...{ loaded: false } } });
+    this.setState({ 
+      targetSite: webUrl, targetStatus: siteInfo.status, site: { ...this.state.site, ...{ loaded: false } },
+      targetGroupIdStatus: siteInfo.status, targetGroupId: siteInfo.status === 'Success' ? siteInfo.site.GroupId : siteInfo.status,
+    });
     this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, this._isAdmin, this.state.targetSite );
     await this.updateTheseSources( this._missingFetches() );
   }

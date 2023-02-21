@@ -5,7 +5,7 @@
  * 
  */
 import { IMinWPBannerProps } from '@mikezimm/fps-library-v2/lib/banner/interfaces/MinWP/IMinWPBannerProps';
-
+import { IFPSResultStatus } from "@mikezimm/fps-pnp2/lib/services/sp/IFPSResultStatus";
 
 export const changePropertyGroupX : string[] = [ 'showSomeProps', 'showCustomProps' , 'showOOTBProps' , 'showApprovalProps' , 'propsTitleField', 'propsExpanded', 'selectedProperties' ];
 
@@ -47,5 +47,7 @@ export const importBlockPropsWP : string[] = [ 'showSomeProps' ];
 export interface IComplianceOpsWebPartProps extends IMinWPBannerProps {
 
   description: string;
+  GroupId: string;  // Need Site Level to determine if this is a team or not, not subsite
+  GroupIdStatus: IFPSResultStatus;
 
 }

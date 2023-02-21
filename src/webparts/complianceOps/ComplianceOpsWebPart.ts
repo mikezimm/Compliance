@@ -86,7 +86,8 @@ import { onFPSPropPaneCHanged } from '@mikezimm/fps-library-v2/lib/banner/FPSWeb
 import { FPSBaseClass } from '@mikezimm/fps-library-v2/lib/banner/FPSWebPartClass/FPSBaseClass';
 import { IThisFPSWebPartClass } from '@mikezimm/fps-library-v2/lib/banner/FPSWebPartClass/IThisFPSWebPartClass';
 import { allCompliance } from '@mikezimm/fps-library-v2/lib/banner/features/Tricky/constants';
-
+import { getSiteInfo } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/getSiteInfo';
+import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
 
 export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWebPartProps> {
 
@@ -107,6 +108,7 @@ export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWeb
     return super.onInit().then(async _ => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       runFPSSuperOnInit( this as any, PreConfiguredProps, SPPermission );
+      await this.updateGroupId();
 
     });
   }
@@ -141,6 +143,9 @@ export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWeb
 
         errMessage: '',
         bannerProps: bannerProps,
+
+        GroupId: this.properties.GroupId,
+        GroupIdStatus: this.properties.GroupIdStatus,
       }
     );
 
@@ -218,7 +223,6 @@ export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWeb
 
     groups = [ ...groups, ...FPSGroups ];
 
-
     return {
       pages: [
         {
@@ -230,5 +234,20 @@ export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWeb
         }
       ]
     };
+  }
+
+  private async updateGroupId() : Promise<void> {
+
+    if ( this.properties.GroupIdStatus === 'Success' ) return;
+
+    const siteInfo: IFpsGetSiteReturn = await getSiteInfo( this.context.pageContext.web.absoluteUrl, false, true, );
+    if ( siteInfo.status === 'Success' ) {
+      this.properties.GroupId = siteInfo.site.GroupId;
+      console.log('Compliance Site Group Id is', this.properties.GroupId );
+    } else {
+      this.properties.GroupIdStatus = siteInfo.status;
+      console.log('Compliance Site GroupIdStatus', this.properties.GroupIdStatus );
+    }
+
   }
 }
