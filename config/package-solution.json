@@ -3,7 +3,7 @@
   "solution": {
     "name": "compliance-opportunities-client-side-solution",
     "id": "bc58652d-3bd6-430b-83df-8453b9e147f4",
-    "version": "1.0.0.7",
+    "version": "1.0.0.8",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
@@ -30,7 +30,7 @@
         "title": "compliance-opportunities Feature",
         "description": "The feature that activates elements of the compliance-opportunities solution.",
         "id": "24438ce3-ef2b-4466-a567-415a7bceeb69",
-        "version": "1.0.0.7"
+        "version": "1.0.0.8"
       }
     ]
   },

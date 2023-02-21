@@ -106,7 +106,7 @@ const InstructionsPageHook: React.FC<IInstructionsPageProps> = ( props ) => {
 
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Instructions' ), updateTour, closeTour );
 
-  const filtered = props.fpsItemsReturn.items.filter( item => { return item.WebPartTab === 'Instructions' && item.Active === 'Public' } ); //"Instructions"
+  const filtered = props.fpsItemsReturn.items.filter( item => { return item.WebPartTab === 'Instructions' && item.Status === 'Public' } ); //"Instructions"
   const InstructionsPageElement: JSX.Element = mainPivotKey !== 'Instructions' ? null : <div className = { styles.page } style={ null }>
     {/* { InfoElement} */}
     <div className = { 'easy-container' } style={ {} }>

@@ -78,7 +78,7 @@ const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.f
 //Use this to add more console.logs for this component
 const consolePrefix: string = 'fpsconsole: FpsCore115Banner';
 
-const mainKeys: ITabMain[] = [ 'Home', 'Instructions', 'Tips', 'Labels', 'Site', 'Details', 'Contacts', 'Maps', 'Forms', 'Admins' ];
+const mainKeys: ITabMain[] = [ 'Home', 'Tips', 'Labels', 'Instructions', 'Site', 'Details', 'Contacts', 'Maps', 'Forms', 'Admins' ];
 
 const contactKeys: ITabContactPivots[] = [ 'Experts', 'Coordinators', 'SharePoint', 'Committee', ];
 const contactPivots: JSX.Element[] = contactKeys.map( ( key: string, idx: number ) => {

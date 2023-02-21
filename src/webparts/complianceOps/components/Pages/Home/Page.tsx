@@ -88,7 +88,7 @@ const HomePageHook: React.FC<IHomePageProps> = ( props ) => {
 
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles , '', 'MainPivot' ), updateTour, closeTour );
 
-  const filtered = props.fpsItemsReturn.items.filter( item => { return item.WebPartTab === 'Home' && item.Active === 'Public' } ); //"Home"
+  const filtered = props.fpsItemsReturn.items.filter( item => { return item.WebPartTab === 'Home' && item.Status === 'Public' } ); //"Home"
 
   const HomeLinksElement: JSX.Element = mainPivotKey !== 'Home' ? null : <div className = { styles.page } style={ null }>
     {/* { InfoElement} */}

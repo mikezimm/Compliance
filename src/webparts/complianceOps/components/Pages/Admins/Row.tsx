@@ -8,7 +8,7 @@ import { ISourceRowRender } from '../SourcePages/ISourceRowRender';
 
 export interface IThisItemInterface extends IAnySourceItem {
   ID: number;
-  Active: string;
+  Status: string;
   'File/ServerRelativeUrl': string;
   WebPartTab: string;
   SortOrder: number;
@@ -24,9 +24,9 @@ export function createAdminsRow( props: ISourceRowRender ): JSX.Element { // esl
 
   const thisItem: IThisItemInterface = item as IThisItemInterface;
 
-  const { Title, Description, BannerImageUrl, FirstPublishedDate, PromotedState } = thisItem;
+  const { Title, Description, FirstPublishedDate, PromotedState } = thisItem; // , BannerImageUrl
   const isNewsLink = thisItem.OData__OriginalSourceUrl !== null ? true : false;
-  const isNews =  isNewsLink === false && ( PromotedState === 1 || PromotedState === 2 ) ? true : false;
+  const isNews =  isNewsLink === false && ( PromotedState === 1 || PromotedState === 2 ) ? true : false; //
   const isOldLink = false;
 
 

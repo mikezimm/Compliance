@@ -55,7 +55,7 @@ export interface ISourceInfo {
   history: ISourcePropsCOP;
 }
 
-export const RecordsSitePagesColumns: string[] = [ 'Active', 'WebPartTab', 'SortOrder' ];
+export const RecordsSitePagesColumns: string[] = [ 'Status', 'WebPartTab', 'SortOrder' ];
 
 export const EnforcementColumns: string[] = [ 'ID', 'Title', 'URL', 'Subsite', 'SubTitle', 'SPOwner', 'NoRecordsDeclared', 'DocumentsHosted', 'JSONLists' ];
 
@@ -91,7 +91,7 @@ export const SourceInfo: ISourceInfo = {
     selectThese: [ ...ModernSitePagesColumns, ...RecordsSitePagesColumns ],
     itemFetchCol: ExtraFetchModernPage,
     isModern: true,
-    restFilter: `Active eq 'Public'`,
+    restFilter: `Status eq 'Public'`,
 
     defSearchButtons: [ 'Home', 'Instructions', 'Admin', 'Contents', 'Others', ],
     // meta1 should be same as defSearchButtons and is used to build Admins tab
@@ -232,7 +232,7 @@ export const SourceInfo: ISourceInfo = {
     listTitle: 'Tip of the Day',
     webRelativeLink: '/lists/Tip%20of%20the%20Day',
     searchSource: 'Tips',
-    searchSourceDesc:  'Tip of the day list',
+    searchSourceDesc:  'Tips',
     columns: ['*'],
     searchProps: ['Tip'],
     selectThese: [ '*' ],
