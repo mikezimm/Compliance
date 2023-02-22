@@ -45,6 +45,7 @@ export const WPPresetEverywhere : IPreConfigSettings = {
     props: {
         bannerTitle: "ALV Compliance Opportunities",
         defPinState: 'disabled',
+        homeParentGearAudience: 'Page Editors',
     }
 };
 

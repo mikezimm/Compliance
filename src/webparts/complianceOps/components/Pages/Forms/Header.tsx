@@ -79,8 +79,8 @@ const FormPageHook: React.FC<IFormPageProps> = ( props ) => {
 
   const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
     <ul>
-      <li>These are forms that the XYZ Team uses for XYZ</li>
-      <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li>
+      <li>These are useful forms that provide further guidance on proper management of records.</li>
+      {/* <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li> */}
     </ul>
   </div>
 
@@ -89,7 +89,7 @@ const FormPageHook: React.FC<IFormPageProps> = ( props ) => {
     defaultIcon = 'Help'
     showAccordion = { true }
     content = { MainContent }
-    contentStyles = { { height: '100px' } }
+    contentStyles = { { height: '80px' } }
   />;
 
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Forms' ), updateTour, closeTour );

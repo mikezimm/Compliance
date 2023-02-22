@@ -88,8 +88,7 @@ import { IThisFPSWebPartClass } from '@mikezimm/fps-library-v2/lib/banner/FPSWeb
 import { allCompliance } from '@mikezimm/fps-library-v2/lib/banner/features/Tricky/constants';
 import { getSiteInfo } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/getSiteInfo';
 import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
-import { fetchLables } from './components/HTTPFetch';
-import { RIG_API_PROD_Sales, RIG_API_PROD_Titles, RIG_API_QA_Sales, RIG_API_QA_Titles } from './storedSecrets/CorpAPIs';
+import { RIGAdmin, } from './storedSecrets/CorpAPIs';
 
 export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWebPartProps> {
 
@@ -102,8 +101,8 @@ export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWeb
     this._repoLink = gitRepoCompliance; //Set as any but will get created in FPSSuperOnOnit
     this._exportIgnorePropsWP = exportIgnorePropsWP;
     this._importBlockPropsWP = importBlockPropsWP;
-    this._trickyApp = 'FPS UPDATE FPSBaseClass';
-    this._trickyEmailsWP = allCompliance; // These are emails that get tricky functionality for this specific web part
+    this._trickyApp = 'FPS Compliance';
+    this._trickyEmailsWP = [ ...allCompliance, ...[ RIGAdmin ]]; // These are emails that get tricky functionality for this specific web part
     this._allowShowSearch = false;  //Set to true if you want 'Toggle Search option' in property pane
     this._allowSiteThemeChoice = true;  // Should be set true by default in fps-library-v2 1.0.78
 
