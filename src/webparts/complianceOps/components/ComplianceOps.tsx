@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styles from './ComplianceOps.module.scss';
-import { IComplianceOpsProps, IComplianceOpsState, IStateSource, ITabContactPivots, ITabMain } from './IComplianceOpsProps';
+import { IComplianceOpsProps, IComplianceOpsState, IStateSource, ITabContactPivots, ITabMain, ITabTestingPivots } from './IComplianceOpsProps';
 
 
 import { Pivot, PivotItem, PivotLinkFormat, PivotLinkSize,} from 'office-ui-fabric-react/lib/Pivot';
@@ -65,6 +65,8 @@ import ExpertsPageHook from './Pages/Experts/Header';
 
 import AdminsPageHook from './Pages/Admins/Header';
 
+import TestingPageHook from './Pages/Testing/Header';
+
 // import { createAdminsRow } from './Pages/Admins/Row';
 import { addEasyIcons } from '@mikezimm/fps-library-v2/lib/components/atoms/EasyIcons/getEasyIcon';
 
@@ -79,13 +81,12 @@ const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.f
 //Use this to add more console.logs for this component
 const consolePrefix: string = 'fpsconsole: FpsCore115Banner';
 
-const mainKeys: ITabMain[] = [ 'Home', 'Tips', 'Labels', 'Instructions', 'Site', 'Details', 'Contacts', 'Maps', 'Forms', 'Admins' ];
+const mainKeys: ITabMain[] = [ 'Home', 'Tips', 'Labels', 'Instructions', 'Site', 'Details', 'Contacts', 'Maps', 'Forms', 'Admins', 'Testing' ];
 
 const contactKeys: ITabContactPivots[] = [ 'Experts', 'Coordinators', 'SharePoint', 'Committee', ];
 const contactPivots: JSX.Element[] = contactKeys.map( ( key: string, idx: number ) => {
   return <PivotItem key={ idx } headerText={ contactKeys[idx] } ariaLabel={contactKeys[idx]} title={contactKeys[idx]} itemKey={ key }/>;
 });
-
 
 export default class ComplianceOps extends React.Component<IComplianceOpsProps, IComplianceOpsState> {
 
@@ -113,7 +114,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
   private _setMainPivots() : void {
     const pivots: JSX.Element[] = [];
     mainKeys.map( ( key: ITabMain, idx: number ) => {
-      if ( key !== 'Admins' || this._isAdmin === true ) pivots.push ( <PivotItem key={ idx } headerText={ mainKeys[idx] } ariaLabel={mainKeys[idx]} title={mainKeys[idx]} itemKey={ key }/> );
+      if ( ( key !== 'Admins' && key !== 'Testing' ) || this._isAdmin === true ) pivots.push ( <PivotItem key={ idx } headerText={ mainKeys[idx] } ariaLabel={mainKeys[idx]} title={mainKeys[idx]} itemKey={ key }/> );
     });
     this._mainPivots = pivots;
   }
@@ -206,6 +207,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       fullAnalyticsSaved: false,
       experts: [],
 
+      labels : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       admins : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       site : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       committee : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
@@ -552,6 +554,25 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     />;
 
+    const testingPageHeader = <TestingPageHook
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
+      bannerProps={ bannerProps }
+      stateSource={ this.state.labels }
+      httpClient={ this.props.httpClient }
+      // easyPagesPageProps= {{
+      //   expandedState: true,
+      //   parentUrl: '',
+      //   sourceName: 'Alternate',
+      //   source: this._SourceInfo.admins,
+      //   tabs: this._SourceInfo.admins.defSearchButtons,
+      // }}
+      // easyPagesSourceProps={ this.props.bannerProps.easyPagesSourceProps }
+      // EasyIconsObject={ this.props.bannerProps.EasyIconsObject }
+      primarySource={ this._SourceInfo.labels }
+      fpsItemsReturn={ this.state.labels }
+
+    />;
+
     // const adminsItems = this.createItemsElement( adminsPageHeader, 'Admins' );
 
     const contactsPivot = 
@@ -567,7 +588,6 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       >
        { contactPivots } 
       </Pivot>
-
     </div>
 
     const WebUrl: JSX.Element = bannerProps.showTricks && bannerProps.beAUser !== true ? <WebUrlHook 
@@ -600,6 +620,9 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { mainPivotKey === 'Contacts' && contactPivotKey === 'Coordinators' ? coordinatorsItems : undefined }
         { mainPivotKey === 'Contacts' && contactPivotKey === 'Committee' ? committeeItems : undefined }
         { mainPivotKey === 'Contacts' && contactPivotKey === 'Experts' ? expertsPageHeader : undefined }
+
+        {/* These next 4 items need to be in order where contactsPivot is above the other items */}
+        { mainPivotKey !== 'Testing' ? undefined : testingPageHeader }
 
         { mainPivotKey !== 'Maps' ? undefined : mapItems }
         { mainPivotKey !== 'Forms' ? undefined : formItems }

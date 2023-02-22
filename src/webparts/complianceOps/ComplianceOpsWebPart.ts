@@ -88,6 +88,8 @@ import { IThisFPSWebPartClass } from '@mikezimm/fps-library-v2/lib/banner/FPSWeb
 import { allCompliance } from '@mikezimm/fps-library-v2/lib/banner/features/Tricky/constants';
 import { getSiteInfo } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/getSiteInfo';
 import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
+import { fetchLables } from './components/HTTPFetch';
+import { RIG_API_PROD_Sales, RIG_API_PROD_Titles, RIG_API_QA_Sales, RIG_API_QA_Titles } from './storedSecrets/CorpAPIs';
 
 export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWebPartProps> {
 
@@ -144,6 +146,7 @@ export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWeb
         errMessage: '',
         bannerProps: bannerProps,
 
+        httpClient: this.context.httpClient,
         GroupId: this.properties.GroupId,
         GroupIdStatus: this.properties.GroupIdStatus,
       }

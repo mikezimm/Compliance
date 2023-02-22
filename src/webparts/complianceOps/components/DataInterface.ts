@@ -14,14 +14,14 @@ import { DisplayMode } from '@microsoft/sp-core-library';
 // import { IAppFormat } from './INTERFACES/ILayoutsPage';
 
 // NOTE:  IAppFormat must be very similar to StdComplianceKeys... except history vs unknown
-export type IAppFormat = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'history' | 'admins';
+export type IAppFormat = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'history' | 'admins' | 'labels';
 
 export const IntraNetRecs = ['/sites','/SP_Glob','alPpqRec','ords']; //Just so this is not searchable easily
 export const IntraNetHome: string =`${IntraNetRecs.join('')}`;
 
-export type IDefSourceType = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'admins' | 'history' | 'unknown' | '*';
+export type IDefSourceType = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'admins' | 'history' | 'labels' | 'unknown' | '*';
 
-export type ISearchSource = 'Site' | 'Committee' | 'Coordinators' | 'Maps' | 'Forms' | 'Tips' | 'Admins' | 'History';
+export type ISearchSource = 'Site' | 'Committee' | 'Coordinators' | 'Maps' | 'Forms' | 'Tips' | 'Admins' | 'Labels' | 'History';
 
 /**
  * Added  { prop: string; asc: boolean; } to fix the orderBy? Lint Error.
@@ -52,6 +52,7 @@ export interface ISourceInfo {
   forms: ISourcePropsCOP;
   tips: ISourcePropsCOP;
   admins: ISourcePropsCOP;
+  labels: ISourcePropsCOP;
   history: ISourcePropsCOP;
 }
 
@@ -76,6 +77,38 @@ console.log( collectionUrl );
  */
 
 export const SourceInfo: ISourceInfo = {
+
+  labels: {
+    key: `labels`,
+    defType: `labels`,
+    performanceSettings: {  label: 'labels', updateMiliseconds: true, includeMsStr: true, op: 'fetch7'  },
+    webUrl: ``,
+    listTitle: ``,
+    webRelativeLink: ``,
+    // absoluteWebUrl?: string;
+    // sitesWebUrls?: string;
+    // selectThese?: string[];
+    // expandThese?: string[];
+    // restFilter?: string;
+    // orderBy?: ISeriesSortObject;
+    // webRelativeLink: string;
+    viewItemLink: ``,
+    searchSource: `Labels`,
+    searchSourceDesc: ``,
+    columns: [],
+    searchProps: [],
+    // evalFilter?: string;
+    // itemFetchCol?: string[];
+    // isModern?: boolean;
+    // OverflowTab?: string;
+    // meta0?: string[];
+    // meta1?: string[];
+    // meta2?: string[];
+    // meta3?: string[];
+    // metaX?: string[];
+    defSearchButtons: [],
+    fetchCount: 5000,
+  },
 
   admins: {
     key: 'admins',
@@ -310,6 +343,7 @@ export function buildCurrentSourceInfo( editMode: DisplayMode, getsAdmin: boolea
   SourceInfo.forms.performanceSettings.editMode = editMode;
   SourceInfo.tips.performanceSettings.editMode = editMode;
   SourceInfo.admins.performanceSettings.editMode = editMode;
+  SourceInfo.labels.performanceSettings.editMode = editMode;
 
   // Give Admins of Records site and Tricky Users the Admins tab and Admins pages
   if ( getsAdmin === true ) { SourceInfo.admins.restFilter = ''; }
