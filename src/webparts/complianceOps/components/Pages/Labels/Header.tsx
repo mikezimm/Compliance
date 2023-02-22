@@ -11,6 +11,7 @@ import styles from './header.module.scss';
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
+import { OtherIframeHref, RigAPIDocs, RIG_Page_Search_QA } from '../../../storedSecrets/CorpAPIs';
 
 export interface ILabelsPageProps {
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
@@ -74,22 +75,20 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
  *                                                                 
  *                                                                 
  */
-  const bannerIframeHref: string =`https://alvweb.alv.tenant.int/RIG/RetentionSchedule.aspx?Search=`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
-  const rigAPIDocs: string =`https://alvweb.alv.tenant.int/RIG/rest/RIG/`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
-  const otherIframeHref: string =`https://alvweb.alv.tenant.int/RIG/ItemGovernance.aspx`.replace(`tenant`,'vilotua'.split("").reverse().join(''));
+
   // const backgroundImage: string = `url("${bannerImage}")`;
 
   const MainContent: JSX.Element = <div className={ styles.infoItems }style={{ cursor: 'default' }}>
     {/* <ul> */}
       <div>The first step to applying records retention to your files, is understanding what kinds of records you have.</div>
       <div><span>You can search the retention schedule here or 
-        <span onClick={ () => window.open( bannerIframeHref, '_blank') } 
+        <span onClick={ () => window.open( RIG_Page_Search_QA, '_blank') } 
         style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}
         >
         click on this link to open in a full window</span>.</span></div>
-      {/* <li onClick={ () => window.open( bannerIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}>IFrame Url1: { bannerIframeHref} </li> */}
-      <div onClick={ () => window.open( otherIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>IFrame Url2: { otherIframeHref} </div>
-      <div onClick={ () => window.open( rigAPIDocs, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>API Docs: { rigAPIDocs} </div>
+      {/* <li onClick={ () => window.open( RIG_Page_Search, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}>IFrame Url1: { RIG_Page_Search} </li> */}
+      <div onClick={ () => window.open( OtherIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>IFrame Url2: { OtherIframeHref} </div>
+      <div onClick={ () => window.open( RigAPIDocs, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>API Docs: { RigAPIDocs} </div>
       {/* <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'purple', fontWeight: 600 }}>MIKE to provide further description here</li> */}
     {/* </ul> */}
   </div>
@@ -108,7 +107,7 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
     { InfoElement }
     {/* <div id={ 'ComplLabelsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
     <div style={{ width: 'calc(100% - 40px)', height: '75vh'}}>
-      <iframe src={bannerIframeHref} width='100%' height='100%' name='labels_Iframe'/>
+      <iframe src={RIG_Page_Search_QA} width='100%' height='100%' name='labels_Iframe'/>
     </div>
 
     { TeachMe }

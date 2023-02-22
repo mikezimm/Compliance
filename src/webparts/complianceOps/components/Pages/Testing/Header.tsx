@@ -9,7 +9,7 @@ import ReactJson from 'react-json-view';
 
 import { IComplianceOpsProps, IComplianceOpsState, IStateSource, ITabContactPivots, ITabMain, ITabTesting, ITabTestingPivots } from '../../IComplianceOpsProps';
 
-import HTTPApiHook from '../../HTTPApiBox/component';
+import HTTPApiHook from '../../HttpApiBox/component';
 
 // await fetchLables( RIG_API_PROD_Titles, this.context.spHttpClient, 'Prod Labels' );
 // await fetchLables( RIG_API_QA_Titles, this.context.spHttpClient, 'QA Labels' );
