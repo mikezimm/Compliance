@@ -9,6 +9,7 @@ import ReactJson from 'react-json-view';
 
 import { IComplianceOpsProps, IComplianceOpsState, IStateSource, ITabContactPivots, ITabMain, ITabTesting, ITabTestingPivots } from '../../IComplianceOpsProps';
 
+import HTTPApiHook from '../../HTTPApiBox/component';
 
 // await fetchLables( RIG_API_PROD_Titles, this.context.spHttpClient, 'Prod Labels' );
 // await fetchLables( RIG_API_QA_Titles, this.context.spHttpClient, 'QA Labels' );
@@ -20,11 +21,10 @@ import { Pivot, PivotItem, PivotLinkFormat, PivotLinkSize,} from 'office-ui-fabr
 import { ISourcePropsCOP } from '../../DataInterface';
 import { IWebpartBannerProps } from '../../../fpsReferences';
 import { RIG_API_PROD_Sales, RIG_API_PROD_Titles, RIG_API_QA_Sales, RIG_API_QA_Titles } from '../../../storedSecrets/CorpAPIs';
-import { fetchLables, IFpsHttpInfo } from '../../HTTPFetch';
 // import { ISpinnerStyles, Spinner, SpinnerSize, } from 'office-ui-fabric-react/lib/Spinner';
 
 
-const testingKeys: ITabTestingPivots[] = [ 'Prod Titles', 'QA Titles', 'Prod Sales', 'QA Sales', ];
+const testingKeys: ITabTestingPivots[] = [ 'Instructions', 'Prod Titles', 'QA Titles', 'Prod Sales', 'QA Sales', ];
 const testingPivots: JSX.Element[] = testingKeys.map( ( key: string, idx: number ) => {
   return <PivotItem key={ idx } headerText={ testingKeys[idx] } ariaLabel={testingKeys[idx]} title={testingKeys[idx]} itemKey={ key }/>;
 });
@@ -70,21 +70,21 @@ const TestingPageHook: React.FC<ITestingPageProps> = ( props ) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { debugMode, mainPivotKey, wpID, primarySource, } = props; //appLinks, news 
 
-  const [ tab, setTab ] = useState< ITabTestingPivots >( 'na' );
+  const [ tab, setTab ] = useState< ITabTestingPivots >( 'Instructions' );
   const [ fetchThis, setFetchThis ] = useState< string >( '' );
-  const [ response, setResponse ] = useState< IFpsHttpInfo >( null );
+  // const [ response, setResponse ] = useState< IFpsHttpInfo >( null );
 
   const pivotTestingClick = async ( temp: any ): Promise<void> => {
     const tabKey: ITabTestingPivots = temp.props.itemKey;
     setTab( tabKey );
-    let fetchThis: string = '';
-    if ( tabKey === 'Prod Sales' ) { fetchThis = RIG_API_PROD_Sales }
-    else if ( tabKey === 'QA Sales' ) { fetchThis = RIG_API_QA_Sales }
-    else if ( tabKey === 'Prod Titles' ) { fetchThis = RIG_API_PROD_Titles }
-    else if ( tabKey === 'QA Titles' ) { fetchThis = RIG_API_QA_Titles }
+    let fetchThisStr: string = '';
+    if ( tabKey === 'Prod Sales' ) { fetchThisStr = RIG_API_PROD_Sales }
+    else if ( tabKey === 'QA Sales' ) { fetchThisStr = RIG_API_QA_Sales }
+    else if ( tabKey === 'Prod Titles' ) { fetchThisStr = RIG_API_PROD_Titles }
+    else if ( tabKey === 'QA Titles' ) { fetchThisStr = RIG_API_QA_Titles }
 
-    const respon: IFpsHttpInfo = await fetchLables( fetchThis, props.httpClient, tabKey );
-    setResponse( respon );
+    // const respon: IFpsHttpInfo = await fetchLables( fetchThis, props.httpClient, tabKey );
+    setFetchThis( fetchThisStr );
 
   }
 
@@ -103,11 +103,24 @@ const TestingPageHook: React.FC<ITestingPageProps> = ( props ) => {
     </Pivot>
   </div>
 
+  const startElement: JSX.Element = tab !== 'Instructions' ? undefined : <div>
+      <h3>Click on another tab to fetch that api.</h3>
+    </div>
+
+  const resultElement: JSX.Element = tab === 'Instructions' ? undefined : <HTTPApiHook 
+    description={ tab }
+    textInput={ fetchThis }
+    httpClient={ props.httpClient }
+    showComponent={ true }
+    updateInputCallback={ null }
+    wpID={ props.wpID }
+  />
+
   const TestingPageElement: JSX.Element = mainPivotKey !== 'Testing' ? null : <div className = { styles.page } style={ null }>
     { testingsPivot }
+    { resultElement }
+    { startElement }
 
-    <ReactJson src={ response } name={ 'Response Details' } collapsed={ false } displayDataTypes={ false } displayObjectSize={ false }
-          enableClipboard={ true } style={{ padding: '20px 0px' }} theme= { 'rjv-default' } indentWidth={ 2}/>
     {/* <div id={ 'ComplTestingtartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
     { null }
   </div>;

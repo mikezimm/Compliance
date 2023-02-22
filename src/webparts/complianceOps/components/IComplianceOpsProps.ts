@@ -51,7 +51,7 @@ export type ITabTesting = `Testing`;
 
 export type ITabMain = ITabHome | ISearchSource | ITabInstructions | ITabContacts | ITabDetails | ITabLabels | ITabAdmins | ITabTesting;
 export type ITabContactPivots = ITabCommittee | ITabCoordinators | ITabSharePoint | ITabExperts;
-export type ITabTestingPivots = 'Prod Titles' | 'QA Titles' | 'Prod Sales' | 'QA Sales' | 'na';
+export type ITabTestingPivots = 'Prod Titles' | 'QA Titles' | 'Prod Sales' | 'QA Sales' | 'na' | 'Instructions';
 
 /**
  * Extends IFPSCorePinMeReactComponentState with all basics required for FPS Banner

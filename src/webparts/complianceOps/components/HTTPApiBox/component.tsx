@@ -22,25 +22,24 @@ import { fetchLables, IFpsHttpInfo } from '../HTTPFetch';
 export const HTTPApiIsValidMessage: string = `API is valid`;
 
 export interface IHTTPApiProps {
-  showInput: boolean;
+  showComponent: boolean;
   inputLabel?: string;
   textInput: string;
   description: string;
   httpClient: HttpClient;
   updateInputCallback( url: string, siteInfo: IFpsHttpInfo ) : void;
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
-  mainPivotKey: ITabMain;
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
 }
 
 const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { debugMode, mainPivotKey, wpID, showInput, textInput, updateInputCallback, httpClient, description } = props; //appLinks, news 
+  const { debugMode, wpID, showComponent, textInput, updateInputCallback, httpClient, description } = props; //appLinks, news 
 
-  // const [ currentUrl, setCurrentUrl ] = useState<string>( textInput );
+  const [ currentUrl, setCurrentUrl ] = useState<string>( textInput );
   const [ webURLStatus, setWebURLStatus ] = useState<string>( 'Untested' );
-  const [ validUrl, setValidUrl ] = useState<string>( '' );
+  // const [ validUrl, setValidUrl ] = useState<string>( '' );
   const [ response, setResponse ] = useState< IFpsHttpInfo >( null );
 
   // const [ lastBubble, setLastBubble ] = useState<number>( 0 );
@@ -60,16 +59,18 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
 
     setTimeout(async () => {
 
-      if ( validUrl !== NewValue ) {
+      if ( currentUrl !== NewValue ) {
         const responseInfo: IFpsHttpInfo = await fetchLables( textInput, httpClient, description );
 
         if ( responseInfo.status === 'Success' ) {
-          setValidUrl( NewValue );
+          // setValidUrl( NewValue );
+          setCurrentUrl( NewValue );
           updateInputCallback( NewValue, responseInfo,  );
           setWebURLStatus( HTTPApiIsValidMessage );
           setResponse( responseInfo );
         } else {
-          setValidUrl( '' );
+          // setValidUrl( '' );
+          setCurrentUrl( NewValue );
           setWebURLStatus( responseInfo.errorInfo.friendly );
           setResponse( responseInfo );
         }
@@ -80,8 +81,8 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
   }
 
   useEffect(() => {
-    delayOnHTTPApiChange( textInput )
-  }, [ ] );  // Only trigger on first load
+    delayOnHTTPApiChange( textInput );
+  }, [ textInput ] );  // Only trigger on first load
 
   // const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
   //   <ul>
@@ -98,15 +99,16 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
   //   contentStyles = { { height: '100px' } }
   // />;
 
-  const InputLabel : string = props.inputLabel ? props.inputLabel : `WebURL`;
+  const InputLabel : string = props.inputLabel ? props.inputLabel : `API Endpoint`;
 
-  const HTTPApiElement: JSX.Element = showInput !== true ? null : 
-  <div><div style={{ display: 'inline-table', paddingBottom: '20px', paddingTop: '20px', width: '100%', background: 'lightgray' }}>
+  const HTTPApiElement: JSX.Element = showComponent !== true ? null : 
+  <div><div style={{ display: 'inline-table', paddingBottom: '20px', paddingTop: '20px', width: '100%' }}>
     <span style={{ paddingLeft: '20px', paddingRight: '20px', fontSize: 'larger', fontWeight: 600, whiteSpace: 'nowrap', cursor: 'default' }}>{ InputLabel }</span>
     <TextField
       className={ styles.textField }
-      styles={ { fieldGroup: [ { width: '75%', maxWidth: '700px' }, { borderColor: 'lightgray', }, ] } } //this.getReportingStyles
-      defaultValue={ textInput }
+      styles={ { fieldGroup: [ { width: '75%', maxWidth: '700px' }, ] } } //this.getReportingStyles
+      // defaultValue={ textInput }
+      value={ currentUrl }
       label={ null }
       autoComplete='off'
       // onChange={ this._onHTTPApiChange.bind(this) }
@@ -124,9 +126,10 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
       </span> }
     </div>
 
-    <ReactJson src={ response } name={ 'Response Details' } collapsed={ false } displayDataTypes={ false } displayObjectSize={ false }
+    { !response ? <div>NO API Provided</div> :
+        <ReactJson src={ response } name={ 'Response Details' } collapsed={ false } displayDataTypes={ false } displayObjectSize={ false }
         enableClipboard={ true } style={{ padding: '20px 0px' }} theme= { 'rjv-default' } indentWidth={ 2}/>
-
+    }
     </div>;
 
   return ( HTTPApiElement );
