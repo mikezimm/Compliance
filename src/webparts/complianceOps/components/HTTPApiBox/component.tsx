@@ -3,21 +3,14 @@
 
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useState, useEffect } from 'react';
-import { ITabMain } from '../IComplianceOpsProps';
-// import { Icon  } from 'office-ui-fabric-react/lib/Icon';
+import { useState, useEffect, useCallback } from 'react';
 
-// import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
-import { getSiteInfo } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/getSiteInfo';
-import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
 import styles from './webInput.module.scss';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { HttpClient, HttpClientResponse } from '@microsoft/sp-http';
 import ReactJson from 'react-json-view';
 import { fetchLables, IFpsHttpInfo } from '../HTTPFetch';
-// import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
-// import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
-// import { AllTeachBubbles } from '../Teaching/bubbles';
+import { BasicAuth } from '../../storedSecrets/CorpAPIs';
 
 export const HTTPApiIsValidMessage: string = `API is valid`;
 
@@ -28,6 +21,7 @@ export interface IHTTPApiProps {
   description: string;
   httpClient: HttpClient;
   updateInputCallback( url: string, siteInfo: IFpsHttpInfo ) : void;
+  callBackOnError: boolean;
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
 }
@@ -35,7 +29,7 @@ export interface IHTTPApiProps {
 const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { debugMode, wpID, showComponent, textInput, updateInputCallback, httpClient, description } = props; //appLinks, news 
+  const { debugMode, wpID, showComponent, textInput, updateInputCallback, httpClient, description, callBackOnError } = props; //appLinks, news 
 
   const [ currentUrl, setCurrentUrl ] = useState<string>( textInput );
   const [ webURLStatus, setWebURLStatus ] = useState<string>( 'Untested' );
@@ -54,34 +48,47 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
   //   setTeachBubble( null );
   // }
 
+  const onHTTPApiChange = useCallback( async (NewValue: string, ): Promise<void> => {
+
+    if ( currentUrl !== NewValue ) setCurrentUrl( NewValue );
+    // if ( currentUrl !== NewValue ) {
+    const responseInfo: IFpsHttpInfo = await fetchLables( NewValue, httpClient, description, BasicAuth );
+
+    if ( responseInfo.status === 'Success' ) {
+      // setValidUrl( NewValue );
+      // setCurrentUrl( NewValue );
+      updateInputCallback( NewValue, responseInfo,  );
+      setWebURLStatus( HTTPApiIsValidMessage );
+      setResponse( responseInfo );
+    } else {
+      // setValidUrl( '' );
+      // setCurrentUrl( NewValue );
+      // for:  https://github.com/mikezimm/Compliance/issues/44
+      if ( callBackOnError === true ) updateInputCallback( NewValue, responseInfo, );
+      setWebURLStatus( responseInfo.errorInfo ? responseInfo.errorInfo.friendly : responseInfo.status );
+      setResponse( responseInfo );
+    }
+    // }
+    // }
+
+    return;
+
+  }, []);
+
   const delayOnHTTPApiChange = (input: any): void => {
     const NewValue = typeof input === 'string' ? input : input && input.target && input.target.value ? input.target.value : '';
 
-    setTimeout(async () => {
-
-      if ( currentUrl !== NewValue ) {
-        const responseInfo: IFpsHttpInfo = await fetchLables( textInput, httpClient, description );
-
-        if ( responseInfo.status === 'Success' ) {
-          // setValidUrl( NewValue );
-          setCurrentUrl( NewValue );
-          updateInputCallback( NewValue, responseInfo,  );
-          setWebURLStatus( HTTPApiIsValidMessage );
-          setResponse( responseInfo );
-        } else {
-          // setValidUrl( '' );
-          setCurrentUrl( NewValue );
-          setWebURLStatus( responseInfo.errorInfo.friendly );
-          setResponse( responseInfo );
-        }
-      }
-    }, 1000);
-    // }
-
+    if ( currentUrl !== NewValue ) {
+      setTimeout(async () => {
+        await onHTTPApiChange( NewValue );
+      }, 1000);
+    }
   }
 
-  useEffect(() => {
-    delayOnHTTPApiChange( textInput );
+  useEffect((): void => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    // setCurrentUrl( textInput );
+    onHTTPApiChange( textInput );
   }, [ textInput ] );  // Only trigger on first load
 
   // const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
@@ -126,7 +133,7 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
       </span> }
     </div>
 
-    { !response ? <div>NO API Provided</div> :
+    { !response ? <div>{webURLStatus}</div> :
         <ReactJson src={ response } name={ 'Response Details' } collapsed={ false } displayDataTypes={ false } displayObjectSize={ false }
         enableClipboard={ true } style={{ padding: '20px 0px' }} theme= { 'rjv-default' } indentWidth={ 2}/>
     }

@@ -113,6 +113,7 @@ const TestingPageHook: React.FC<ITestingPageProps> = ( props ) => {
     httpClient={ props.httpClient }
     showComponent={ true }
     updateInputCallback={ null }
+    callBackOnError= { true }
     wpID={ props.wpID }
   />
 

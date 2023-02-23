@@ -597,6 +597,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       textInput={ this.state.targetSite }
       // updateInputCallback={ ( url: string, targetStatus: string ) => { this.setState({ targetSite: url, targetStatus: targetStatus }) }}
       updateInputCallback= { this._updateWebUrl.bind( this )}
+      callBackOnError= { true }
       wpID={ '' }
     /> : undefined ;
 

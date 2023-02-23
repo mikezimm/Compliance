@@ -20,17 +20,18 @@ export interface IFpsHttpInfo extends IFpsErrorObject {
 
 }
 
-export async function fetchLables ( apiEndPoint: string, httpClient: HttpClient, description: string ): Promise<IFpsHttpInfo>  {
+export async function fetchLables ( apiEndPoint: string, httpClient: HttpClient, description: string, headers?: any ): Promise<IFpsHttpInfo>  {
 
   // Validate approved location
   // const websLocation = this.approvedWebs.filter(loc => loc.key == web)[0];
   // const websQuery = window.location.origin + websLocation.siteRelativeURL + "/_api/Web/Lists?$filter=BaseTemplate eq 101 and Hidden eq false&select=Title";
   
   try {
-    const response = await httpClient.get(apiEndPoint, HttpClient.configurations.v1);
+    // const response = await httpClient.get(apiEndPoint, HttpClient.configurations.v1, headers ? headers : undefined );
+    const response = await httpClient.get(apiEndPoint, HttpClient.configurations.v1, headers );
     if ( check4Gulp() ===  true ) console.log(`API Response: ${description}`, response );
 
-    return createFPSHttpResponse( description, response );
+    return await createFPSHttpResponse( description, response );
 
   } catch(e) {
     return { 

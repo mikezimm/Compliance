@@ -24,6 +24,7 @@ export interface IWebUrlProps {
   inputLabel?: string;
   textInput: string;
   updateInputCallback( url: string, siteInfo: IFpsGetSiteReturn ) : void;
+  callBackOnError: boolean;
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
   mainPivotKey: ITabMain;
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
@@ -32,7 +33,7 @@ export interface IWebUrlProps {
 const WebUrlHook: React.FC<IWebUrlProps> = ( props ) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { debugMode, mainPivotKey, wpID, showInput, textInput, updateInputCallback,  } = props; //appLinks, news 
+  const { debugMode, mainPivotKey, wpID, showInput, textInput, updateInputCallback, callBackOnError } = props; //appLinks, news 
 
   // const [ currentUrl, setCurrentUrl ] = useState<string>( textInput );
   const [ webURLStatus, setWebURLStatus ] = useState<string>( 'Untested' );
@@ -63,7 +64,9 @@ const WebUrlHook: React.FC<IWebUrlProps> = ( props ) => {
           setWebURLStatus( WebUrlIsValidMessage );
         } else {
           setValidUrl( '' );
-          setWebURLStatus( siteInfo.errorInfo.friendly );
+          if ( callBackOnError === true ) updateInputCallback( NewValue, siteInfo, );
+          // for:  https://github.com/mikezimm/Compliance/issues/44
+          setWebURLStatus( siteInfo.errorInfo ? siteInfo.errorInfo.friendly : siteInfo.status );
         }
       }
     }, 1000);
