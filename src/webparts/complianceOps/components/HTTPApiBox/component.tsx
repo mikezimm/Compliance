@@ -43,21 +43,21 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
   //   setLastBubble( saveBubble );
   //   setTeachBubble( null );
   // }
-  const delayOnHTTPApiChange = (input: any): void => {
+  const delayOnHTTPApiChange = (input: any, forceRun: boolean ): void => {
     const NewValue = typeof input === 'string' ? input : input && input.target && input.target.value ? input.target.value : '';
     setTimeout(async () => {
-      if ( currentUrl !== NewValue ) {
-        const responseInfo: IFpsHttpInfo = await fetchLables( textInput, httpClient, description );
+      if ( currentUrl !== NewValue || forceRun === true ) {
+        const responseInfo: IFpsHttpInfo = await fetchLables( NewValue, httpClient, description );
         if ( responseInfo.status === 'Success' ) {
           // setValidUrl( NewValue );
           setCurrentUrl( NewValue );
-          updateInputCallback( NewValue, responseInfo,  );
+          if ( updateInputCallback ) updateInputCallback( NewValue, responseInfo,  );
           setWebURLStatus( HTTPApiIsValidMessage );
           setResponse( responseInfo );
         } else {
           // setValidUrl( '' );
           setCurrentUrl( NewValue );
-          if ( callBackOnError === true ) updateInputCallback( NewValue, responseInfo, );
+          if ( callBackOnError === true && updateInputCallback ) updateInputCallback( NewValue, responseInfo, );
           setWebURLStatus( responseInfo.errorInfo.friendly );
           setResponse( responseInfo );
         }
@@ -65,9 +65,16 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
     }, 1000);
     // }
   }
+
   useEffect(() => {
-    delayOnHTTPApiChange( textInput );
-  }, [ textInput ] );  // Only trigger on first load
+    delayOnHTTPApiChange( textInput, true );
+  }, [ ] );  // Only trigger on first load
+
+  useEffect(() => {
+    delayOnHTTPApiChange( textInput, false );
+  }, [ textInput ] );  // When textInput changes
+
+
   // const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
   //   <ul>
   //     <li>These are NOT google maps {`:)`}</li>

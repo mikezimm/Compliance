@@ -4,7 +4,7 @@ import { IHelpTable, } from '@mikezimm/fps-library-v2/lib/banner/components/Sing
 import { createAboutRow } from '@mikezimm/fps-library-v2/lib/banner/components/Panel/createAboutRow';
 import { IWebpartBannerProps } from '@mikezimm/fps-library-v2/lib/banner/mainReact/IWebpartBannerProps';
 
-export const panelVersionNumber = '2023-02-21 -  1.0.0.08'; //Added to show in panel
+export const panelVersionNumber = '2023-02-23 -  1.0.0.09'; //Added to show in panel
 
 export function aboutTable( bannerProps: IWebpartBannerProps ): { table: IHelpTable } {
 
