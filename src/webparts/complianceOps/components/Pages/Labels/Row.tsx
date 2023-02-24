@@ -61,7 +61,6 @@ export function createLabelsRow( props: ISourceRowRender ): JSX.Element { // esl
     <div title={ null } >{ getHighlightedText( item.RecordCode, searchText ) }</div>
     <div title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</div>
     <div title={ null } >{ getHighlightedText( item.Description, searchText ) }</div>
-
     {/* <div title={ null } >{ getHighlightedText( item[ 'Name/Title' ], searchText ) }</div> */}
   </div>;
 

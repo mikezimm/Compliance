@@ -14,6 +14,7 @@ export function getSuggestionsByKeys(item: any, keys: string[], suggestions: ISu
   const results: ISuggestion[] = [];
 
   keys.map(key => {
+    //Exclude empty keys, if results is more than max, if the item[key] is not a string or is empty
     if ( key && results.length < max && item[key] && typeof item[key] === 'string') {
 
       // get array of strings only (aka words) from the item proprty

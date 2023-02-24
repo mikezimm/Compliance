@@ -84,8 +84,7 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
       <div>You can search the retention schedule here or 
         <span onClick={ () => window.open( RIG_Page_Search_PROD, '_blank') } 
         style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}
-        >
-        click on this link to open in a full window</span>.</div>
+        >click on this link</span>  to open in a full window.</div>
       {/* <li onClick={ () => window.open( RIG_Page_Search, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}>IFrame Url1: { RIG_Page_Search} </li> */}
       <div onClick={ () => window.open( OtherIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>IFrame Url2: { OtherIframeHref} </div>
       <div onClick={ () => window.open( RigAPIDocs, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>API Docs: { RigAPIDocs} </div>

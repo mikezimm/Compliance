@@ -103,7 +103,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
   private _performance: ILoadPerformance = null;
 
-  private _suggestions: string [];
+  private _suggestions: boolean;
 
   private _webPartHelpElement = [
     getWebPartHelpElementBoxTiles( ),
@@ -335,8 +335,12 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     ]);
 
     //Get Suggestions
-    const suggestions = getSuggestionsByKeys( user.item, [ 'jobTitle' ] , LabelSuggs );
-    console.log( 'Suggestions', suggestions );
+    if ( this._suggestions !== true ) {
+      const suggestions = !this.state.user.item ? getSuggestionsByKeys( user.item, [ 'jobTitle' ] , LabelSuggs ) : [];
+      console.log( 'Suggestions', suggestions );
+      this._suggestions = true;
+    }
+
 
     const endWas = Math.max(
       ops.fetch0 && ops.fetch0.end ? ops.fetch0.end.getTime() : -1,
