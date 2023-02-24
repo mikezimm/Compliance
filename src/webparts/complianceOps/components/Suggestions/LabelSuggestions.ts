@@ -41,7 +41,7 @@ export const CustRelationsLabels: ISuggestion = {
 export const ITLabels: ISuggestion = {
   title: `IT`,
   description: ``,
-  finds: [ `SharePoint`, `Information Technology`, `` ] ,
+  finds: [ `SharePoint`, `Information Technology`, ] ,
   suggestions: [ `` ] ,
 }
 

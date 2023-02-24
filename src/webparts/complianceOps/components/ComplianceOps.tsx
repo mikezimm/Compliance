@@ -335,7 +335,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     ]);
 
     //Get Suggestions
-    const suggestions = getSuggestionsByKeys( user, [ 'jobDescription' ] , LabelSuggs );
+    const suggestions = getSuggestionsByKeys( user.item, [ 'jobTitle' ] , LabelSuggs );
     console.log( 'Suggestions', suggestions );
 
     const endWas = Math.max(

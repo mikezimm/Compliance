@@ -14,10 +14,10 @@ export function getSuggestionsByKeys(item: any, keys: string[], suggestions: ISu
   const results: ISuggestion[] = [];
 
   keys.map(key => {
-    if (results.length < max && item[key] && typeof item[key] === 'string') {
+    if ( key && results.length < max && item[key] && typeof item[key] === 'string') {
 
       // get array of strings only (aka words) from the item proprty
-      const keyVals: string[] = key.replace(/[0-9]/g, " ").split(/\b([a-z]+)\b/gi);
+      const keyVals: string[] = item[key].replace(/[0-9]/g, " ").split(/\b([a-z]+)\b/gi);
 
       keyVals.map(keyval => {
         let found: boolean = false;
