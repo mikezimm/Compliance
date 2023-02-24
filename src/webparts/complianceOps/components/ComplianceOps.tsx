@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styles from './ComplianceOps.module.scss';
-import { IComplianceOpsProps, IComplianceOpsState, IStateSource, ITabContactPivots, ITabMain, ITabTestingPivots } from './IComplianceOpsProps';
+import { IComplianceOpsProps, IComplianceOpsState, IStateSource, IStateUser, ITabContactPivots, ITabMain, ITabSecondary, ITabTestingPivots } from './IComplianceOpsProps';
 
 
 import { Pivot, PivotItem, PivotLinkFormat, PivotLinkSize,} from 'office-ui-fabric-react/lib/Pivot';
@@ -74,6 +74,15 @@ import SharePointPageHook from './Pages/SharePoint/Header';
 import { getSiteCollectionUrlFromLink } from '@mikezimm/fps-library-v2/lib/logic/Strings/urlServices';
 import { IUserProperties } from './PersonaCard/IUserProperties';
 import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
+import { fetchLabelData } from './Pages/Labels/fetchLabels';
+import { createLabelsRow } from './Pages/Labels/Row';
+
+import { MSGraphClient } from '@microsoft/sp-http';
+import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
+import { convertSugsLC } from './Suggestions/convertSugsLC';
+import { LabelSuggestions } from './Suggestions/LabelSuggestions';
+import { getSuggestionsByKeys } from './Suggestions/getSuggestionsByKeys';
+
 // import { createSharePointRow } from './Pages/SharePoint/Row';
 
 const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.fpsSiteThemeLight, primary: styles.fpsSiteThemePrimary };
@@ -83,14 +92,18 @@ const consolePrefix: string = 'fpsconsole: FpsCore115Banner';
 
 const mainKeys: ITabMain[] = [ 'Home', 'Tips', 'Labels', 'Instructions', 'Site', 'Details', 'Contacts', 'Maps', 'Forms', 'Admins', 'Testing' ];
 
-const contactKeys: ITabContactPivots[] = [ 'Experts', 'Coordinators', 'SharePoint', 'Committee', ];
+const contactKeys: ITabContactPivots[] = [ 'Experts', 'SharePoint', 'Coordinators', 'Committee', ];
 const contactPivots: JSX.Element[] = contactKeys.map( ( key: string, idx: number ) => {
   return <PivotItem key={ idx } headerText={ contactKeys[idx] } ariaLabel={contactKeys[idx]} title={contactKeys[idx]} itemKey={ key }/>;
 });
 
+const LabelSuggs = convertSugsLC( LabelSuggestions, true );
+
 export default class ComplianceOps extends React.Component<IComplianceOpsProps, IComplianceOpsState> {
 
   private _performance: ILoadPerformance = null;
+
+  private _suggestions: string [];
 
   private _webPartHelpElement = [
     getWebPartHelpElementBoxTiles( ),
@@ -142,6 +155,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     if ( this.state.forms.loaded !== true ) loads.push( 'forms' );
     if ( this.state.tips.loaded !== true ) loads.push( 'tips' );
     if ( this.state.admins.loaded !== true ) loads.push( 'admins' );
+    if ( this.state.labels.loaded !== true ) loads.push( 'labels' );
+    if ( this.state.user.loaded !== true ) loads.push( 'user' );
 
     if ( loads.length === 0 ) loads.push( '*' );
 
@@ -151,6 +166,33 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
   private _updatePinState( newValue :  IPinMeState ): void {
     this.setState({ pinState: newValue, });
+  }
+
+  private graphClient: MSGraphClient = null;
+
+  private async getCurrentUserGraph(): Promise<IStateUser>{
+    try {
+      const thisContext = this.props.bannerProps.context as any;
+      this.graphClient = await thisContext.msGraphClientFactory.getClient();
+      const results: any = await this.graphClient
+        .api(`/me`)
+        .version('v1.0')
+        .get();
+      console.log('getCurrentUser Success', results );
+      return {
+        item: results,
+        e: null,
+        status: 'Success',
+      };
+
+    } catch (e) {
+      console.log('getCurrentUser Error', e );
+      return {
+        item: null,
+        e: null,
+        status: 'Error',
+      };
+    }
   }
 
   /***
@@ -215,6 +257,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       maps : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       forms : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       tips : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      user: { item: null, loaded: false, refreshId: constId, status: 'Unknown', e: null },
 
     };
   }
@@ -279,7 +322,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     const all: boolean = sources.indexOf( '*' ) > -1 ? true : false;
 
     // NOTE:  The vars in the array must be in same order they are called in the Promise.all
-    const [ site, committee, coordinators, maps, forms, tips, admins ] = await Promise.all([
+    const [ site, committee, coordinators, maps, forms, tips, admins, labels, user ] = await Promise.all([
       all === true || sources.indexOf( 'site' ) > -1 ? this.getSource( this._SourceInfo.site, this._performance ) : this.state.site,
       all === true || sources.indexOf( 'committee' ) > -1 ? this.getSource( this._SourceInfo.committee, this._performance ) : this.state.committee,
       all === true || sources.indexOf( 'coordinators' ) > -1 ? this.getSource( this._SourceInfo.coordinators, this._performance ) : this.state.coordinators,
@@ -287,7 +330,13 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       all === true || sources.indexOf( 'forms' ) > -1 ? this.getSource( this._SourceInfo.forms, this._performance ) : this.state.forms,
       all === true || sources.indexOf( 'tips' ) > -1 ? this.getSource( this._SourceInfo.tips, this._performance ) : this.state.tips,
       all === true || sources.indexOf( 'admins' ) > -1 ? this.getSource( this._SourceInfo.admins, this._performance ) : this.state.admins,
+      all === true || sources.indexOf( 'labels' ) > -1 ? this.getSource( this._SourceInfo.labels, this._performance ) : this.state.labels,
+      all === true || sources.indexOf( 'user' ) > -1 ? this.getCurrentUserGraph() : this.state.user,
     ]);
+
+    //Get Suggestions
+    const suggestions = getSuggestionsByKeys( user, [ 'jobDescription' ] , LabelSuggs );
+    console.log( 'Suggestions', suggestions );
 
     const endWas = Math.max(
       ops.fetch0 && ops.fetch0.end ? ops.fetch0.end.getTime() : -1,
@@ -297,6 +346,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       ops.fetch4 && ops.fetch4.end ? ops.fetch4.end.getTime() : -1,
       ops.fetch5 && ops.fetch5.end ? ops.fetch5.end.getTime() : -1,
       ops.fetch6 && ops.fetch6.end ? ops.fetch6.end.getTime() : -1,
+      ops.fetch7 && ops.fetch7.end ? ops.fetch7.end.getTime() : -1,
+      ops.fetch9 && ops.fetch9.end ? ops.fetch9.end.getTime() : -1,
     );
 
     const experts: IUserProperties[] = [];
@@ -307,7 +358,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
           expert.JobTitle = member.MemberPosition;
           expert.Email = getEmailFromLoginName( expert.Name );
           experts.push( expert );
-        } 
+        }
       });
     }
     ops.fetch = updatePerformanceEnd( ops.fetch,   true, 999999 );
@@ -316,6 +367,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     console.log('Total fetch time was:', totalTime );
 
     this.setState({
+      user: user,
       experts: experts,
       admins: admins,
       site: site,
@@ -324,6 +376,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       coordinators: coordinators,
       forms: forms,
       tips: tips,
+      labels: labels,
       fullAnalyticsSaved: true,
     });
 
@@ -331,8 +384,12 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
   private async getSource( sourceProps: ISourcePropsCOP, _performance: ILoadPerformance ) : Promise<IStateSource> {
     const { displayMode } = this.props.bannerProps;
-
-    const stateSource = await getSourceItems( { ...sourceProps, ...{ editMode: displayMode } }, true, true ) as IStateSource;
+    let stateSource: IStateSource = null;
+    if ( sourceProps.key === 'labels' ) {
+      stateSource = fetchLabelData( sourceProps, true, true ) as IStateSource;
+    } else {
+      stateSource = await getSourceItems( { ...sourceProps, ...{ editMode: displayMode } }, true, true ) as IStateSource;
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const _performanceOpsAny: any = _performance.ops;
@@ -506,6 +563,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       context={ bannerProps.context }
       users={ this.state.experts }
       webUrl={ IntraNetHome }
+      deepLinkClick={ this.deepLinkClick.bind(this) }
     />;
 
     const committeePageHeader = <CommitteePageHook
@@ -536,7 +594,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     const labelsPageHeader = <LabelsPageHook
       debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
 
-    // const labelsItems = this.createItemsElement( labelsPageHeader, 'Labels' );
+    const labelsItems = this.createItemsElement( labelsPageHeader, 'Labels' );
 
     const adminsPageHeader = <AdminsPageHook
       debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
@@ -611,7 +669,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { mainPivotKey !== 'Home' ? undefined : homePage }
         { mainPivotKey !== 'Instructions' ? undefined : instructionsPageHeader }
         { mainPivotKey !== 'Tips' ? undefined : tipsItems }
-        { mainPivotKey !== 'Labels' ? undefined : labelsPageHeader }
+        { mainPivotKey !== 'Labels' ? undefined : labelsItems }
         { mainPivotKey !== 'Site' ? undefined : enforcementItems }
         { mainPivotKey !== 'Details' ? undefined : detailsPageHeader }
 
@@ -666,6 +724,14 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     });
   }
 
+  private deepLinkClick( main: ITabMain, contact: ITabContactPivots, ): void {
+    this.setState({ 
+      mainPivotKey: main ? main : this.state.mainPivotKey,
+      contactPivotKey: contact ? contact : this.state.contactPivotKey,
+    });
+  }
+
+
   private createItemsElement( pageHeader: JSX.Element , tab: ITabMain ): JSX.Element {
 
     let primarySource = null;
@@ -703,6 +769,11 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         primarySource = this._SourceInfo.tips;
         stateSource = this.state.tips;
         renderRow = createTipsRow;
+      break;
+      case 'Labels':
+        primarySource = this._SourceInfo.labels;
+        stateSource = this.state.labels;
+        renderRow = createLabelsRow;
       break;
     }
 

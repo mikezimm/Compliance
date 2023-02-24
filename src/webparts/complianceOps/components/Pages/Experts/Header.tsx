@@ -1,7 +1,7 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
-import { IStateSource, ITabContactPivots, } from '../../IComplianceOpsProps';
+import { IStateSource, ITabContactPivots, ITabMain, } from '../../IComplianceOpsProps';
 
 import {  PersonaSize,}  from 'office-ui-fabric-react/lib/Persona';
 
@@ -24,6 +24,7 @@ export interface IExpertsPageProps {
   users: IUserProperties[];
   context: any;
   webUrl: string;
+  deepLinkClick( main: ITabMain, contact: ITabContactPivots, ): void;
 
 }
 
@@ -88,10 +89,14 @@ const ExpertsPageHook: React.FC<IExpertsPageProps> = ( props ) => {
 
   const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
     <ul>
-      <li>If unsure if your files are considered { `'Records'`}</li>
-      <li>Or you are not sure what your files should be classified as...</li>
-      <li>Contact one of these experts.</li>
-      <li>They can help you {`: )`} </li>
+      <p>If unsure if your files are considered { `'Records'`} or you are not sure what your files should be classified as...</p>
+      <p>Contact one of Global Records Managers below. They can help you {`: )`} </p>
+      <p>If you have questions or issues with SharePoint, click on the 
+        <button onClick={ () => props.deepLinkClick( 'Contacts', 'SharePoint' ) } style={{ cursor: 'pointer', margin: '0px 15px' }}>
+          SharePoint</button>
+        
+         tab.</p>
+
       {/* <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li> */}
     </ul>
   </div>

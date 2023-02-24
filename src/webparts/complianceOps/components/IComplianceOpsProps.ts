@@ -10,6 +10,7 @@ import { ISearchSource } from './DataInterface';
 import { IUserProperties } from './PersonaCard/IUserProperties';
 import { IFPSResultStatus } from '@mikezimm/fps-pnp2/lib/services/sp/IFPSResultStatus';
 import { HttpClient, } from '@microsoft/sp-http';
+import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
 
 export interface IComplianceOpsProps  extends IFPSCoreReactComponentProps {
   description: string;
@@ -52,7 +53,11 @@ export type ITabTesting = `Testing`;
 export type ITabMain = ITabHome | ISearchSource | ITabInstructions | ITabContacts | ITabDetails | ITabLabels | ITabAdmins | ITabTesting;
 export type ITabContactPivots = ITabCommittee | ITabCoordinators | ITabSharePoint | ITabExperts;
 export type ITabTestingPivots = 'Prod Titles' | 'QA Titles' | 'Prod Sales' | 'QA Sales' | 'na' | 'Instructions';
+export type ITabSecondary = ITabContactPivots | ITabTestingPivots;
 
+export interface IStateUser extends IFpsItemsReturn {
+  item: MicrosoftGraph.User;
+}
 /**
  * Extends IFPSCorePinMeReactComponentState with all basics required for FPS Banner
  */
@@ -71,6 +76,8 @@ export interface IComplianceOpsState extends IFPSCorePinMeReactComponentState {
 
   experts: IUserProperties[];
 
+  user: IStateUser;
+
   labels : IStateSource;
   admins : IStateSource;
   site : IStateSource;
@@ -80,24 +87,4 @@ export interface IComplianceOpsState extends IFPSCorePinMeReactComponentState {
   forms : IStateSource;
   tips : IStateSource;
 
-}
-
-export interface ICorpLabels   {
-  Country: string;
-  RecordCode: string;
-  RecordTitle: string;
-  Description: string;
-  CT_Group: string;
-  Published: string;
-  TargetPath: string;
-  RetentionType: string;
-  RetentionNumber: string;
-  RetentionUnit: string;
-  RetentionTrigger: string;
-  RecordFunction: string;
-  RecordCategory: string;
-  ModifiedDate: string;
-  Status: string;
-  FunctionCode: string;
-  CategoryCode: string;
 }

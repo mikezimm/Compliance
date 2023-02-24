@@ -16,12 +16,6 @@ export const AllTeachBubbles: IMinTeachBubble[] =     [
     message: `Explains the big picture of what this webpart does.`,
   }, {
     // step: 0,
-    target: `#${MainPivot}Instructions${ReplaceWpId}`,
-    headline: `Get instructions`,
-    message: `Step by step instructions and video on how to set records retention on your libraries.`,
-    // message: `${defaultMessage}`,
-  }, {
-    // step: 0,
     target: `#${MainPivot}Tips${ReplaceWpId}`,
     headline: `Get some tips`,
     // message: ``,
@@ -31,6 +25,12 @@ export const AllTeachBubbles: IMinTeachBubble[] =     [
     target: `#${MainPivot}Labels${ReplaceWpId}`,
     headline: `Search the Retention Schedule`,
     message: `Search (AS-303) Labels and determine what types of records you might have.`,
+    // message: `${defaultMessage}`,
+  }, {
+    // step: 0,
+    target: `#${MainPivot}Instructions${ReplaceWpId}`,
+    headline: `Get instructions`,
+    message: `Step by step instructions and video on how to set records retention on your libraries.`,
     // message: `${defaultMessage}`,
   }, {
     // step: 0,

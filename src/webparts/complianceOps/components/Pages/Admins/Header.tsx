@@ -122,17 +122,17 @@ const AdminsPageHook: React.FC<IAdminsPageProps> = ( props ) => {
     <ul>
       <li>You have access to the Admins tab so you must be a Records site admin.</li>
       <li>This tab gives you easy access to all of your site pages from any Compliance web part in the company.</li>
-      <li>Click the buttons to filter all your site pages by the WebPart Tab they fall under (like Instructions).</li>
+      {/* <li>Click the buttons to filter your site pages by the WebPart Tab they fall under (like Instructions).</li> */}
       <li>The Admin tab has information about how this web part and site are designed to work.</li>
     </ul>
   </div>;
 
   const InfoElement: JSX.Element = <Accordion 
-    title = { 'More information about this tab'}
+    title = { 'More information about this tab' }
     defaultIcon = 'Help'
     showAccordion = { true }
     content = { AccordionContent }
-    contentStyles = { { height: '135px' } }
+    contentStyles = { { height: '125px' } }
   />;
 
   const AdminsPageElement: JSX.Element = mainPivotKey !== 'Admins' ? null : <div className = { styles.page } style={ null }>

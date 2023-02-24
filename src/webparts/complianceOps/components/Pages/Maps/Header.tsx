@@ -45,8 +45,11 @@ const MapPageHook: React.FC<IMapPageProps> = ( props ) => {
 
   const MainContent: JSX.Element = <div style={{ cursor: 'default' }}>
     <ul>
-      <li>These are NOT google maps {`:)`}</li>
-      <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li>
+      <li>All facilities are expected to complete a records map {`:)`}</li>
+      <li>To access the records map template, 
+        <a href='/sites/SP_GlobalPpqRecords/Commonly%20Used%20Forms/Information_Mapping_Template.xlsm.xlsm' >Open this file</a> and rename according to your facility code.  See first sheet in file for information.</li>
+
+      {/* <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li> */}
     </ul>
   </div>
 
@@ -55,7 +58,7 @@ const MapPageHook: React.FC<IMapPageProps> = ( props ) => {
     defaultIcon = 'Help'
     showAccordion = { true }
     content = { MainContent }
-    contentStyles = { { height: '100px' } }
+    contentStyles = { { height: '90px' } }
   />;
 
   const MapPageElement: JSX.Element = mainPivotKey !== 'Maps' ? null : <div className = { styles.page } style={ null }>

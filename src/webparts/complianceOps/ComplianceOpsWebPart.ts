@@ -89,6 +89,7 @@ import { allCompliance } from '@mikezimm/fps-library-v2/lib/banner/features/Tric
 import { getSiteInfo } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/getSiteInfo';
 import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
 import { RIGAdmin, } from './storedSecrets/CorpAPIs';
+import { HttpClient, HttpClientResponse } from '@microsoft/sp-http';
 
 export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWebPartProps> {
 
@@ -105,7 +106,7 @@ export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWeb
     this._trickyEmailsWP = [ ...allCompliance, ...[ RIGAdmin ]]; // These are emails that get tricky functionality for this specific web part
     this._allowShowSearch = false;  //Set to true if you want 'Toggle Search option' in property pane
     this._allowSiteThemeChoice = true;  // Should be set true by default in fps-library-v2 1.0.78
-
+    console.log( 'You are: ', await this.context.httpClient.get('https://graph.microsoft.com/v1.0/me', HttpClient.configurations.v1 ) );
     return super.onInit().then(async _ => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       runFPSSuperOnInit( this as any, PreConfiguredProps, SPPermission );

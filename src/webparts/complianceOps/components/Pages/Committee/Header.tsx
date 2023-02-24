@@ -81,7 +81,7 @@ const CommitteePageHook: React.FC<ICommitteePageProps> = ( props ) => {
     <ul>
       <li>These are the RIM Committee members from around the world.</li>
       <li>This multi-disciplin group is responsible for our records strategy.</li>
-      <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li>
+      {/* <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li> */}
     </ul>
   </div>
 
@@ -90,7 +90,7 @@ const CommitteePageHook: React.FC<ICommitteePageProps> = ( props ) => {
     defaultIcon = 'Help'
     showAccordion = { true }
     content = { MainContent }
-    contentStyles = { { height: '115px' } }
+    contentStyles = { { height: '75px' } }
   />;
 
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Committee' ), updateTour, closeTour );

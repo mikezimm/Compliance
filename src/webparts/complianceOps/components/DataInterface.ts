@@ -19,7 +19,7 @@ export type IAppFormat = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms
 export const IntraNetRecs = ['/sites','/SP_Glob','alPpqRec','ords']; //Just so this is not searchable easily
 export const IntraNetHome: string =`${IntraNetRecs.join('')}`;
 
-export type IDefSourceType = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'admins' | 'history' | 'labels' | 'unknown' | '*';
+export type IDefSourceType = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'admins' | 'history' | 'labels' | 'user' | 'unknown' | '*';
 
 export type ISearchSource = 'Site' | 'Committee' | 'Coordinators' | 'Maps' | 'Forms' | 'Tips' | 'Admins' | 'Labels' | 'History';
 
@@ -71,6 +71,50 @@ export const Divisions: string[] = [ 'AAM','AEU','AJA','ASA','Global','TCH', 'TK
 export const collectionUrl: string = getSiteCollectionUrlFromLink( window.location.pathname );
 console.log( collectionUrl );
 
+// {
+//   "Country": "",
+//   "RecordCode": "FAC-20",
+//   "RecordTitle": "Security Plans, Vulnerability Assessments and Compliance Reporting",
+//   "Description": "Records documenting security plans and vulnerability assessments for chemical and other facilities including, for example, facility security plans and assessments, vessel security plans and assessments, compliance reporting and top screens.  ",
+//   "CT_Group": "_ALV Facilities, Equipment and Fleet - FAC-2 Physical Security",
+//   "Published": "No",
+//   "TargetPath": "",
+//   "RetentionType": "Fixed",
+//   "RetentionNumber": "10",
+//   "RetentionUnit": "Years",
+//   "RetentionTrigger": "Creation",
+//   "RecordFunction": "Facilities, Equipment and Fleet",
+//   "RecordCategory": "FAC-2 Physical Security",
+//   "ModifiedDate": "2021-11-18T15:06:50Z",
+//   "Status": "Active",
+//   "FunctionCode": "",
+//   "CategoryCode": ""
+// },
+
+export const LabelSearchColumns: string[] = [
+  'Country', // Searchable
+  'RecordCode', // Searchable   : "FAC-20",
+  'RecordTitle', // Searchable  : "Security Plans, Vulnerability Assessments and Compliance Reporting",
+  'Description', // Searchable  : "Records documenting security plans and vulnerability assessments for chemical and other facilities including, for example, facility security plans and assessments, vessel security plans and assessments, compliance reporting and top screens.  ",
+  'CT_Group', // Searchable     : "_ALV Facilities, Equipment and Fleet - FAC-2 Physical Security",
+  'TargetPath', // Searchable
+  'RecordFunction', // Searchable : "Facilities, Equipment and Fleet",
+  'RecordCategory', // Searchable : "FAC-2 Physical Security",
+  'Status', // Searchable         : "Active",
+ ];
+
+export const LabelOtherColumns: string[] = [
+  'Published', // DETAILS TAB       : "No",
+  'RetentionType', // DETAILS TAB   : "Fixed",
+  'RetentionNumber', // DETAILS TAB : "10",
+  'RetentionUnit', // DETAILS TAB   : "Years",
+  'RetentionTrigger', // DETAILS TAB: "Creation",
+  'ModifiedDate', // DETAILS TAB    : "2021-11-18T15:06:50Z",
+  'FunctionCode',
+  'CategoryCode',
+ ];
+
+
 /**
  * NOTE ABOUT ADDING SOURCES:
  * Be sure to include here, component did mount fetch AND this._missingFetches in main react component
@@ -96,7 +140,7 @@ export const SourceInfo: ISourceInfo = {
     searchSource: `Labels`,
     searchSourceDesc: ``,
     columns: [],
-    searchProps: [],
+    searchProps: LabelSearchColumns,
     // evalFilter?: string;
     // itemFetchCol?: string[];
     // isModern?: boolean;
@@ -106,7 +150,7 @@ export const SourceInfo: ISourceInfo = {
     // meta2?: string[];
     // meta3?: string[];
     // metaX?: string[];
-    defSearchButtons: [],
+    defSearchButtons: ['China', 'Engineering', 'Contracts', 'FAC' ],
     fetchCount: 5000,
   },
 

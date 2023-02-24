@@ -4,7 +4,7 @@
     padding-top: 15px;
 
     display: grid;
-    grid-template-columns: 50px 200px auto;
+    grid-template-columns: 80px 200px auto;
     grid-gap: 10px;
 
     i {
@@ -13,9 +13,9 @@
     }
 
     div {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      // white-space: nowrap;
+      // overflow: hidden;
+      // text-overflow: ellipsis;
     }
 
 }

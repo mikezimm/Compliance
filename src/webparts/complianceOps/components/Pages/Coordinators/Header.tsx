@@ -82,7 +82,7 @@ const CoordinatorsPageHook: React.FC<ICoordinatorsPageProps> = ( props ) => {
       <li>These are Records coordinators from around the world.</li>
       <li>They can help guide you in determining what records label or retention is required for your content.</li>
       <li>If you have any questions about what retention your files should have, they are a good place to start.</li>
-      <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li>
+      {/* <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'red', fontWeight: 600 }}>Terri to provide further description here</li> */}
     </ul>
   </div>
 
@@ -91,7 +91,7 @@ const CoordinatorsPageHook: React.FC<ICoordinatorsPageProps> = ( props ) => {
     defaultIcon = 'Help'
     showAccordion = { true }
     content = { MainContent }
-    contentStyles = { { height: '130px' } }
+    contentStyles = { { height: '95px' } }
   />;
 
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Coordinators' ), updateTour, closeTour );

@@ -89,7 +89,7 @@ const FormPageHook: React.FC<IFormPageProps> = ( props ) => {
     defaultIcon = 'Help'
     showAccordion = { true }
     content = { MainContent }
-    contentStyles = { { height: '80px' } }
+    contentStyles = { { height: '65px' } }
   />;
 
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Forms' ), updateTour, closeTour );

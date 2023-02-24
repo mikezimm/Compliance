@@ -20,4 +20,5 @@ npm install @pnp/spfx-property-controls@3.6.0 --save --save-exact
 npm install react-json-view@1.20.4
 npm install --save-dev webpack-bundle-analyzer@3.9.0
 
+- npm install @microsoft/microsoft-graph-types -D to get current user
 
