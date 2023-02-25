@@ -78,7 +78,8 @@ export interface IComplianceOpsState extends IFPSCorePinMeReactComponentState {
   mainPivotKey: ITabMain;
   contactPivotKey: ITabContactPivots;
 
-  targetSite: string;
+  targetSiteUrl: string;
+  targetWebUrl: string;
   targetInfo: IFpsGetSiteReturn;
   targetStatus: string;
 

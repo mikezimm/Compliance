@@ -2,6 +2,11 @@ import { ISuggestion } from "./LabelSuggestions";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
+export function getSuggestionsFromStrings( strings: string[], suggestions: ISuggestion[], max: number = 1000 ): ISuggestion[] {
+  const results: ISuggestion[] = getSuggestionsByKeys( { key: strings.join(';') }, ['key'], suggestions );
+  return results;
+}
+
 export function getSuggestionsByKeys(item: any, keys: string[], suggestions: ISuggestion[], max: number = 1000 ): ISuggestion[] {
 
   if (!keys || keys.length === 0)

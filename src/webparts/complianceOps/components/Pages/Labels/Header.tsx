@@ -121,6 +121,7 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
     We might suggest clicking on these Topics to get started.
     { suggestionRow( suggestions.user, `Based your Job Title of '${ user.item.jobTitle }':`, updateButtons ) }
     { suggestionRow( suggestions.web, `Based your Current Site Title of '${ webTitle }' or Site Description:`, updateButtons ) }
+    { suggestionRow( suggestions.libraries, `Based your Libraries on this site:`, updateButtons ) }
 
   </div>
 

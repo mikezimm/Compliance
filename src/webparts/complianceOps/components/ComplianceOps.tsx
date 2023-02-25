@@ -81,7 +81,7 @@ import { MSGraphClient } from '@microsoft/sp-http';
 import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
 import { convertSugsLC } from './Suggestions/convertSugsLC';
 import { LabelSuggestions } from './Suggestions/LabelSuggestions';
-import { getSuggestionsByKeys } from './Suggestions/getSuggestionsByKeys';
+import { getSuggestionsByKeys, getSuggestionsFromStrings } from './Suggestions/getSuggestionsByKeys';
 import { getSiteInfo } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/getSiteInfo';
 
 // import { createSharePointRow } from './Pages/SharePoint/Row';
@@ -172,8 +172,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
   private graphClient: MSGraphClient = null;
 
-  private async getCurrentWeb(): Promise<IFpsGetSiteReturn> {
-    const siteInfo: IFpsGetSiteReturn = await getSiteInfo( this.props.bannerProps.context.pageContext.web.absoluteUrl, false, true, );
+  private async getCurrentWeb(webUrl: string ): Promise<IFpsGetSiteReturn> {
+    const siteInfo: IFpsGetSiteReturn = await getSiteInfo( webUrl, false, true, );
     this._performance.ops.fetchW = siteInfo.performanceOp;
     return siteInfo;
   }
@@ -249,10 +249,11 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       showDevHeader: false,
       lastStateChange: '',
       analyticsWasExecuted: false,
-      refreshId: this._newRefreshId(),
+      refreshId: constId,
       debugMode: false,
       showSpinner: false,
-      targetSite: collectionUrl,
+      targetSiteUrl: collectionUrl,
+      targetWebUrl: this.props.bannerProps.context.pageContext.web.absoluteUrl,
       targetStatus: '',
       targetGroupId: this.props.GroupId,
       targetGroupIdStatus: this.props.GroupIdStatus,
@@ -328,7 +329,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     //refresh these privates when the prop changes warrent it
     if ( refresh === true ) {
-      this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, this._isAdmin, this.state.targetSite );
+      this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, this._isAdmin, this.state.targetSiteUrl );
       await this.updateTheseSources( this._missingFetches() );
       this._contentPages = getBannerPages( this.props.bannerProps );
     }
@@ -356,7 +357,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       all === true || sources.indexOf( 'admins' ) > -1 ? this.getSource( this._SourceInfo.admins, this._performance ) : this.state.admins,
       all === true || sources.indexOf( 'labels' ) > -1 ? this.getSource( this._SourceInfo.labels, this._performance ) : this.state.labels,
       all === true || sources.indexOf( 'user' ) > -1 ? this.getCurrentUserGraph() : this.state.user,
-      all === true || sources.indexOf( 'targetInfo' ) > -1 ? this.getCurrentWeb() : this.state.targetInfo,
+      all === true || sources.indexOf( 'targetInfo' ) > -1 ? this.getCurrentWeb( this.state.targetWebUrl ) : this.state.targetInfo,
     ]);
 
     const updateSugs = this._suggestions !== true ? true : false;
@@ -365,8 +366,20 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     //Get Suggestions
     if ( updateSugs === true ) {
       let process9 = startPerformOp( 'suggestions' , this.props.bannerProps.displayMode, true );
-      const sugsUser = !this.state.user.item ? getSuggestionsByKeys( user.item, [ 'jobTitle' ] , LabelSuggs ) : [];
-      const sugsWeb = !this.state.targetInfo.site ? getSuggestionsByKeys( this.props.bannerProps.context.pageContext.web, [ 'title', 'description' ] , LabelSuggs ) : [];
+
+      const sugsUser = user ? getSuggestionsByKeys( user.item, [ 'jobTitle' ] , LabelSuggs ) : this.state.suggestions.user;
+
+      let sugsWeb = this.state.suggestions.web;
+
+      if ( this.state.targetWebUrl === this.props.bannerProps.context.pageContext.web.absoluteUrl ) {
+        sugsWeb = getSuggestionsByKeys( this.props.bannerProps.context.pageContext.web, [ 'title', 'description' ] , LabelSuggs );
+
+      } else if ( targetInfo && targetInfo.status === 'Success' ) {
+        sugsWeb = getSuggestionsByKeys( targetInfo.site, [ 'Title', 'Description' ] , LabelSuggs );
+      }
+
+      const libs = site.items.map( item => { return item.NoRecordsDeclared } ); // NoRecordsDeclared is currently the Library Title
+      const sugsLibs = libs.length > 0 ? getSuggestionsFromStrings( libs , LabelSuggs ) : [];
 
       this._suggestions = true;
 
@@ -375,7 +388,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       suggestions = {
         all: LabelSuggs,
         user: sugsUser,
-        libraries: [],
+        libraries: sugsLibs,
         web: sugsWeb,
         site: [],
         performance: process9,
@@ -519,10 +532,11 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     // const FPSUser : IFPSUser = this.props.bannerProps.FPSUser;
     // const showSpecial = this.state.targetGroupId === '00000000-0000-0000-0000-000000000000' ? true : false;
-    const showSpecial = this.state.targetGroupId === '00000000-0000-0000-0000-000000000000' ? false : true;
+    const specialType = this.state.targetGroupId !== '00000000-0000-0000-0000-000000000000' ? 'Teams/Group' : this.state.targetSiteUrl.indexOf('/sites/lifenet') > -1 ? 'LifeNet' : '';
+    const showSpecial = specialType === '' ? false : true;
     const WarningUrls = this.state.admins.items.filter( page => { return page.WebPartTab === 'TeamsWarning' && page.Status === 'Public' });
     const specialProps: ISpecialMessage = {
-      message: 'This site is NOT allowed to store Records :(',
+      message: `${specialType} sites are NOT allowed to store Records :(`,
       style:  { color: 'red', background: 'yellow' },
       leftIcon:'WarningSolid',
       rightIcon: 'WarningSolid',
@@ -709,8 +723,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       mainPivotKey={ mainPivotKey }
       showInput={ true }
       inputLabel={ 'Target Site Url' }
-      textInput={ this.state.targetSite }
-      // updateInputCallback={ ( url: string, targetStatus: string ) => { this.setState({ targetSite: url, targetStatus: targetStatus }) }}
+      textInput={ this.state.targetWebUrl }
+      // updateInputCallback={ ( url: string, targetStatus: string ) => { this.setState({ targetWebUrl: url, targetStatus: targetStatus }) }}
       updateInputCallback= { this._updateWebUrl.bind( this )}
       callBackOnError= { true }
       wpID={ '' }
@@ -750,21 +764,37 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     );
   }
 
-  private async _updateWebUrl( url: string, targetInfo: IFpsGetSiteReturn ) : Promise<void>  { 
-    const webUrl: string = getSiteCollectionUrlFromLink( url );
+  private async _updateWebUrl( webUrl: string, targetInfo: IFpsGetSiteReturn ) : Promise<void>  { 
+    if ( webUrl === this.state.targetWebUrl ) return;
+    const siteUrl: string = getSiteCollectionUrlFromLink( webUrl );
     // const site: IStateSource = JSON.parse(JSON.stringify( this.state.site ));
     // site.loaded = false;
-    // this.setState({ targetSite: webUrl, targetStatus: targetStatus, site: site });
-    this.setState({ 
-      targetSite: webUrl, targetStatus: targetInfo.status, site: { ...this.state.site, ...{ loaded: false } },
-      targetGroupIdStatus: targetInfo.status, targetGroupId: targetInfo.status === 'Success' ? targetInfo.site.GroupId : targetInfo.status,
-      targetInfo: targetInfo,
-    });
-    this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, this._isAdmin, this.state.targetSite );
+    // this.setState({ targetWebUrl: webUrl, targetStatus: targetStatus, site: site });
+    this._suggestions = false;  // Set to false so it gets re-run against current libraries and site AIInnovation
+
+    if ( targetInfo.status === 'AccessDenied' || targetInfo.status === 'Success') {
+      this.setState({ 
+        targetSiteUrl: siteUrl,
+        targetWebUrl: webUrl,
+        targetStatus: targetInfo.status,
+        site: { ...this.state.site, ...{ loaded: false } }, // This re-fetches this site's libraries that need labels because it does exist
+        targetGroupIdStatus: targetInfo.status,
+        targetGroupId: targetInfo.status === 'Success' ? targetInfo.site.GroupId : targetInfo.status,
+        targetInfo: targetInfo,
+      });
+    } else {
+      this.setState({ 
+        targetSiteUrl: siteUrl,
+        targetWebUrl: webUrl,
+        targetStatus: targetInfo.status,
+        targetGroupId: targetInfo.status,
+      });
+    }
+
+    this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, this._isAdmin, this.state.targetSiteUrl );
     await this.updateTheseSources( this._missingFetches() );
+
   }
-
-
 
   private pivotMainClick( temp: any ): void {
     console.log('pivotMainClick:', temp.props.itemKey );
