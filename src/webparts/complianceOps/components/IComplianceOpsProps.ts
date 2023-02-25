@@ -2,7 +2,7 @@
 import { IFPSCoreReactComponentProps } from '@mikezimm/fps-library-v2/lib/banner/mainReact/ReactComponentProps';
 import { IFPSCorePinMeReactComponentState } from '@mikezimm/fps-library-v2/lib/banner/mainReact/ReactComponentState';
 
-import { IAnySourceItem } from '../fpsReferences';
+import { IAnySourceItem, ILoadPerformanceOps, IPerformanceOp } from '../fpsReferences';
 import { IFpsItemsReturn } from '../fpsReferences';
 
 import { ILoadPerformance } from '../fpsReferences';
@@ -11,6 +11,8 @@ import { IUserProperties } from './PersonaCard/IUserProperties';
 import { IFPSResultStatus } from '@mikezimm/fps-pnp2/lib/services/sp/IFPSResultStatus';
 import { HttpClient, } from '@microsoft/sp-http';
 import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
+import { ISuggestion } from './Suggestions/LabelSuggestions';
+import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
 
 export interface IComplianceOpsProps  extends IFPSCoreReactComponentProps {
   description: string;
@@ -58,6 +60,16 @@ export type ITabSecondary = ITabContactPivots | ITabTestingPivots;
 export interface IStateUser extends IFpsItemsReturn {
   item: MicrosoftGraph.User;
 }
+
+export interface IStateSuggestions {
+  performance: IPerformanceOp;
+  all: ISuggestion[];
+  user: ISuggestion[];
+  libraries: ISuggestion[];
+  web: ISuggestion[];
+  site: ISuggestion[];
+
+}
 /**
  * Extends IFPSCorePinMeReactComponentState with all basics required for FPS Banner
  */
@@ -67,6 +79,7 @@ export interface IComplianceOpsState extends IFPSCorePinMeReactComponentState {
   contactPivotKey: ITabContactPivots;
 
   targetSite: string;
+  targetInfo: IFpsGetSiteReturn;
   targetStatus: string;
 
   targetGroupId: string; // Need Site Level of targetWeb to determine if this is a team or not, not subsite)
@@ -87,4 +100,5 @@ export interface IComplianceOpsState extends IFPSCorePinMeReactComponentState {
   forms : IStateSource;
   tips : IStateSource;
 
+  suggestions: IStateSuggestions;
 }

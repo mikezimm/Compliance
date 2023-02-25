@@ -79,7 +79,7 @@ public async componentDidMount(): Promise<void> {
 
 public componentDidUpdate(prevProps: ISourcePagesProps): void {
     //Just rebuild the component
-    const { stateSource } = this.props; 
+    const { stateSource, topButtons } = this.props; 
     const itemsLength = stateSource ? stateSource.items.length : 0;
     let resetArrows = false;
     if ( prevProps.resetArrows !== this.props.resetArrows ) {
@@ -92,10 +92,12 @@ public componentDidUpdate(prevProps: ISourcePagesProps): void {
 
     if ( itemsLength < lastVisible ) lastVisible = itemsLength;
 
-    if ( !this.props.stateSource ) {
+    if ( !stateSource || topButtons.join('-') !== prevProps.topButtons.join('-')) {
       this.setState({ 
         // refreshId: this.props.stateSource.refreshId, 
-        filtered: [],
+        filtered: stateSource ? stateSource.items : [],
+        topSearch: [],
+        searchText: '',
         firstVisible: 0,
         lastVisible: lastVisible - 1,
         refreshId: makeid(4),
@@ -105,7 +107,9 @@ public componentDidUpdate(prevProps: ISourcePagesProps): void {
     } else if ( this.props.primarySource !== prevProps.primarySource ) {
       this.setState({ 
         // refreshId: this.props.stateSource.refreshId, 
-        filtered: stateSource ? this.props.stateSource.items : [],
+        filtered: stateSource ? stateSource.items : [],
+        topSearch: [],
+        searchText: '',
         firstVisible: 0,
         lastVisible: lastVisible - 1,
         refreshId: makeid(4),

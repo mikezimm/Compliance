@@ -1,7 +1,7 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
-import { ITabMain, } from '../../IComplianceOpsProps';
+import { IStateSource, IStateSuggestions, IStateUser, ITabMain, } from '../../IComplianceOpsProps';
 
 // import { Icon  } from 'office-ui-fabric-react/lib/Icon';
 import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
@@ -12,11 +12,23 @@ import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/compo
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
 import { OtherIframeHref, RigAPIDocs, RIG_Page_Search_PROD, RIG_Page_Search_QA } from '../../../storedSecrets/CorpAPIs';
+import { buttonProperties } from 'office-ui-fabric-react';
+import { ISuggestion } from '../../Suggestions/LabelSuggestions';
+import { ISourcePropsCOP } from '../../DataInterface';
+import SourcePages from '../SourcePages/SourcePages';
+import { createLabelsRow } from './Row';
+import { makeid } from '../../../fpsReferences';
 
+const defaultButton: string = 'defaults';
 export interface ILabelsPageProps {
+  stateSource: IStateSource;
+  primarySource: ISourcePropsCOP;
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
   mainPivotKey: ITabMain;
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
+  suggestions: IStateSuggestions;
+  user: IStateUser;
+  webTitle: string;
 }
 
 /***
@@ -33,8 +45,11 @@ export interface ILabelsPageProps {
 const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { debugMode, mainPivotKey, wpID, } = props; //appLinks, news 
+  const { debugMode, mainPivotKey, wpID, user, suggestions, primarySource, stateSource, webTitle } = props; //appLinks, news 
 
+  const [ buttonLabels, setSuttonLabels ] = useState<string[]>( primarySource.defSearchButtons );
+  const [ activeButton, setActiveButton ] = useState<string>( defaultButton );
+  const [ refreshId, setRefreshId ] = useState<string>( makeid( 5 ) );
   const [ teachBubble, setTeachBubble ] = useState<number>( null );
   const [ lastBubble, setLastBubble ] = useState<number>( 0 );
 
@@ -78,14 +93,46 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
 
   // const backgroundImage: string = `url("${bannerImage}")`;
 
+
+  const updateButtons = ( suggestion: ISuggestion ) : void => {
+    const useThese: string[] = suggestion === defaultButton as any ? primarySource.defSearchButtons : suggestion.suggestions;
+    setSuttonLabels( useThese );
+    setActiveButton( suggestion === defaultButton as any ? defaultButton : suggestion.title );
+  }
+
+  // onClick( sug: ISuggestion, ): void
+  const suggestionRow = ( sugs: ISuggestion[], intro: string, onClick : any ): JSX.Element  => {
+    const SuggestionButtons : JSX.Element = sugs.length === 0 ? undefined : <div>
+      { intro } 
+      <span className={ styles.suggestions }>
+      <button key={ defaultButton } title={ '' }
+        className={ activeButton === defaultButton ? styles.isSelected : '' }
+        onClick={ () => onClick( defaultButton )}>{ defaultButton }</button>
+      { sugs.map( suggestion => { return <button key={ suggestion.title } title={ suggestion.description } 
+        className={ activeButton === suggestion.title ? styles.isSelected : '' } 
+        onClick={ () => onClick( suggestion )}>{ suggestion.title }</button>})}
+      </span>
+    </div>;
+    return SuggestionButtons;
+  }
+
+
+  const IntroContent: JSX.Element = <div>
+    We might suggest clicking on these Topics to get started.
+    { suggestionRow( suggestions.user, `Based your Job Title of '${ user.item.jobTitle }':`, updateButtons ) }
+    { suggestionRow( suggestions.web, `Based your Current Site Title of '${ webTitle }' or Site Description:`, updateButtons ) }
+
+  </div>
+
   const MainContent: JSX.Element = <div className={ styles.infoItems }style={{ cursor: 'default' }}>
     {/* <ul> */}
-      <div>The first step to applying records retention to your files, is understanding what kinds of records you have.</div>
-      <div>You can search the retention schedule here or 
+      <div>Hi { user.item.givenName }, the first step to applying records retention to your files, is understanding what kinds of records you may have.</div>
+      <div>You can search the retention schedule here or &nbsp;
         <span onClick={ () => window.open( RIG_Page_Search_PROD, '_blank') } 
         style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}
         >click on this link</span>  to open in a full window.</div>
       {/* <li onClick={ () => window.open( RIG_Page_Search, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}>IFrame Url1: { RIG_Page_Search} </li> */}
+      { IntroContent }
       <div onClick={ () => window.open( OtherIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>IFrame Url2: { OtherIframeHref} </div>
       <div onClick={ () => window.open( RigAPIDocs, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>API Docs: { RigAPIDocs} </div>
       {/* <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'purple', fontWeight: 600 }}>MIKE to provide further description here</li> */}
@@ -97,13 +144,34 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
     defaultIcon = 'Help'
     showAccordion = { true }
     content = { MainContent }
-    contentStyles = { { height: '115px' } }
+    contentStyles = { { height: '195px' } }
   />;
+
+  const itemsElement = <SourcePages
+    // source={ SourceInfo }
+    primarySource={ primarySource }
+    itemsPerPage={ 20 }
+    pageWidth={ 1000 }
+    topButtons={ buttonLabels }
+    stateSource={ { ...stateSource, ...{ refreshId: refreshId } } }
+    startQty={ 20 }
+    showItemType={ false }
+    debugMode={ debugMode }
+    renderRow={ createLabelsRow }
+    // bumpDeepLinks= { this.bumpDeepStateFromComponent.bind(this) }
+    deepProps={ null } //this.state.deepProps
+    // canvasOptions={ this.props.canvasOptions }
+
+    onParentCall={ () => { alert('Hey, parent was called!')} }
+    headingElement={ InfoElement }
+    // footerElement={ <div style={{color: 'red', fontWeight: 600 }}>THIS IS the FOOTER ELEMENT</div> }
+  />;
+
 
   const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Labels' ), updateTour, closeTour );
 
   const LabelsPageElement: JSX.Element = mainPivotKey !== 'Labels' ? null : <div className = { styles.page } style={ null }>
-    { InfoElement }
+    { itemsElement }
     {/* <div id={ 'ComplLabelsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
     {/* <div style={{ width: 'calc(100% - 40px)', height: '75vh'}}>
       <iframe src={RIG_Page_Search_QA} width='100%' height='100%' name='labels_Iframe'/>

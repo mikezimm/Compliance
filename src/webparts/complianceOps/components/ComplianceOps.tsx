@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styles from './ComplianceOps.module.scss';
-import { IComplianceOpsProps, IComplianceOpsState, IStateSource, IStateUser, ITabContactPivots, ITabMain, ITabSecondary, ITabTestingPivots } from './IComplianceOpsProps';
+import { IComplianceOpsProps, IComplianceOpsState, IStateSource, IStateSuggestions, IStateUser, ITabContactPivots, ITabMain, ITabSecondary, ITabTestingPivots } from './IComplianceOpsProps';
 
 
 import { Pivot, PivotItem, PivotLinkFormat, PivotLinkSize,} from 'office-ui-fabric-react/lib/Pivot';
@@ -82,6 +82,7 @@ import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
 import { convertSugsLC } from './Suggestions/convertSugsLC';
 import { LabelSuggestions } from './Suggestions/LabelSuggestions';
 import { getSuggestionsByKeys } from './Suggestions/getSuggestionsByKeys';
+import { getSiteInfo } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/getSiteInfo';
 
 // import { createSharePointRow } from './Pages/SharePoint/Row';
 
@@ -157,6 +158,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     if ( this.state.admins.loaded !== true ) loads.push( 'admins' );
     if ( this.state.labels.loaded !== true ) loads.push( 'labels' );
     if ( this.state.user.loaded !== true ) loads.push( 'user' );
+    if ( this.state.targetInfo.loaded !== true ) loads.push( 'targetInfo' );
 
     if ( loads.length === 0 ) loads.push( '*' );
 
@@ -170,8 +172,18 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
   private graphClient: MSGraphClient = null;
 
+  private async getCurrentWeb(): Promise<IFpsGetSiteReturn> {
+    const siteInfo: IFpsGetSiteReturn = await getSiteInfo( this.props.bannerProps.context.pageContext.web.absoluteUrl, false, true, );
+    this._performance.ops.fetchW = siteInfo.performanceOp;
+    return siteInfo;
+  }
+
   private async getCurrentUserGraph(): Promise<IStateUser>{
+    const { ops } = this._performance;
+
     try {
+      ops.fetchU = startPerformOp( 'user' , this.props.bannerProps.displayMode, true );
+
       const thisContext = this.props.bannerProps.context as any;
       this.graphClient = await thisContext.msGraphClientFactory.getClient();
       const results: any = await this.graphClient
@@ -179,6 +191,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         .version('v1.0')
         .get();
       console.log('getCurrentUser Success', results );
+      ops.fetchU = updatePerformanceEnd( ops.fetchU , true, LabelSuggs.length );
       return {
         item: results,
         e: null,
@@ -187,6 +200,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     } catch (e) {
       console.log('getCurrentUser Error', e );
+      ops.fetchU = updatePerformanceEnd( ops.fetchU , true, LabelSuggs.length );
       return {
         item: null,
         e: null,
@@ -258,6 +272,16 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       forms : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       tips : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       user: { item: null, loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      targetInfo: { site: null, loaded: false, refreshId: constId, status: 'Unknown', e: null },
+
+      suggestions: {
+        performance: null,
+        all: [],
+        user: [],
+        libraries: [],
+        web: [],
+        site: [],
+      }
 
     };
   }
@@ -316,13 +340,13 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
   }
 
   private async updateTheseSources( sources: IDefSourceType[] ): Promise<void> {
-    const { ops } = this._performance;
+    const { ops, } = this._performance;
     ops.fetch = startPerformOp( 'fetch Sync', this.props.bannerProps.displayMode );
 
     const all: boolean = sources.indexOf( '*' ) > -1 ? true : false;
 
     // NOTE:  The vars in the array must be in same order they are called in the Promise.all
-    const [ site, committee, coordinators, maps, forms, tips, admins, labels, user ] = await Promise.all([
+    const [ site, committee, coordinators, maps, forms, tips, admins, labels, user, targetInfo ] = await Promise.all([
       all === true || sources.indexOf( 'site' ) > -1 ? this.getSource( this._SourceInfo.site, this._performance ) : this.state.site,
       all === true || sources.indexOf( 'committee' ) > -1 ? this.getSource( this._SourceInfo.committee, this._performance ) : this.state.committee,
       all === true || sources.indexOf( 'coordinators' ) > -1 ? this.getSource( this._SourceInfo.coordinators, this._performance ) : this.state.coordinators,
@@ -332,15 +356,35 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       all === true || sources.indexOf( 'admins' ) > -1 ? this.getSource( this._SourceInfo.admins, this._performance ) : this.state.admins,
       all === true || sources.indexOf( 'labels' ) > -1 ? this.getSource( this._SourceInfo.labels, this._performance ) : this.state.labels,
       all === true || sources.indexOf( 'user' ) > -1 ? this.getCurrentUserGraph() : this.state.user,
+      all === true || sources.indexOf( 'targetInfo' ) > -1 ? this.getCurrentWeb() : this.state.targetInfo,
     ]);
 
-    //Get Suggestions
-    if ( this._suggestions !== true ) {
-      const suggestions = !this.state.user.item ? getSuggestionsByKeys( user.item, [ 'jobTitle' ] , LabelSuggs ) : [];
-      console.log( 'Suggestions', suggestions );
-      this._suggestions = true;
-    }
+    const updateSugs = this._suggestions !== true ? true : false;
+    let suggestions: IStateSuggestions = updateSugs === true ? null : this.state.suggestions;
 
+    //Get Suggestions
+    if ( updateSugs === true ) {
+      let process9 = startPerformOp( 'suggestions' , this.props.bannerProps.displayMode, true );
+      const sugsUser = !this.state.user.item ? getSuggestionsByKeys( user.item, [ 'jobTitle' ] , LabelSuggs ) : [];
+      const sugsWeb = !this.state.targetInfo.site ? getSuggestionsByKeys( this.props.bannerProps.context.pageContext.web, [ 'title', 'description' ] , LabelSuggs ) : [];
+
+      this._suggestions = true;
+
+      process9 = updatePerformanceEnd( process9 , true, LabelSuggs.length );
+
+      suggestions = {
+        all: LabelSuggs,
+        user: sugsUser,
+        libraries: [],
+        web: sugsWeb,
+        site: [],
+        performance: process9,
+      }
+      console.log( 'suggestions', suggestions );
+
+      this._performance.ops.process9 = process9;
+
+    }
 
     const endWas = Math.max(
       ops.fetch0 && ops.fetch0.end ? ops.fetch0.end.getTime() : -1,
@@ -365,6 +409,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         }
       });
     }
+
     ops.fetch = updatePerformanceEnd( ops.fetch,   true, 999999 );
 
     const totalTime = endWas - ops.fetch.start.getTime();
@@ -381,6 +426,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       forms: forms,
       tips: tips,
       labels: labels,
+      targetInfo: targetInfo,
+      suggestions: suggestions,
       fullAnalyticsSaved: true,
     });
 
@@ -596,9 +643,15 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     // const detailsItems = this.createItemsElement( detailsPageHeader, 'Details' );
 
     const labelsPageHeader = <LabelsPageHook
-      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
+      suggestions={ this.state.suggestions }
+      user={ this.state.user }
+      primarySource={ this._SourceInfo.labels }
+      stateSource={ this.state.labels}
+      webTitle={ this.props.bannerProps.context.pageContext.web.title }
+    />;
 
-    const labelsItems = this.createItemsElement( labelsPageHeader, 'Labels' );
+    // const labelsItems = this.createItemsElement( labelsPageHeader, 'Labels' );
 
     const adminsPageHeader = <AdminsPageHook
       debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
@@ -673,7 +726,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { mainPivotKey !== 'Home' ? undefined : homePage }
         { mainPivotKey !== 'Instructions' ? undefined : instructionsPageHeader }
         { mainPivotKey !== 'Tips' ? undefined : tipsItems }
-        { mainPivotKey !== 'Labels' ? undefined : labelsItems }
+        { mainPivotKey !== 'Labels' ? undefined : labelsPageHeader }
         { mainPivotKey !== 'Site' ? undefined : enforcementItems }
         { mainPivotKey !== 'Details' ? undefined : detailsPageHeader }
 
@@ -697,14 +750,15 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     );
   }
 
-  private async _updateWebUrl( url: string, siteInfo: IFpsGetSiteReturn ) : Promise<void>  { 
+  private async _updateWebUrl( url: string, targetInfo: IFpsGetSiteReturn ) : Promise<void>  { 
     const webUrl: string = getSiteCollectionUrlFromLink( url );
     // const site: IStateSource = JSON.parse(JSON.stringify( this.state.site ));
     // site.loaded = false;
     // this.setState({ targetSite: webUrl, targetStatus: targetStatus, site: site });
     this.setState({ 
-      targetSite: webUrl, targetStatus: siteInfo.status, site: { ...this.state.site, ...{ loaded: false } },
-      targetGroupIdStatus: siteInfo.status, targetGroupId: siteInfo.status === 'Success' ? siteInfo.site.GroupId : siteInfo.status,
+      targetSite: webUrl, targetStatus: targetInfo.status, site: { ...this.state.site, ...{ loaded: false } },
+      targetGroupIdStatus: targetInfo.status, targetGroupId: targetInfo.status === 'Success' ? targetInfo.site.GroupId : targetInfo.status,
+      targetInfo: targetInfo,
     });
     this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, this._isAdmin, this.state.targetSite );
     await this.updateTheseSources( this._missingFetches() );
@@ -773,11 +827,6 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         primarySource = this._SourceInfo.tips;
         stateSource = this.state.tips;
         renderRow = createTipsRow;
-      break;
-      case 'Labels':
-        primarySource = this._SourceInfo.labels;
-        stateSource = this.state.labels;
-        renderRow = createLabelsRow;
       break;
     }
 

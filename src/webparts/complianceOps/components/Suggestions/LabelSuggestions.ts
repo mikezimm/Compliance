@@ -42,7 +42,7 @@ export const ITLabels: ISuggestion = {
   title: `IT`,
   description: ``,
   finds: [ `SharePoint`, `Information Technology`, ] ,
-  suggestions: [ `` ] ,
+  suggestions: [ `ITS-`, `Software`, `Cyber Security`, `Applications`, `IT projects`, `Help Desk` ] ,
 }
 
 export const FinanceLabels: ISuggestion = {
@@ -66,6 +66,13 @@ export const HumanResLabels: ISuggestion = {
   suggestions: [ `` ] ,
 }
 
+export const ComplianceLabels: ISuggestion = {
+  title: `Compliance`,
+  description: ``,
+  finds: [ `Compliance` ] ,
+  suggestions: [ `Compliance`, `Incidents`, `Audits`, `Privacy`, `Certifications`, `Investigation`, `Recalls`, `Litigation` ] ,
+}
+
 export const LabelSuggestions: ISuggestion[] = [
   PurchasingLabels,
   EngineeringLabels,
@@ -74,6 +81,6 @@ export const LabelSuggestions: ISuggestion[] = [
   ITLabels,
   FinanceLabels,
   HumanResLabels,
-
+  ComplianceLabels,
 ];
 
