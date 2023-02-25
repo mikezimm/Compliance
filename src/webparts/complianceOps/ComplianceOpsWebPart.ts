@@ -89,7 +89,7 @@ import { allCompliance } from '@mikezimm/fps-library-v2/lib/banner/features/Tric
 import { getSiteInfo } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/getSiteInfo';
 import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
 import { RIGAdmin, } from './storedSecrets/CorpAPIs';
-import { HttpClient, HttpClientResponse } from '@microsoft/sp-http';
+import { HttpClient, } from '@microsoft/sp-http';
 
 export default class ComplianceOpsWebPart extends FPSBaseClass<IComplianceOpsWebPartProps> {
 
