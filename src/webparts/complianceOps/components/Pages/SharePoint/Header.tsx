@@ -8,6 +8,7 @@ import styles from './header.module.scss';
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
+import { check4Gulp } from '../../../fpsReferences';
 
 const goToMeetingId : string = 'f3603cca-3b48-4625-afd2-2eb0587bf1d6';
 export interface ISharePointPageProps {
@@ -85,7 +86,14 @@ const SharePointPageHook: React.FC<ISharePointPageProps> = ( props ) => {
   const SharePointPageElement: JSX.Element = contactPivotKey !== 'SharePoint' ? null : <div className = { styles.page } style={ null }>
     <div style={{ marginRight: '50px' }}>If you need assistance with this web part or setting labels on your site, you have come to the right place!</div>
 
-    <li onClick={ () => window.open( RotatingGlobeCSS, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}>Rotating Globe CSS for Buttons?: { RotatingGlobeCSS} </li>
+    {
+      check4Gulp() !== true ? undefined :
+        <li onClick={ () => window.open( RotatingGlobeCSS, '_blank') } 
+          style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}
+          >Seen during gulp:  Rotating Globe CSS for Buttons?: { RotatingGlobeCSS }
+        </li>
+    }
+
 
     <div className={ styles.shareLab }>
       <div className={ styles.lab } onClick={ () => window.open( linkNa, '_blank')}>

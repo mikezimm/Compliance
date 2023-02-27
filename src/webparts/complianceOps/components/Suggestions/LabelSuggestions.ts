@@ -14,14 +14,14 @@ export const PurchasingLabels: ISuggestion = {
   title: `Purchasing`,
   description: ``,
   finds: [ `Purchasing`, `Buyer`, `Supplier` ] ,
-  suggestions: [ `Contract`, `SOR`, `SOW` ] ,
+  suggestions: [ `SUP-`, `Contract`, `SOR`, `SOW` ] ,
 }
 
 export const EngineeringLabels: ISuggestion = {
   title: `Engineering`,
   description: ``,
-  finds: [ `Engineer`, `Engineering`, `Design`, `Designer`, `VEVA`, `Patent` ] ,
-  suggestions: [ `Drawing`, `Specification`, `Engineering`, `Design`, `VEVA`, `Patent`, `Specification`  ] ,
+  finds: [ `Engineer`, `Engineering`, `Design`, `Designer`, `VEVA`, `Patent`, `EWO`, `ECR`, `DWR` ] ,
+  suggestions: [ `PPQ-`, `Drawing`, `Specification`, `Engineering`, `Design`, `VEVA`, `Patent`, ] ,
 }
 
 export const ProjManagementLabels: ISuggestion = {

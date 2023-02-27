@@ -17,7 +17,7 @@ import { ISuggestion } from '../../Suggestions/LabelSuggestions';
 import { ISourcePropsCOP } from '../../DataInterface';
 import SourcePages from '../SourcePages/SourcePages';
 import { createLabelsRow } from './Row';
-import { makeid } from '../../../fpsReferences';
+import { check4Gulp, makeid } from '../../../fpsReferences';
 
 const defaultButton: string = 'defaults';
 export interface ILabelsPageProps {
@@ -134,8 +134,15 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
         >click on this link</span>  to open in a full window.</div>
       {/* <li onClick={ () => window.open( RIG_Page_Search, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}>IFrame Url1: { RIG_Page_Search} </li> */}
       { IntroContent }
-      <div onClick={ () => window.open( OtherIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>IFrame Url2: { OtherIframeHref} </div>
-      <div onClick={ () => window.open( RigAPIDocs, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>API Docs: { RigAPIDocs} </div>
+
+      {
+        check4Gulp() !== true ? undefined :
+          <div>
+            <div onClick={ () => window.open( OtherIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>IFrame Url2: { OtherIframeHref} </div>
+            <div onClick={ () => window.open( RigAPIDocs, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>API Docs: { RigAPIDocs} </div>
+          </div>
+      }
+
       {/* <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'purple', fontWeight: 600 }}>MIKE to provide further description here</li> */}
     {/* </ul> */}
   </div>
@@ -174,9 +181,9 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
   const LabelsPageElement: JSX.Element = mainPivotKey !== 'Labels' ? null : <div className = { styles.page } style={ null }>
     { itemsElement }
     {/* <div id={ 'ComplLabelsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
-    {/* <div style={{ width: 'calc(100% - 40px)', height: '75vh'}}>
-      <iframe src={RIG_Page_Search_QA} width='100%' height='100%' name='labels_Iframe'/>
-    </div> */}
+    <div style={{ width: 'calc(100% - 40px)', height: '75vh'}}>
+      <iframe src={RIG_Page_Search_PROD} width='100%' height='100%' name='labels_Iframe'/>
+    </div>
 
     { TeachMe }
   </div>;

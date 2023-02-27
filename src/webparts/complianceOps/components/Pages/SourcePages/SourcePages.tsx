@@ -8,7 +8,7 @@ import { ISourcePagesProps, ISourcePagesState, } from './ISourcePagesProps';
 
 import { Icon, } from 'office-ui-fabric-react/lib/Icon'; 
 
-import { IAnySourceItem, makeid } from '../../../fpsReferences';
+import { check4Gulp, IAnySourceItem, makeid } from '../../../fpsReferences';
 import { getFilteredItems } from './Search/functions';
 // import { ContentPanel, } from './SourcePanelContent';
 import SourceSearchHook from './Search/SourceSearch';
@@ -89,6 +89,8 @@ public componentDidUpdate(prevProps: ISourcePagesProps): void {
     }
 
     let lastVisible = this._itemsPerPage;
+
+    if ( check4Gulp() === true ) console.log( 'filtered SourePage', lastVisible, stateSource.items, );
 
     if ( itemsLength < lastVisible ) lastVisible = itemsLength;
 

@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styles from './Row.module.scss';
 
-import { getHighlightedText, IAnySourceItem } from '../../../fpsReferences';
+import { check4Gulp, getHighlightedText, IAnySourceItem } from '../../../fpsReferences';
 import { ISourceRowRender } from '../SourcePages/ISourceRowRender';
 // import { buildClickableIcon } from '@mikezimm/fps-library-v2/lib/components/atoms/Icons/stdIconsBuildersV02';
 
@@ -20,10 +20,12 @@ export function createFormRow( props: ISourceRowRender ): JSX.Element { // eslin
 
   const thisItem: IThisFormInterface = item as IThisFormInterface;
 
+  const goToLink: string = check4Gulp() === true ? thisItem.ServerRedirectedEmbedUrl : thisItem.FileRef;
+  
   const row = <div className={ styles.genericItem } onClick = { () => onClick( thisItem.ID, 'generic', item ) }>
     <div title={ null } >{ thisItem.ID }</div>
     <div title={ null } >{ getHighlightedText( thisItem.Status, searchText ) }</div>
-    <div title={ `${thisItem.FileRef}`} onClick={ () => window.open( thisItem.ServerRedirectedEmbedUrl, '_blank' )}
+    <div title={ `${thisItem.FileRef}`} onClick={ () => window.open( goToLink, '_blank' )}
       style={{ cursor: 'pointer' }}>{ getHighlightedText( thisItem.FileLeafRef, searchText )  }</div>
   </div>;
 
