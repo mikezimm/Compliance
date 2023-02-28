@@ -20,6 +20,7 @@ import { createLabelsRow } from './Row';
 import { check4Gulp, makeid } from '../../../fpsReferences';
 
 const defaultButton: string = 'defaults';
+
 export interface ILabelsPageProps {
   stateSource: IStateSource;
   primarySource: ISourcePropsCOP;
@@ -47,7 +48,7 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { debugMode, mainPivotKey, user, suggestions, primarySource, stateSource, webTitle } = props; //appLinks, news wpID, 
 
-  const [ buttonLabels, setSuttonLabels ] = useState<string[]>( primarySource.defSearchButtons );
+  const [ buttonLabels, setButtonLabels ] = useState<string[]>( primarySource.defSearchButtons );
   const [ activeButton, setActiveButton ] = useState<string>( defaultButton );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [ refreshId, setRefreshId ] = useState<string>( makeid( 5 ) );
@@ -97,7 +98,7 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
 
   const updateButtons = ( suggestion: ISuggestion ) : void => {
     const useThese: string[] = suggestion === defaultButton as any ? primarySource.defSearchButtons : suggestion.suggestions;
-    setSuttonLabels( useThese );
+    setButtonLabels( useThese );
     setActiveButton( suggestion === defaultButton as any ? defaultButton : suggestion.title );
   }
 

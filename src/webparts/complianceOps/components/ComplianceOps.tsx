@@ -677,9 +677,13 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
     
     const rigItemsPageHeader = <RigItemsPageHook
+      suggestions={ this.state.suggestions }
+      user={ this.state.user }
+      webTitle={ this.props.bannerProps.context.pageContext.web.title }
       stateSource = { this.state.rigItems}
       primarySource = { this._SourceInfo.rigItems }
-      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
+    />;
 
     const sitePageHeader = <SitePageHook
       debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
@@ -738,12 +742,12 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     // const detailsItems = this.createItemsElement( detailsPageHeader, 'Details' );
 
     const labelsPageHeader = <LabelsPageHook
-      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
       suggestions={ this.state.suggestions }
       user={ this.state.user }
+      webTitle={ this.props.bannerProps.context.pageContext.web.title }
       primarySource={ this._SourceInfo.labels }
       stateSource={ this.state.labels}
-      webTitle={ this.props.bannerProps.context.pageContext.web.title }
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
     />;
 
     // const labelsItems = this.createItemsElement( labelsPageHeader, 'Labels' );

@@ -1,22 +1,23 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
-import { IStateSource, ITabMain, } from '../../IComplianceOpsProps';
+import { IStateSource, IStateSuggestions, IStateUser, ITabMain, } from '../../IComplianceOpsProps';
 
-// import { Icon  } from 'office-ui-fabric-react/lib/Icon';
+import { Icon  } from 'office-ui-fabric-react/lib/Icon';
 import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
 
 import styles from './header.module.scss';
+import stylesRow from './Row.module.scss';
 
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
 // import { OtherIframeHref, RigAPIDocs, RIG_Page_Search_PROD, RIG_Page_Search_QA } from '../../../storedSecrets/CorpAPIs';
 // import { buttonProperties } from 'office-ui-fabric-react';
-// import { ISuggestion } from '../../Suggestions/LabelSuggestions';
+import { ISuggestion } from '../../Suggestions/LabelSuggestions';
 import { ISourcePropsCOP } from '../../DataInterface';
 // import SourcePages from '../SourcePages/SourcePages';
-import { createRigItemsRow } from './Row';
+import { createRigItemsRow0, createRigItemsRow1, createRigItemsRow2 } from './Row';
 // import { check4Gulp, makeid } from '../../../fpsReferences';
 import ReactJson from 'react-json-view';
 import { simplifyPropsosedRIGItems } from '../../../storedSecrets/AS303 Items v3';
@@ -26,7 +27,17 @@ import { makeid } from '../../../fpsReferences';
 import { OtherIframeHref } from '../../../storedSecrets/CorpAPIs';
 // import { FutureMockRecordItems } from '../../../storedSecrets/AS303 Items Full';
 
-// const defaultButton: string = 'defaults';
+const renderRows = [ createRigItemsRow0, createRigItemsRow1, createRigItemsRow2 ];
+const renderHeaders = [
+  [ 'Item Name', 'Record Code', 'Data Classification', 'Data Privacy', 'Status', ],
+  [ 'Item Name', 'Item Description', 'Record Code', 'Data Classification', 'Data Privacy', 'Status', ],
+  [ 'Item Name', 'Item Description', 'Record Code',  'Record Title', 'Data Classification', 'Data Privacy', 'Status', ],
+]
+const renderIcons = [ 'TripleColumn', 'QuadColumn', 'DoubleColumn',  ];
+const renderTitles = [ 'Simple', 'Description', 'Details',  ];
+const renderStyles = [ stylesRow.genericItem0, stylesRow.genericItem1, stylesRow.genericItem2,  ];
+
+const defaultButton: string = 'defaults';
 
 export interface IRigItemsPageProps {
   stateSource: IStateSource;
@@ -34,9 +45,9 @@ export interface IRigItemsPageProps {
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
   mainPivotKey: ITabMain;
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
-  // suggestions: IStateSuggestions;
-  // user: IStateUser;
-  // webTitle: string;
+  suggestions: IStateSuggestions;
+  user: IStateUser;
+  webTitle: string;
 }
 
 /***
@@ -53,14 +64,16 @@ export interface IRigItemsPageProps {
 const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { debugMode, mainPivotKey, wpID, primarySource, stateSource, } = props; //appLinks, news 
+  const { debugMode, mainPivotKey, user, suggestions, primarySource, stateSource, webTitle } = props; //appLinks, news 
 
   // const [ buttonRigItems, setSuttonRigItems ] = useState<string[]>( primarySource.defSearchButtons );
-  const [ buttonLabels, setSuttonLabels ] = useState<string[]>( primarySource.defSearchButtons );
-  // const [ activeButton, setActiveButton ] = useState<string>( defaultButton );
+  const [ buttonRigItems, setButtonRigItems ] = useState<string[]>( primarySource.defSearchButtons );
+  const [ activeButton, setActiveButton ] = useState<string>( defaultButton );
   const [ refreshId, setRefreshId ] = useState<string>( makeid( 5 ) );
   const [ teachBubble, setTeachBubble ] = useState<number>( null );
   const [ lastBubble, setLastBubble ] = useState<number>( 0 );
+  // const [ activeView, setActiveView ] = useState<string>( renderTitles[0] );
+  const [ activeView, setActiveView ] = useState<string>( renderTitles[0] );
 
   /***
  *     .d88b.  d8b   db       .o88b. db      d888888b  .o88b. db   dD .d8888. 
@@ -76,6 +89,11 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
   // useEffect(() => {
   //   setExpandedState( easyPagesExpanded )
   // }, [ debugMode ] );
+
+  // const toggleView = ( ): void => {
+  //   const newView = activeView === renderRows.length -1 ? 0 : activeView + 1;
+  //   setActiveView( newView );
+  // }
 
   const closeTour = ( ): void => {
     const saveBubble = teachBubble + 0;
@@ -103,44 +121,50 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
   // const backgroundImage: string = `url("${bannerImage}")`;
 
 
-  // const updateButtons = ( suggestion: ISuggestion ) : void => {
-  //   const useThese: string[] = suggestion === defaultButton as any ? primarySource.defSearchButtons : suggestion.suggestions;
-  //   setSuttonRigItems( useThese );
-  //   setActiveButton( suggestion === defaultButton as any ? defaultButton : suggestion.title );
-  // }
+  const updateButtons = ( suggestion: ISuggestion ) : void => {
+    const useThese: string[] = suggestion === defaultButton as any ? primarySource.defSearchButtons : suggestion.suggestions;
+    setButtonRigItems( useThese );
+    setActiveButton( suggestion === defaultButton as any ? defaultButton : suggestion.title );
+  }
 
-  // // onClick( sug: ISuggestion, ): void
-  // const suggestionRow = ( sugs: ISuggestion[], intro: string, onClick : any ): JSX.Element  => {
-  //   const SuggestionButtons : JSX.Element = sugs.length === 0 ? undefined : <div>
-  //     { intro } 
-  //     <span className={ styles.suggestions }>
-  //     <button key={ defaultButton } title={ '' }
-  //       className={ activeButton === defaultButton ? styles.isSelected : '' }
-  //       onClick={ () => onClick( defaultButton )}>{ defaultButton }</button>
-  //     { sugs.map( suggestion => { return <button key={ suggestion.title } title={ suggestion.description } 
-  //       className={ activeButton === suggestion.title ? styles.isSelected : '' } 
-  //       onClick={ () => onClick( suggestion )}>{ suggestion.title }</button>})}
-  //     </span>
-  //   </div>;
-  //   return SuggestionButtons;
-  // }
+  // onClick( sug: ISuggestion, ): void
+  const suggestionRow = ( sugs: ISuggestion[], intro: string, onClick : any ): JSX.Element  => {
+    const SuggestionButtons : JSX.Element = sugs.length === 0 ? undefined : <div>
+      { intro } 
+      <span className={ styles.suggestions }>
+      <button key={ defaultButton } title={ '' }
+        className={ activeButton === defaultButton ? styles.isSelected : '' }
+        onClick={ () => onClick( defaultButton )}>{ defaultButton }</button>
+      { sugs.map( suggestion => { return <button key={ suggestion.title } title={ suggestion.description } 
+        className={ activeButton === suggestion.title ? styles.isSelected : '' } 
+        onClick={ () => onClick( suggestion )}>{ suggestion.title }</button>})}
+      </span>
+    </div>;
+    return SuggestionButtons;
+  }
 
 
-  // const IntroContent: JSX.Element = <div>
-  //   We might suggest clicking on these Topics to get started.
-  //   { suggestionRow( suggestions.user, `Based your Job Title of '${ user.item.jobTitle }':`, updateButtons ) }
-  //   { suggestionRow( suggestions.web, `Based your Current Site Title of '${ webTitle }' or Site Description:`, updateButtons ) }
-  //   { suggestionRow( suggestions.libraries, `Based your Libraries on this site:`, updateButtons ) }
+  const IntroContent: JSX.Element = <div>
+    We might suggest clicking on these Topics to get started.
+    { suggestionRow( suggestions.user, `Based your Job Title of '${ user.item.jobTitle }':`, updateButtons ) }
+    { suggestionRow( suggestions.web, `Based your Current Site Title of '${ webTitle }' or Site Description:`, updateButtons ) }
+    { suggestionRow( suggestions.libraries, `Based your Libraries on this site:`, updateButtons ) }
 
-  // </div>
+  </div>
+
+  const rowOptions = renderTitles.map( row => { return <button key={ row } 
+      className={ row === activeView ? styles.isSelected : '' }
+      onClick={ () => setActiveView( row )}>{ row }</button>});
 
   const MainContent: JSX.Element = <div className={ styles.infoItems }style={{ cursor: 'default' }}>
-    <h3>Need to verify this text is ok and update it</h3>
+    <b><mark>Need to verify this text is ok and update it</mark></b>
     <div>Items on this tab are RIG Items.</div>
     <div>RIG Items are typical names of content that may or may not be a record.</div>
-    <div>You can search for common names  here and determine both Retention types as well as privacy and data classifications.</div>
+    <div>You can search for common names here and determine both Retention types as well as privacy and data classifications.</div>
     <div>This is a living list that anyone in the company can help maintain.</div>
     <div>To submit an update, please <span className={ styles.isLink } onClick={ () => window.open( OtherIframeHref, '_blank')} >click here</span></div>
+    <div>You can filter lots of different ways</div>
+    <div style={{ fontSize: 'large', cursor: 'pointer' }}>Change Layout: <span className={ styles.suggestions }>{ rowOptions }</span>  </div>
   </div>
 
   const InfoElement: JSX.Element = <Accordion 
@@ -148,20 +172,28 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
     defaultIcon = 'Help'
     showAccordion = { true }
     content = { MainContent }
-    contentStyles = { { height: '195px' } }
+    contentStyles = { { height: '200px' } }
   />;
+
+  const headerRows = <div className={ [ stylesRow.genericItem, stylesRow.genericItem1 ].join( ' ' ) } onClick = { null }>
+    { renderHeaders[ renderTitles.indexOf( activeView ) ].map( heading => {
+      return <div key={ heading } >{ heading }</div>
+    })}
+  </div>
 
   const itemsElement = <SourcePages
     // source={ SourceInfo }
     primarySource={ primarySource }
     itemsPerPage={ 20 }
     pageWidth={ 1000 }
-    topButtons={ buttonLabels }
+    topButtons={ buttonRigItems }
     stateSource={ { ...stateSource, ...{ refreshId: refreshId } } }
     startQty={ 20 }
     showItemType={ false }
     debugMode={ debugMode }
-    renderRow={ createRigItemsRow }
+    tableHeaderElements={ renderHeaders[ renderTitles.indexOf( activeView ) ] }
+    tableHeaderClassName= { [ stylesRow.genericItem, renderStyles[ renderTitles.indexOf( activeView ) ] ].join( ' ' )  }
+    renderRow={ renderRows[ renderTitles.indexOf( activeView ) ] }
     // bumpDeepLinks= { this.bumpDeepStateFromComponent.bind(this) }
     deepProps={ null } //this.state.deepProps
     // canvasOptions={ this.props.canvasOptions }

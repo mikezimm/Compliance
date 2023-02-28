@@ -109,6 +109,7 @@ export const LabelSearchColumns: string[] = [
  ];
 
  export const RigItemSearchColumns: string[] = [
+  'Status', //  : string;
   'ItemId', //  : string; // This is added when it is fetched so it can be processed easier.
   'ItemName', //  : string;
   'ItemType', //  : string;
@@ -118,7 +119,9 @@ export const LabelSearchColumns: string[] = [
   'CategoryCode', //  : string;
   'CategoryName', //  : string;
   'RecordCode', //  : string;
-
+  'RecordTitle', //  : string;
+  'Classification', //  : string;
+  'GlobalDataPrivacy', //  : string;
  ];
 
 export const LabelOtherColumns: string[] = [
@@ -203,7 +206,7 @@ export const SourceInfo: ISourceInfo = {
     // meta2?: string[];
     // meta3?: string[];
     // metaX?: string[];
-    defSearchButtons: ['Current', 'China', 'Contracts', 'FAC' ],
+    defSearchButtons: [ 'Current', 'China', 'Contracts', 'FAC', 'Personal Data', 'Sensitive Personal Data', 'Confidential', 'Secret' ],
     fetchCount: 5000,
   },
 

@@ -190,6 +190,12 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
     const topSearchContent = <div className={ styles.topSearch } style={ { background : debugMode === true ? 'pink' : null }} >{ topSearch }</div>;
 
     const filtered: JSX.Element[] = [];
+    let tableHeaderRow: JSX.Element = undefined;
+    if ( this.props.tableHeaderElements && this.props.tableHeaderElements.length > 0 ) {
+      tableHeaderRow = <tr className={ this.props.tableHeaderClassName }>{
+        this.props.tableHeaderElements.map( ( item, index ) => { return <th key={ index }>{item}</th>} )
+      }</tr>
+    }
     this.state.filtered.map( ( item: IAnySourceItem, idx: number ) => {
 
       if ( idx >= this.state.firstVisible && idx <= this.state.lastVisible ) {
@@ -285,6 +291,7 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
               { searchSourceDesc }
               { searchBox }
               { topSearchContent }
+              { tableHeaderRow }
               { filtered }
               { this.props.footerElement }
               {/* { FetchingSpinner } */}
