@@ -4,10 +4,10 @@ import { startPerformOpV2, updatePerformanceEndV2 } from "@mikezimm/fps-library-
 import { checkItemsResults, IFpsItemsReturn } from "@mikezimm/fps-library-v2/lib/pnpjs/Common/CheckItemsResults";
 import { ISourceProps } from "@mikezimm/fps-library-v2/lib/pnpjs/SourceItems";
 import { IItemsErrorObj } from "@mikezimm/fps-pnp2/lib/services/sp/fetch/items/Interface";
-import { IMinFetchProps } from "@mikezimm/fps-pnp2/lib/services/sp/fetch/items/Interface";
+// import { IMinFetchProps } from "@mikezimm/fps-pnp2/lib/services/sp/fetch/items/Interface";
 // import { ISourceProps } from './Interface';
 // import { checkItemsResults, IFpsItemsReturn } from '../Common/CheckItemsResults';
-import { createMinFetchProps } from "@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/createMinFetchProps";
+// import { createMinFetchProps } from "@mikezimm/fps-library-v2/lib/pnpjs/SourceItems/createMinFetchProps";
 // import { startPerformOpV2, updatePerformanceEndV2 } from "../../components/molecules/Performance/functions";
 
 
@@ -22,7 +22,7 @@ export function fetchLabelData( sourceProps: ISourceProps, alertMe: boolean | un
   const performanceOp = performanceSettings ? startPerformOpV2( performanceSettings ) : null;
   // const initialResult = await fetchAnyItems( FetchProps );
 
-  const MockLabels: IAnySourceItem[] = LabelExportJSON.map( ( label: any ) => {
+  const MockLabels: IAnySourceItem[] = LabelExportJSON.map( ( label: IAnySourceItem ) => {
     label.Title = label.RecordTitle;
     return label;
   } );

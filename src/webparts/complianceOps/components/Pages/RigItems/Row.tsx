@@ -8,7 +8,7 @@ import { ISourceRowRender } from '../SourcePages/ISourceRowRender';
 // import { buildClickableIcon } from '@mikezimm/fps-library-v2/lib/components/atoms/Icons/stdIconsBuildersV02';
 
 export interface IRigItemSource extends IAnySourceItem {
-  ItemId: number; // This is added when it is fetched so it can be processed easier.
+  ItemId: string; // This is added when it is fetched so it can be processed easier.
   ItemName: string;
   ItemType: string;
   ItemDescription: string;
@@ -29,9 +29,9 @@ export interface IRigItemSource extends IAnySourceItem {
 //export const CoordinatorColumns: string[] = [ 'ID','Facility', 'Division', 'Name/Title', 'AlternateContact/Title', 'Datelastverified', 'MapComplete' ];
 
 export function createRigItemsRow( props: ISourceRowRender ): JSX.Element { // eslint-disable-line @typescript-eslint/no-explicit-any
-  const { item, searchText, onClick,  } = props; // details, showItemType, onOpenPanel, onParentCall, 
+  const { item, searchText,  } = props; // details, showItemType, onOpenPanel, onParentCall, onClick
 
-  const thisItem: IRigItemSource = item as IRigItemSource;
+  // const thisItem: IRigItemSource = item as IRigItemSource;
 
   const row = <div className={ styles.genericItem } onClick = { null }>
     <div title={ null } >{ getHighlightedText( item.RecordCode, searchText ) }</div>

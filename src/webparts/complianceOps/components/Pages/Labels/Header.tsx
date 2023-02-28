@@ -11,8 +11,8 @@ import styles from './header.module.scss';
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
-import { OtherIframeHref, RigAPIDocs, RIG_Page_Search_PROD, RIG_Page_Search_QA } from '../../../storedSecrets/CorpAPIs';
-import { buttonProperties } from 'office-ui-fabric-react';
+import { OtherIframeHref, RigAPIDocs, RIG_Page_Search_PROD, } from '../../../storedSecrets/CorpAPIs';
+// import { buttonProperties } from 'office-ui-fabric-react';
 import { ISuggestion } from '../../Suggestions/LabelSuggestions';
 import { ISourcePropsCOP } from '../../DataInterface';
 import SourcePages from '../SourcePages/SourcePages';
@@ -45,10 +45,11 @@ export interface ILabelsPageProps {
 const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { debugMode, mainPivotKey, wpID, user, suggestions, primarySource, stateSource, webTitle } = props; //appLinks, news 
+  const { debugMode, mainPivotKey, user, suggestions, primarySource, stateSource, webTitle } = props; //appLinks, news wpID, 
 
   const [ buttonLabels, setSuttonLabels ] = useState<string[]>( primarySource.defSearchButtons );
   const [ activeButton, setActiveButton ] = useState<string>( defaultButton );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [ refreshId, setRefreshId ] = useState<string>( makeid( 5 ) );
   const [ teachBubble, setTeachBubble ] = useState<number>( null );
   const [ lastBubble, setLastBubble ] = useState<number>( 0 );

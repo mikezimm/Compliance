@@ -2,7 +2,7 @@
 import { IFPSCoreReactComponentProps } from '@mikezimm/fps-library-v2/lib/banner/mainReact/ReactComponentProps';
 import { IFPSCorePinMeReactComponentState } from '@mikezimm/fps-library-v2/lib/banner/mainReact/ReactComponentState';
 
-import { IAnySourceItem, ILoadPerformanceOps, IPerformanceOp } from '../fpsReferences';
+import { IAnySourceItem, IPerformanceOp } from '../fpsReferences';
 import { IFpsItemsReturn } from '../fpsReferences';
 
 import { ILoadPerformance } from '../fpsReferences';

@@ -54,9 +54,9 @@ export interface ICorpLabelsSource extends IAnySourceItem {
 //export const CoordinatorColumns: string[] = [ 'ID','Facility', 'Division', 'Name/Title', 'AlternateContact/Title', 'Datelastverified', 'MapComplete' ];
 
 export function createLabelsRow( props: ISourceRowRender ): JSX.Element { // eslint-disable-line @typescript-eslint/no-explicit-any
-  const { item, searchText, onClick,  } = props; // details, showItemType, onOpenPanel, onParentCall, 
+  const { item, searchText,  } = props; // details, showItemType, onOpenPanel, onParentCall, onClick, 
 
-  const thisItem: ICorpLabelsSource = item as ICorpLabelsSource;
+  // const thisItem: ICorpLabelsSource = item as ICorpLabelsSource;
 
   const row = <div className={ styles.genericItem } onClick = { null }>
     <div title={ null } >{ getHighlightedText( item.RecordCode, searchText ) }</div>

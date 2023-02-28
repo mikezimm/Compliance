@@ -1,27 +1,29 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
-import { IStateSource, IStateSuggestions, IStateUser, ITabMain, } from '../../IComplianceOpsProps';
+import { IStateSource, ITabMain, } from '../../IComplianceOpsProps';
 
 // import { Icon  } from 'office-ui-fabric-react/lib/Icon';
-import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
+// import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
 
 import styles from './header.module.scss';
 
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
-import { OtherIframeHref, RigAPIDocs, RIG_Page_Search_PROD, RIG_Page_Search_QA } from '../../../storedSecrets/CorpAPIs';
-import { buttonProperties } from 'office-ui-fabric-react';
-import { ISuggestion } from '../../Suggestions/LabelSuggestions';
+// import { OtherIframeHref, RigAPIDocs, RIG_Page_Search_PROD, RIG_Page_Search_QA } from '../../../storedSecrets/CorpAPIs';
+// import { buttonProperties } from 'office-ui-fabric-react';
+// import { ISuggestion } from '../../Suggestions/LabelSuggestions';
 import { ISourcePropsCOP } from '../../DataInterface';
-import SourcePages from '../SourcePages/SourcePages';
-import { createRigItemsRow } from './Row';
-import { check4Gulp, makeid } from '../../../fpsReferences';
+// import SourcePages from '../SourcePages/SourcePages';
+// import { createRigItemsRow } from './Row';
+// import { check4Gulp, makeid } from '../../../fpsReferences';
 import ReactJson from 'react-json-view';
-import { TrimmedRecordItems } from '../../../storedSecrets/AS303 Items Full';
+import { simplifyPropsosedRIGItems } from '../../../storedSecrets/AS303 Items v3';
+// import { FutureMockRecordItems } from '../../../storedSecrets/AS303 Items Full';
 
-const defaultButton: string = 'defaults';
+// const defaultButton: string = 'defaults';
+
 export interface IRigItemsPageProps {
   stateSource: IStateSource;
   primarySource: ISourcePropsCOP;
@@ -49,9 +51,9 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { debugMode, mainPivotKey, wpID, primarySource, stateSource, } = props; //appLinks, news 
 
-  const [ buttonRigItems, setSuttonRigItems ] = useState<string[]>( primarySource.defSearchButtons );
-  const [ activeButton, setActiveButton ] = useState<string>( defaultButton );
-  const [ refreshId, setRefreshId ] = useState<string>( makeid( 5 ) );
+  // const [ buttonRigItems, setSuttonRigItems ] = useState<string[]>( primarySource.defSearchButtons );
+  // const [ activeButton, setActiveButton ] = useState<string>( defaultButton );
+  // const [ refreshId, setRefreshId ] = useState<string>( makeid( 5 ) );
   const [ teachBubble, setTeachBubble ] = useState<number>( null );
   const [ lastBubble, setLastBubble ] = useState<number>( 0 );
 
@@ -184,7 +186,7 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
     {/* { itemsElement } */}
     {/* <div id={ 'ComplRigItemsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
     {
-        <ReactJson src={ TrimmedRecordItems } name={ 'Response Details' } collapsed={ false } displayDataTypes={ false } displayObjectSize={ false }
+        <ReactJson src={ simplifyPropsosedRIGItems() } name={ 'Response Details' } collapsed={ false } displayDataTypes={ false } displayObjectSize={ true }
         enableClipboard={ true } style={{ padding: '20px 0px' }} theme= { 'rjv-default' } indentWidth={ 2}/>
     }
 

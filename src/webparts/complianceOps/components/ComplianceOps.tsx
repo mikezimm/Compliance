@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styles from './ComplianceOps.module.scss';
-import { IComplianceOpsProps, IComplianceOpsState, IStateSource, IStateSuggestions, IStateUser, ITabContactPivots, ITabMain, ITabSecondary, ITabTestingPivots } from './IComplianceOpsProps';
+import { IComplianceOpsProps, IComplianceOpsState, IStateSource, IStateSuggestions, IStateUser, ITabContactPivots, ITabMain, } from './IComplianceOpsProps';
 
 
 import { Pivot, PivotItem, PivotLinkFormat, PivotLinkSize,} from 'office-ui-fabric-react/lib/Pivot';
@@ -77,10 +77,10 @@ import { getSiteCollectionUrlFromLink } from '@mikezimm/fps-library-v2/lib/logic
 import { IUserProperties } from './PersonaCard/IUserProperties';
 import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
 import { fetchLabelData } from './Pages/Labels/fetchLabels';
-import { createLabelsRow } from './Pages/Labels/Row';
+// import { createLabelsRow } from './Pages/Labels/Row';
 
 import { MSGraphClient } from '@microsoft/sp-http';
-import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
+// import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
 import { convertSugsLC } from './Suggestions/convertSugsLC';
 import { LabelSuggestions } from './Suggestions/LabelSuggestions';
 import { getSuggestionsByKeys, getSuggestionsFromStrings } from './Suggestions/getSuggestionsByKeys';
@@ -188,8 +188,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     try {
       ops.fetchU = startPerformOp( 'user' , this.props.bannerProps.displayMode, true );
 
-      const thisContext = this.props.bannerProps.context as any;
-      this.graphClient = await thisContext.msGraphClientFactory.getClient();
+      // const thisContext = this.props.bannerProps.context ;
+      this.graphClient = await this.props.bannerProps.context.msGraphClientFactory.getClient();
       const results: any = await this.graphClient
         .api(`/me`)
         .version('v1.0')
@@ -448,7 +448,9 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       coordinators: coordinators,
       forms: forms,
       tips: tips,
+      allLists: allLists,
       labels: labels,
+      rigItems: rigItems,
       targetInfo: targetInfo,
       suggestions: suggestions,
       fullAnalyticsSaved: true,
@@ -511,7 +513,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       hasTeamsContext, bannerProps
     } = this.props;
 
-    const { mainPivotKey, contactPivotKey, fullAnalyticsSaved } = this.state;
+    const { mainPivotKey, contactPivotKey } = this.state; //, fullAnalyticsSaved
 
 
     const devHeader = this.state.showDevHeader === true ? <div><b>Props: </b> { `this.props.lastPropChange , this.props.lastPropDetailChange` } - <b>State: lastStateChange: </b> { this.state.lastStateChange  } </div> : null ;
