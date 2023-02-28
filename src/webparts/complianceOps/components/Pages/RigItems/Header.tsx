@@ -186,10 +186,13 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
     {/* { itemsElement } */}
     {/* <div id={ 'ComplRigItemsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
     {
-        <ReactJson src={ simplifyPropsosedRIGItems() } name={ 'Response Details' } collapsed={ false } displayDataTypes={ false } displayObjectSize={ true }
-        enableClipboard={ true } style={{ padding: '20px 0px' }} theme= { 'rjv-default' } indentWidth={ 2}/>
-    }
 
+    }
+    <ReactJson src={ stateSource } name={ 'Response Details' } collapsed={ false } displayDataTypes={ false } displayObjectSize={ true }
+      enableClipboard={ true } style={{ padding: '20px 0px' }} theme= { 'rjv-default' } indentWidth={ 2}/>
+
+    <ReactJson src={ simplifyPropsosedRIGItems() } name={ 'Response Details' } collapsed={ false } displayDataTypes={ false } displayObjectSize={ true }
+      enableClipboard={ true } style={{ padding: '20px 0px' }} theme= { 'rjv-default' } indentWidth={ 2}/>
     { TeachMe }
   </div>;
 

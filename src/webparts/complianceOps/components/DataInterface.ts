@@ -33,6 +33,7 @@ export interface ISourcePropsCOP extends ISourceProps {
     defType: IDefSourceType;        //Used in Search Meta function
 
     searchSource: ISearchSource;
+    indexKey: string;
     // searchSourceDesc: string;
 
     // orderBy?: {
@@ -104,6 +105,20 @@ export const LabelSearchColumns: string[] = [
   'RecordFunction', // Searchable : "Facilities, Equipment and Fleet",
   'RecordCategory', // Searchable : "FAC-2 Physical Security",
   'Status', // Searchable         : "Active",
+  'ItemNamesStr', // From RigItemNames         : ,
+ ];
+
+ export const RigItemSearchColumns: string[] = [
+  'ItemId', //  : string; // This is added when it is fetched so it can be processed easier.
+  'ItemName', //  : string;
+  'ItemType', //  : string;
+  'ItemDescription', //  : string;
+  'FunctionCode', //  : string;
+  'FunctionName', //  : string;
+  'CategoryCode', //  : string;
+  'CategoryName', //  : string;
+  'RecordCode', //  : string;
+
  ];
 
 export const LabelOtherColumns: string[] = [
@@ -129,6 +144,7 @@ export const SourceInfo: ISourceInfo = {
     key: `labels`,
     defType: `labels`,
     performanceSettings: {  label: 'labels', updateMiliseconds: true, includeMsStr: true, op: 'fetch7'  },
+    indexKey: `RecordCode`,
     webUrl: ``,
     listTitle: ``,
     webRelativeLink: ``,
@@ -160,6 +176,7 @@ export const SourceInfo: ISourceInfo = {
   rigItems: {
     key: `rigItems`,
     defType: `rigItems`,
+    indexKey: `ItemName`, //ItemId 
     performanceSettings: {  label: 'RigItems', updateMiliseconds: true, includeMsStr: true, op: 'fetch8'  },
     webUrl: ``,
     listTitle: ``,
@@ -175,7 +192,8 @@ export const SourceInfo: ISourceInfo = {
     searchSource: `Labels`,
     searchSourceDesc: ``,
     columns: [],
-    searchProps: LabelSearchColumns,
+    searchProps: RigItemSearchColumns,
+
     // evalFilter?: string;
     // itemFetchCol?: string[];
     // isModern?: boolean;
@@ -192,6 +210,7 @@ export const SourceInfo: ISourceInfo = {
   admins: {
     key: 'admins',
     defType: 'admins',
+    indexKey: `ID`,
     performanceSettings: {  label: 'admins', updateMiliseconds: true, includeMsStr: true, op: 'fetch6'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Site Pages',
@@ -220,6 +239,7 @@ export const SourceInfo: ISourceInfo = {
   site: {
     key: 'site',
     defType: 'site',
+    indexKey: `ID`,
     performanceSettings: {  label: 'site', updateMiliseconds: true, includeMsStr: true, op: 'fetch0' },
     webUrl: `/sites/alvsiteprovisioning`,
     listTitle: 'SPORetentionLabelsEnforcement',
@@ -244,6 +264,7 @@ export const SourceInfo: ISourceInfo = {
   allLists: {
     key: 'allLists',
     defType: 'allLists',
+    indexKey: `ID`,
     performanceSettings: {  label: 'allLists', updateMiliseconds: true, includeMsStr: true, op: 'fetch9' },
     webUrl: `/sites/alvsiteprovisioning`,
     listTitle: 'SPORetentionLabelsEnforcement',
@@ -268,6 +289,7 @@ export const SourceInfo: ISourceInfo = {
   committee: {
     key: 'committee',
     defType: 'committee',
+    indexKey: `ID`,
     performanceSettings: {  label: 'committee', updateMiliseconds: true, includeMsStr: true, op: 'fetch1' },
     webUrl: `${IntraNetHome}`,
     listTitle: 'RIG Committee',
@@ -294,6 +316,7 @@ export const SourceInfo: ISourceInfo = {
   coordinators: {
     key: 'coordinators',
     defType: 'coordinators',
+    indexKey: `ID`,
     performanceSettings: {  label: 'coordinators', updateMiliseconds: true, includeMsStr: true, op: 'fetch2'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Facility Records Coordinators',
@@ -320,6 +343,7 @@ export const SourceInfo: ISourceInfo = {
   maps: {
     key: 'maps',
     defType: 'maps',
+    indexKey: `ID`,
     performanceSettings: {  label: 'maps', updateMiliseconds: true, includeMsStr: true, op: 'fetch3'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Facility Record Maps',
@@ -345,6 +369,7 @@ export const SourceInfo: ISourceInfo = {
   forms: {
     key: 'forms',
     defType: 'forms',
+    indexKey: `ID`,
     performanceSettings: {  label: 'forms', updateMiliseconds: true, includeMsStr: true, op: 'fetch4'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Appendices toAS303 and Commonly Used Forms',
@@ -365,6 +390,7 @@ export const SourceInfo: ISourceInfo = {
   tips: {
     key: 'tips',
     defType: 'tips',
+    indexKey: `ID`,
     performanceSettings: {  label: 'tips', updateMiliseconds: true, includeMsStr: true, op: 'fetch5'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Tip of the Day',
@@ -389,6 +415,7 @@ export const SourceInfo: ISourceInfo = {
   history: {
     key: 'history',
     defType: 'history',
+    indexKey: `ID`,
     webUrl: `${IntraNetHome}/`,
     webRelativeLink: '',
     searchSource: 'History',

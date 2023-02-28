@@ -24,6 +24,8 @@ export interface IRigItemSource extends IAnySourceItem {
   Status: string;
   PrivacyReviewedFlag: string;
   GlobalStorageLocation: string;
+
+  RecordIdx?: number; // The index of the parent Label Item
 }
 
 //export const CoordinatorColumns: string[] = [ 'ID','Facility', 'Division', 'Name/Title', 'AlternateContact/Title', 'Datelastverified', 'MapComplete' ];

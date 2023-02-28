@@ -85,6 +85,7 @@ import { convertSugsLC } from './Suggestions/convertSugsLC';
 import { LabelSuggestions } from './Suggestions/LabelSuggestions';
 import { getSuggestionsByKeys, getSuggestionsFromStrings } from './Suggestions/getSuggestionsByKeys';
 import { getSiteInfo } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/getSiteInfo';
+import { fetchRigItems } from './Pages/RigItems/fetchRigItems';
 
 // import { createSharePointRow } from './Pages/SharePoint/Row';
 
@@ -268,16 +269,16 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       fullAnalyticsSaved: false,
       experts: [],
 
-      rigItems : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
-      labels : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
-      admins : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
-      site : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
-      allLists : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
-      committee : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
-      coordinators : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
-      maps : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
-      forms : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
-      tips : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      rigItems : { items: [], index: [], loaded: false, refreshId: constId, status: 'Unknown', e: null, misc1: [], },
+      labels : { items: [], index: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      admins : { items: [], index: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      site : { items: [], index: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      allLists : { items: [], index: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      committee : { items: [], index: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      coordinators : { items: [], index: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      maps : { items: [], index: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      forms : { items: [], index: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      tips : { items: [], index: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       user: { item: null, loaded: false, refreshId: constId, status: 'Unknown', e: null },
       targetInfo: { site: null, loaded: false, refreshId: constId, status: 'Unknown', e: null },
 
@@ -367,6 +368,56 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       all === true || sources.indexOf( 'user' ) > -1 ? this.getCurrentUserGraph() : this.state.user,
       all === true || sources.indexOf( 'targetInfo' ) > -1 ? this.getCurrentWeb( this.state.targetWebUrl ) : this.state.targetInfo,
     ]);
+
+    /**
+     * Build RIG Indexes and search
+     */
+    ops.analyze7 = startPerformOp( 'analyze7 - RIG', this.props.bannerProps.displayMode );
+
+    if ( labels && labels.items.length > 0 ) {
+      labels.index = [];
+      labels.items.map( item => { 
+        item.ItemNames = [];
+        item.ItemNamesStr = '';
+        if ( item ) labels.index.push( item[ this._SourceInfo.labels.indexKey ] );
+        labels.items = addSearchMeta1( labels.items, this._SourceInfo.labels, null );
+        labels.items = addSearchMeta2( labels.items, SearchTypes );
+      });
+    }
+
+    if ( rigItems && rigItems.items.length > 0 ) {
+      rigItems.index = [];
+      rigItems.misc1 = [];
+      rigItems.items.map( item => { 
+        if ( item ) {
+          const itemIndexStr = item[ this._SourceInfo.rigItems.indexKey ];
+          rigItems.index.push( itemIndexStr );
+          item.RecordIdx = labels.index.indexOf( item.RecordCode );
+
+          if ( item.RecordIdx > -1 ) {
+            labels.items[ item.RecordIdx ].ItemNames.push( itemIndexStr );
+            labels.items[ item.RecordIdx ].ItemNamesStr += `${itemIndexStr}; `;
+          } else {
+            rigItems.misc1.push( itemIndexStr );
+          }
+          rigItems.items = addSearchMeta1( rigItems.items, this._SourceInfo.rigItems, null );
+          rigItems.items = addSearchMeta2( rigItems.items, SearchTypes );
+        }
+      });
+    }
+
+    /**
+     * Add SearchMeta to labels after it has the ItemNamesStr added 
+     */
+    labels.items = addSearchMeta1( labels.items, this._SourceInfo.labels, null );
+    labels.items = addSearchMeta2( labels.items, SearchTypes );
+
+    ops.analyze7 = updatePerformanceEnd( ops.analyze7,   true, labels.items.length + rigItems.items.length );
+    if ( check4Gulp() === true ) console.log( 'RIG Crunch', labels, rigItems, ops.analyze7 );
+
+    /**
+     * Start SUGGESTIONS
+     */
 
     const updateSugs = this._suggestions !== true ? true : false;
     let suggestions: IStateSuggestions = updateSugs === true ? null : this.state.suggestions;
@@ -462,7 +513,10 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     const { displayMode } = this.props.bannerProps;
     let stateSource: IStateSource = null;
     if ( sourceProps.key === 'labels' || sourceProps.key === 'rigItems' ) {
-      stateSource = fetchLabelData( sourceProps, true, true ) as IStateSource;
+      stateSource = sourceProps.key === 'labels' ? fetchLabelData( sourceProps, true, true ) as IStateSource : fetchRigItems( sourceProps, true, true ) as IStateSource;
+      stateSource.index = [];
+      stateSource.items.map( item => { stateSource.index.push( item[ sourceProps.indexKey ] ) });
+
     } else {
       stateSource = await getSourceItems( { ...sourceProps, ...{ editMode: displayMode } }, true, true ) as IStateSource;
     }

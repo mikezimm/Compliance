@@ -32,6 +32,9 @@ export interface IComplianceOpsProps  extends IFPSCoreReactComponentProps {
 
 export interface IStateSource extends IFpsItemsReturn {
   items: IAnySourceItem[];
+  index: string[]; // All unsorted items key values in array for easy 'indexOf' search
+  misc1?: string[]; // Optional array used for RigItems indicating which ones are NOT found as a record
+
 }
 
 export type ITabHome = `Home`;
