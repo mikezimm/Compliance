@@ -36,9 +36,15 @@ export function createRigItemsRow( props: ISourceRowRender ): JSX.Element { // e
   // const thisItem: IRigItemSource = item as IRigItemSource;
 
   const row = <div className={ styles.genericItem } onClick = { null }>
+    <div title={ null } >{ getHighlightedText( item.Status, searchText ) }</div>
+    <div title={ null } >{ getHighlightedText( item.ItemName, searchText ) }</div>
+    <div title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</div>
     <div title={ null } >{ getHighlightedText( item.RecordCode, searchText ) }</div>
     <div title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</div>
-    <div title={ null } >{ getHighlightedText( item.Description, searchText ) }</div>
+    <div title={ null } >{ getHighlightedText( item.Classification, searchText ) }</div>
+    <div title={ null } >{ getHighlightedText( item.GlobalDataPrivacy, searchText ) }</div>
+
+
     {/* <div title={ null } >{ getHighlightedText( item[ 'Name/Title' ], searchText ) }</div> */}
   </div>;
 

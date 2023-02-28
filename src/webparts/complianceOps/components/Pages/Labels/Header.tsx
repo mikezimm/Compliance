@@ -130,9 +130,8 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
     {/* <ul> */}
       <div>Hi { user.item.givenName }, the first step to applying records retention to your files, is understanding what kinds of records you may have.</div>
       <div>You can search the retention schedule here or &nbsp;
-        <span onClick={ () => window.open( RIG_Page_Search_PROD, '_blank') } 
-        style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}
-        >click on this link</span>  to open in a full window.</div>
+        <span className={ styles.isLink } onClick={ () => window.open( RIG_Page_Search_PROD, '_blank') } >
+          click on this link</span> to open in a full window.</div>
       {/* <li onClick={ () => window.open( RIG_Page_Search, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}>IFrame Url1: { RIG_Page_Search} </li> */}
       { IntroContent }
 

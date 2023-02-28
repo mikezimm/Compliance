@@ -149,7 +149,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     return isAdmin;
   }
 
-  private _missingFetches() : IDefSourceType[] {
+  private _missingFetches( getsAdmin: boolean, ) : IDefSourceType[] {
 
     const loads: IDefSourceType[] = [];
     if ( this.state.site.loaded !== true ) loads.push( 'site' );
@@ -158,12 +158,12 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     if ( this.state.maps.loaded !== true ) loads.push( 'maps' );
     if ( this.state.forms.loaded !== true ) loads.push( 'forms' );
     if ( this.state.tips.loaded !== true ) loads.push( 'tips' );
-    if ( this.state.admins.loaded !== true ) loads.push( 'admins' );
+    if ( getsAdmin === true && this.state.admins.loaded !== true ) loads.push( 'admins' );
     if ( this.state.labels.loaded !== true ) loads.push( 'labels' );
     if ( this.state.user.loaded !== true ) loads.push( 'user' );
     if ( this.state.targetInfo.loaded !== true ) loads.push( 'targetInfo' );
-    if ( this.state.allLists.loaded !== true ) loads.push( 'allLists' );
-    if ( this.state.rigItems.loaded !== true ) loads.push( 'rigItems' );
+    if ( getsAdmin === true && this.state.allLists.loaded !== true ) loads.push( 'allLists' );
+    if ( getsAdmin === true && this.state.rigItems.loaded !== true ) loads.push( 'rigItems' );
 
     if ( loads.length === 0 ) loads.push( '*' );
 
@@ -297,7 +297,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
   public async componentDidMount(): Promise<void> {
       if ( check4Gulp() === true )  console.log( `${consolePrefix} ~ componentDidMount` );
 
-      await this.updateTheseSources( this._missingFetches() );
+      await this.updateTheseSources( this._missingFetches( this._isAdmin ) );
 
       const analyticsWasExecuted = saveViewAnalytics( 'Compliance mount', 'didMount' , this.props, this.state.analyticsWasExecuted, this._performance );
 
@@ -337,7 +337,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     //refresh these privates when the prop changes warrent it
     if ( refresh === true ) {
       this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, this._isAdmin, this.state.targetSiteUrl );
-      await this.updateTheseSources( this._missingFetches() );
+      await this.updateTheseSources( this._missingFetches( this._isAdmin  ) );
       this._contentPages = getBannerPages( this.props.bannerProps );
     }
 
@@ -372,9 +372,14 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     /**
      * Build RIG Indexes and search
      */
-    ops.analyze7 = startPerformOp( 'analyze7 - RIG', this.props.bannerProps.displayMode );
 
-    if ( labels && labels.items.length > 0 ) {
+    const processLables = labels.loaded === true && this.state.labels.loaded === false ? true : false;
+    const processRigItems = rigItems.loaded === true && this.state.rigItems.loaded === false ? true : false;
+
+    console.log( 'processRIG', processLables, processRigItems );
+
+    if ( processLables === true ) {
+      ops.analyze7 = startPerformOp( 'analyze7 - RIG', this.props.bannerProps.displayMode );
       labels.index = [];
       labels.items.map( item => { 
         item.ItemNames = [];
@@ -385,7 +390,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       });
     }
 
-    if ( rigItems && rigItems.items.length > 0 ) {
+    if ( processRigItems === true ) {
       rigItems.index = [];
       rigItems.misc1 = [];
       rigItems.items.map( item => { 
@@ -409,12 +414,13 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     /**
      * Add SearchMeta to labels after it has the ItemNamesStr added 
      */
-    labels.items = addSearchMeta1( labels.items, this._SourceInfo.labels, null );
-    labels.items = addSearchMeta2( labels.items, SearchTypes );
+    if ( processLables === true ) {
+      labels.items = addSearchMeta1( labels.items, this._SourceInfo.labels, null );
+      labels.items = addSearchMeta2( labels.items, SearchTypes );
 
-    ops.analyze7 = updatePerformanceEnd( ops.analyze7,   true, labels.items.length + rigItems.items.length );
-    if ( check4Gulp() === true ) console.log( 'RIG Crunch', labels, rigItems, ops.analyze7 );
-
+      ops.analyze7 = updatePerformanceEnd( ops.analyze7,   true, labels.items.length + rigItems.items.length );
+      if ( check4Gulp() === true ) console.log( 'RIG Crunch', labels, rigItems, ops.analyze7 );
+    }
     /**
      * Start SUGGESTIONS
      */
@@ -868,7 +874,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     }
 
     this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, this._isAdmin, this.state.targetSiteUrl );
-    await this.updateTheseSources( this._missingFetches() );
+    await this.updateTheseSources( this._missingFetches( this._isAdmin ) );
 
   }
 

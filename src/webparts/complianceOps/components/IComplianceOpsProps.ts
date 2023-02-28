@@ -59,7 +59,7 @@ export type ITabAllLists = `AllLists`;
 
 export type ITabMain = ITabHome | ISearchSource | ITabInstructions | ITabContacts | ITabDetails | ITabRigItems | ITabLabels | ITabAdmins | ITabTesting | ITabAllLists ;
 export type ITabContactPivots = ITabCommittee | ITabCoordinators | ITabSharePoint | ITabExperts;
-export type ITabTestingPivots = 'Prod Titles' | 'QA Titles' | 'Prod Sales' | 'QA Sales' | 'RIG Items' | 'na' | 'Instructions';
+export type ITabTestingPivots = 'Prod Titles' | 'QA Titles' | 'Prod Sales' | 'QA Sales' | 'RIG Items NA' | 'Prod Titles NA' | 'na' | 'Instructions';
 export type ITabSecondary = ITabContactPivots | ITabTestingPivots;
 
 export interface IStateUser extends IFpsItemsReturn {

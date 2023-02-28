@@ -34,6 +34,8 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { debugMode, wpID, showComponent, textInput, updateInputCallback, httpClient, description, callBackOnError, headers } = props; //appLinks, news 
   const [ currentUrl, setCurrentUrl ] = useState<string>( textInput );
+  const [ currentUser, setCurrentUser ] = useState<string>( textInput );
+  const [ currentPass, setCurrentPass ] = useState<string>( textInput );
   const [ webURLStatus, setWebURLStatus ] = useState<string>( 'Untested' );
   // const [ validUrl, setValidUrl ] = useState<string>( '' );
   const [ response, setResponse ] = useState< IFpsHttpInfo >( null );
@@ -102,6 +104,8 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
       value={ currentUrl }
       label={ null }
       autoComplete='off'
+      type='NOTpassword'
+      canRevealPassword={ true }
       // onChange={ this._onHTTPApiChange.bind(this) }
       onChange={ delayOnHTTPApiChange.bind(this) }
       onGetErrorMessage= { (value: string | Date) : string => { return "";} }
