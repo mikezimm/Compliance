@@ -1,5 +1,6 @@
 
 import { HttpClient, HttpClientResponse } from '@microsoft/sp-http';
+import { IHttpClientOptions } from '@microsoft/sp-http';
 import { IFpsErrorObject } from '@mikezimm/fps-library-v2/lib/pnpjs/Common/IFpsErrorObject';
 import { IFPSResultStatus } from '@mikezimm/fps-pnp2/lib/services/sp/IFPSResultStatus';
 
@@ -20,7 +21,7 @@ export interface IFpsHttpInfo extends IFpsErrorObject {
 
 }
 
-export async function fetchLables ( apiEndPoint: string, httpClient: HttpClient, description: string, headers?: any ): Promise<IFpsHttpInfo>  {
+export async function fetchLables ( apiEndPoint: string, httpClient: HttpClient, description: string, headers?: IHttpClientOptions ): Promise<IFpsHttpInfo>  {
 
   // Validate approved location
   // const websLocation = this.approvedWebs.filter(loc => loc.key == web)[0];
@@ -58,6 +59,7 @@ export async function createFPSHttpResponse( description: string, response: Http
   results.url = response ? response.url : null;
   results.type = response ? response.type : null;
   results.bodyUsed = response ? response.bodyUsed : null;
+  results.headers = response ? response.headers : null;
 
   results.status = response ? response.statusText as IFPSResultStatus : 'Error';
 

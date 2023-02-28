@@ -304,11 +304,17 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
     const startingItems: IAnySourceItem[] = this.props.stateSource.items;
     const filtered: IAnySourceItem[] = getFilteredItems( startingItems, this.state.searchText, [], [], [], selected );
 
+    let lastVisible = this._itemsPerPage;
+
+    if ( check4Gulp() === true ) console.log( 'filtered SourePage', lastVisible, filtered, );
+
+    if ( filtered.length < lastVisible ) lastVisible = filtered.length;
+
     this.setState({ 
       topSearch: selected , 
       filtered: filtered,
       firstVisible: 0,
-      lastVisible: filtered.length - 1,
+      lastVisible: lastVisible - 1,
       resetArrows: makeid(4),
      });
 

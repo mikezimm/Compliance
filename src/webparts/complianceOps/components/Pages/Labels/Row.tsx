@@ -26,6 +26,7 @@ export interface ICorpLabelsSource extends IAnySourceItem {
   Status: string;
   FunctionCode: string;
   CategoryCode: string;
+  Items?: number[]; // Optional Item Id Lookups
 }
 
 

@@ -40,6 +40,7 @@ export type ITabSite = `Site`;
 export type ITabMaps = `Maps`;
 export type ITabForms = `Forms`;
 export type ITabTips = `Tips`;
+export type ITabRigItems = `RigItems`;
 export type ITabLabels = `Labels`;
 export type ITabInstructions = `Instructions`;
 export type ITabContacts = `Contacts`;
@@ -50,11 +51,12 @@ export type ITabSharePoint = `SharePoint`;
 export type ITabExperts = `Experts`;
 export type ITabAdmins = `Admins`;
 export type ITabTesting = `Testing`;
+export type ITabAllLists = `AllLists`;
 
 
-export type ITabMain = ITabHome | ISearchSource | ITabInstructions | ITabContacts | ITabDetails | ITabLabels | ITabAdmins | ITabTesting;
+export type ITabMain = ITabHome | ISearchSource | ITabInstructions | ITabContacts | ITabDetails | ITabRigItems | ITabLabels | ITabAdmins | ITabTesting | ITabAllLists ;
 export type ITabContactPivots = ITabCommittee | ITabCoordinators | ITabSharePoint | ITabExperts;
-export type ITabTestingPivots = 'Prod Titles' | 'QA Titles' | 'Prod Sales' | 'QA Sales' | 'na' | 'Instructions';
+export type ITabTestingPivots = 'Prod Titles' | 'QA Titles' | 'Prod Sales' | 'QA Sales' | 'RIG Items' | 'na' | 'Instructions';
 export type ITabSecondary = ITabContactPivots | ITabTestingPivots;
 
 export interface IStateUser extends IFpsItemsReturn {
@@ -93,7 +95,9 @@ export interface IComplianceOpsState extends IFPSCorePinMeReactComponentState {
   user: IStateUser;
 
   labels : IStateSource;
+  rigItems: IStateSource;
   admins : IStateSource;
+  allLists: IStateSource;
   site : IStateSource;
   committee : IStateSource;
   coordinators : IStateSource;
@@ -102,4 +106,5 @@ export interface IComplianceOpsState extends IFPSCorePinMeReactComponentState {
   tips : IStateSource;
 
   suggestions: IStateSuggestions;
+
 }

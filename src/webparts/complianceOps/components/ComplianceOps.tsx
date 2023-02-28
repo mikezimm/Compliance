@@ -63,6 +63,8 @@ import WebUrlHook from './WebUrlBox/component';
 
 import ExpertsPageHook from './Pages/Experts/Header';
 
+import RigItemsPageHook from './Pages/RigItems/Header';
+
 import AdminsPageHook from './Pages/Admins/Header';
 
 import TestingPageHook from './Pages/Testing/Header';
@@ -91,7 +93,7 @@ const SiteThemes: ISiteThemes = { dark: styles.fpsSiteThemeDark, light: styles.f
 //Use this to add more console.logs for this component
 const consolePrefix: string = 'fpsconsole: FpsCore115Banner';
 
-const mainKeys: ITabMain[] = [ 'Home', 'Tips', 'Labels', 'Instructions', 'Site', 'Details', 'Contacts', 'Maps', 'Forms', 'Admins', 'Testing' ];
+const mainKeys: ITabMain[] = [ 'Home', 'Tips', 'RigItems', 'Labels', 'Instructions', 'Site', 'Details', 'Contacts', 'Maps', 'Forms', 'Admins', 'AllLists', 'Testing' ];
 
 const contactKeys: ITabContactPivots[] = [ 'Experts', 'SharePoint', 'Coordinators', 'Committee', ];
 const contactPivots: JSX.Element[] = contactKeys.map( ( key: string, idx: number ) => {
@@ -128,7 +130,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
   private _setMainPivots() : void {
     const pivots: JSX.Element[] = [];
     mainKeys.map( ( key: ITabMain, idx: number ) => {
-      if ( ( key !== 'Admins' && key !== 'Testing' ) || this._isAdmin === true ) pivots.push ( <PivotItem key={ idx } headerText={ mainKeys[idx] } ariaLabel={mainKeys[idx]} title={mainKeys[idx]} itemKey={ key }/> );
+      if ( ( key !== 'Admins' && key !== 'Testing' && key !== 'AllLists' ) || this._isAdmin === true ) pivots.push ( <PivotItem key={ idx } headerText={ mainKeys[idx] } ariaLabel={mainKeys[idx]} title={mainKeys[idx]} itemKey={ key }/> );
     });
     this._mainPivots = pivots;
   }
@@ -159,6 +161,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     if ( this.state.labels.loaded !== true ) loads.push( 'labels' );
     if ( this.state.user.loaded !== true ) loads.push( 'user' );
     if ( this.state.targetInfo.loaded !== true ) loads.push( 'targetInfo' );
+    if ( this.state.allLists.loaded !== true ) loads.push( 'allLists' );
+    if ( this.state.rigItems.loaded !== true ) loads.push( 'rigItems' );
 
     if ( loads.length === 0 ) loads.push( '*' );
 
@@ -264,9 +268,11 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       fullAnalyticsSaved: false,
       experts: [],
 
+      rigItems : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       labels : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       admins : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       site : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
+      allLists : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       committee : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       coordinators : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
       maps : { items: [], loaded: false, refreshId: constId, status: 'Unknown', e: null },
@@ -347,14 +353,16 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     const all: boolean = sources.indexOf( '*' ) > -1 ? true : false;
 
     // NOTE:  The vars in the array must be in same order they are called in the Promise.all
-    const [ site, committee, coordinators, maps, forms, tips, admins, labels, user, targetInfo ] = await Promise.all([
+    const [ site, allLists, committee, coordinators, maps, forms, tips, admins, rigItems, labels, user, targetInfo ] = await Promise.all([
       all === true || sources.indexOf( 'site' ) > -1 ? this.getSource( this._SourceInfo.site, this._performance ) : this.state.site,
+      all === true || sources.indexOf( 'allLists' ) > -1 ? this.getSource( this._SourceInfo.allLists, this._performance ) : this.state.allLists,
       all === true || sources.indexOf( 'committee' ) > -1 ? this.getSource( this._SourceInfo.committee, this._performance ) : this.state.committee,
       all === true || sources.indexOf( 'coordinators' ) > -1 ? this.getSource( this._SourceInfo.coordinators, this._performance ) : this.state.coordinators,
       all === true || sources.indexOf( 'maps' ) > -1 ? this.getSource( this._SourceInfo.maps, this._performance ) : this.state.maps,
       all === true || sources.indexOf( 'forms' ) > -1 ? this.getSource( this._SourceInfo.forms, this._performance ) : this.state.forms,
       all === true || sources.indexOf( 'tips' ) > -1 ? this.getSource( this._SourceInfo.tips, this._performance ) : this.state.tips,
       all === true || sources.indexOf( 'admins' ) > -1 ? this.getSource( this._SourceInfo.admins, this._performance ) : this.state.admins,
+      all === true || sources.indexOf( 'rigItems' ) > -1 ? this.getSource( this._SourceInfo.rigItems, this._performance ) : this.state.rigItems,
       all === true || sources.indexOf( 'labels' ) > -1 ? this.getSource( this._SourceInfo.labels, this._performance ) : this.state.labels,
       all === true || sources.indexOf( 'user' ) > -1 ? this.getCurrentUserGraph() : this.state.user,
       all === true || sources.indexOf( 'targetInfo' ) > -1 ? this.getCurrentWeb( this.state.targetWebUrl ) : this.state.targetInfo,
@@ -401,12 +409,14 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     const endWas = Math.max(
       ops.fetch0 && ops.fetch0.end ? ops.fetch0.end.getTime() : -1,
+      ops.fetch9 && ops.fetch9.end ? ops.fetch9.end.getTime() : -1,
       ops.fetch1 && ops.fetch1.end ? ops.fetch1.end.getTime() : -1,
       ops.fetch2 && ops.fetch2.end ? ops.fetch2.end.getTime() : -1,
       ops.fetch3 && ops.fetch3.end ? ops.fetch3.end.getTime() : -1,
       ops.fetch4 && ops.fetch4.end ? ops.fetch4.end.getTime() : -1,
       ops.fetch5 && ops.fetch5.end ? ops.fetch5.end.getTime() : -1,
       ops.fetch6 && ops.fetch6.end ? ops.fetch6.end.getTime() : -1,
+      ops.fetch8 && ops.fetch8.end ? ops.fetch8.end.getTime() : -1,
       ops.fetch7 && ops.fetch7.end ? ops.fetch7.end.getTime() : -1,
       ops.fetch9 && ops.fetch9.end ? ops.fetch9.end.getTime() : -1,
     );
@@ -449,7 +459,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
   private async getSource( sourceProps: ISourcePropsCOP, _performance: ILoadPerformance ) : Promise<IStateSource> {
     const { displayMode } = this.props.bannerProps;
     let stateSource: IStateSource = null;
-    if ( sourceProps.key === 'labels' ) {
+    if ( sourceProps.key === 'labels' || sourceProps.key === 'rigItems' ) {
       stateSource = fetchLabelData( sourceProps, true, true ) as IStateSource;
     } else {
       stateSource = await getSourceItems( { ...sourceProps, ...{ editMode: displayMode } }, true, true ) as IStateSource;
@@ -600,6 +610,15 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       fpsItemsReturn={ this.state.admins }
     />;
 
+    
+    const allListsPageHeader = <SitePageHook
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
+    
+    const rigItemsPageHeader = <RigItemsPageHook
+      stateSource = { this.state.rigItems}
+      primarySource = { this._SourceInfo.rigItems }
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
+
     const sitePageHeader = <SitePageHook
       debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
 
@@ -740,6 +759,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { mainPivotKey !== 'Home' ? undefined : homePage }
         { mainPivotKey !== 'Instructions' ? undefined : instructionsPageHeader }
         { mainPivotKey !== 'Tips' ? undefined : tipsItems }
+        { mainPivotKey !== 'RigItems' ? undefined : rigItemsPageHeader }
         { mainPivotKey !== 'Labels' ? undefined : labelsPageHeader }
         { mainPivotKey !== 'Site' ? undefined : enforcementItems }
         { mainPivotKey !== 'Details' ? undefined : detailsPageHeader }

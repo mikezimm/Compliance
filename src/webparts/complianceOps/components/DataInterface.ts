@@ -14,14 +14,14 @@ import { DisplayMode } from '@microsoft/sp-core-library';
 // import { IAppFormat } from './INTERFACES/ILayoutsPage';
 
 // NOTE:  IAppFormat must be very similar to StdComplianceKeys... except history vs unknown
-export type IAppFormat = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'history' | 'admins' | 'labels';
+export type IAppFormat = 'site' | 'allLists' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'history' | 'admins' | 'labels' | 'rigItems';
 
 export const IntraNetRecs = ['/sites','/SP_Glob','alPpqRec','ords']; //Just so this is not searchable easily
 export const IntraNetHome: string =`${IntraNetRecs.join('')}`;
 
-export type IDefSourceType = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'admins' | 'history' | 'labels' | 'user' | 'targetInfo' | 'unknown' | '*';
+export type IDefSourceType = 'site' | 'allLists' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'admins' | 'history' | 'labels' | 'rigItems' | 'user' | 'targetInfo' | 'unknown' | '*';
 
-export type ISearchSource = 'Site' | 'Committee' | 'Coordinators' | 'Maps' | 'Forms' | 'Tips' | 'Admins' | 'Labels' | 'History';
+export type ISearchSource = 'Site' | 'AllLists' | 'Committee' | 'Coordinators' | 'Maps' | 'Forms' | 'Tips' | 'Admins' | 'Labels' | 'RigItems' | 'History';
 
 /**
  * Added  { prop: string; asc: boolean; } to fix the orderBy? Lint Error.
@@ -53,12 +53,15 @@ export interface ISourceInfo {
   tips: ISourcePropsCOP;
   admins: ISourcePropsCOP;
   labels: ISourcePropsCOP;
+  rigItems: ISourcePropsCOP;
+  allLists: ISourcePropsCOP;
   history: ISourcePropsCOP;
 }
 
 export const RecordsSitePagesColumns: string[] = [ 'Status', 'WebPartTab', 'SortOrder' ];
 
 export const EnforcementColumns: string[] = [ 'ID', 'Title', 'URL', 'Subsite', 'SubTitle', 'SPOwner', 'NoRecordsDeclared', 'DocumentsHosted', 'JSONLists' ];
+export const EnforcementColumnsLists: string[] = [ 'ID', 'Title', 'SubTitle', 'NoRecordsDeclared', 'DocumentsHosted' ];
 
 export const CoordinatorColumns: string[] = [ 'ID','Facility', 'Division', 'Name/Title', 'AlternateContact/Title', 'Datelastverified', 'MapComplete' ];
 export const MapsColumns: string[] = [ 'ID','Region', 'Facility', ];
@@ -154,6 +157,38 @@ export const SourceInfo: ISourceInfo = {
     fetchCount: 5000,
   },
 
+  rigItems: {
+    key: `rigItems`,
+    defType: `rigItems`,
+    performanceSettings: {  label: 'RigItems', updateMiliseconds: true, includeMsStr: true, op: 'fetch8'  },
+    webUrl: ``,
+    listTitle: ``,
+    webRelativeLink: ``,
+    // absoluteWebUrl?: string;
+    // sitesWebUrls?: string;
+    // selectThese?: string[];
+    // expandThese?: string[];
+    // restFilter?: string;
+    // orderBy?: ISeriesSortObject;
+    // webRelativeLink: string;
+    viewItemLink: ``,
+    searchSource: `Labels`,
+    searchSourceDesc: ``,
+    columns: [],
+    searchProps: LabelSearchColumns,
+    // evalFilter?: string;
+    // itemFetchCol?: string[];
+    // isModern?: boolean;
+    // OverflowTab?: string;
+    // meta0?: string[];
+    // meta1?: string[];
+    // meta2?: string[];
+    // meta3?: string[];
+    // metaX?: string[];
+    defSearchButtons: ['China', 'Engineering', 'Contracts', 'FAC' ],
+    fetchCount: 5000,
+  },
+
   admins: {
     key: 'admins',
     defType: 'admins',
@@ -181,6 +216,7 @@ export const SourceInfo: ISourceInfo = {
     },
     fetchCount: 5000,
   },
+
   site: {
     key: 'site',
     defType: 'site',
@@ -204,6 +240,31 @@ export const SourceInfo: ISourceInfo = {
     },
     fetchCount: 500,
   },
+
+  allLists: {
+    key: 'allLists',
+    defType: 'allLists',
+    performanceSettings: {  label: 'allLists', updateMiliseconds: true, includeMsStr: true, op: 'fetch9' },
+    webUrl: `/sites/alvsiteprovisioning`,
+    listTitle: 'SPORetentionLabelsEnforcement',
+    webRelativeLink: '/lists/SPORetentionLabelsEnforcement',
+    searchSource: 'Site',
+    searchSourceDesc:  'Site Collection Retention Label Status',
+    columns: [ ...EnforcementColumnsLists ],
+    itemFetchCol: [],
+    searchProps: [ ...EnforcementColumnsLists ],
+    selectThese: [ ...EnforcementColumnsLists ],
+    isModern: true,
+    restFilter: ``,
+    defSearchButtons: [ '' ],
+    // orderBy: { //Including even though it does not seem to do anything
+    //   prop: 'Title',
+    //   order: 'asc',
+    //   asc: true,
+    // },
+    fetchCount: 5000,
+  },
+
   committee: {
     key: 'committee',
     defType: 'committee',
