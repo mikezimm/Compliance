@@ -13,18 +13,20 @@ import { IItemsErrorObj } from "@mikezimm/fps-pnp2/lib/services/sp/fetch/items/I
 
 import { LabelExportJSON } from "../../../storedSecrets/AS303 Labels v3 - JSON Formatted";
 import { IAnySourceItem } from "../../../fpsReferences";
+import { simplifyPropsosedRIGItems } from "../../../storedSecrets/AS303 Items v3";
 
 
-export function fetchLabelData( sourceProps: ISourceProps, alertMe: boolean | undefined, consoleLog: boolean | undefined, ) : IFpsItemsReturn {
+export function fetchRigItems( sourceProps: ISourceProps, alertMe: boolean | undefined, consoleLog: boolean | undefined, ) : IFpsItemsReturn {
 
   const { performanceSettings } = sourceProps;
   // const FetchProps : IMinFetchProps = createMinFetchProps( sourceProps, alertMe, consoleLog );
   const performanceOp = performanceSettings ? startPerformOpV2( performanceSettings ) : null;
   // const initialResult = await fetchAnyItems( FetchProps );
 
-  const MockLabels: IAnySourceItem[] = LabelExportJSON.map( ( label: IAnySourceItem ) => {
-    label.Title = label.RecordTitle;
-    return label;
+  const Items = simplifyPropsosedRIGItems();
+  const MockLabels: IAnySourceItem[] = Items.map( ( item: IAnySourceItem ) => {
+    item.Title = item.ItemName;
+    return item;
   } );
 
   const initialResult: IItemsErrorObj = {

@@ -24,10 +24,10 @@ export function createAdminsRow( props: ISourceRowRender ): JSX.Element { // esl
 
   const thisItem: IThisItemInterface = item as IThisItemInterface;
 
-  const { Title, Description, FirstPublishedDate, PromotedState } = thisItem; // , BannerImageUrl
-  const isNewsLink = thisItem.OData__OriginalSourceUrl !== null ? true : false;
-  const isNews =  isNewsLink === false && ( PromotedState === 1 || PromotedState === 2 ) ? true : false; //
-  const isOldLink = false;
+  const { Title, Description, FirstPublishedDate } = thisItem; // , BannerImageUrl, PromotedState
+  // const isNewsLink = thisItem.OData__OriginalSourceUrl !== null ? true : false;
+  // const isNews =  isNewsLink === false && ( PromotedState === 1 || PromotedState === 2 ) ? true : false; //
+  // const isOldLink = false;
 
 
   const row = <div className={ styles.genericItem } onClick = { () => onClick( thisItem.ID, 'generic', item ) }>

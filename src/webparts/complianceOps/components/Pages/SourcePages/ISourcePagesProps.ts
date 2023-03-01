@@ -6,6 +6,8 @@ import { IMinPageArrowsState, IPageArrowsParentProps } from '@mikezimm/fps-libra
 import { ISourceRowRender } from "./ISourceRowRender";
 import { IStateSource } from "../../IComplianceOpsProps";
 
+export type ITableHeaderElement  = string | JSX.Element ;
+
 export interface ISourcePagesProps extends IPageArrowsParentProps {
   // refreshId: string;
 
@@ -27,6 +29,10 @@ export interface ISourcePagesProps extends IPageArrowsParentProps {
 
   stateSource: IStateSource;
   renderRow( props: ISourceRowRender ): JSX.Element;
+
+  tableHeaderElements?: ITableHeaderElement[];
+  tableClassName?: string;
+  tableHeaderClassName?: string;
 
   // onParentCall is a pass down from the parent web part component and SHOULD look for this signature.
   onParentCall(command: string, Id: number, type: string, item: IAnySourceItem) : void;

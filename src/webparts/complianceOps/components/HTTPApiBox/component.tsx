@@ -2,16 +2,18 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
-import { ITabMain } from '../IComplianceOpsProps';
+// import { ITabMain } from '../IComplianceOpsProps';
 // import { Icon  } from 'office-ui-fabric-react/lib/Icon';
 // import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
-import { getSiteInfo } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/getSiteInfo';
-import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
+// import { getSiteInfo } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/getSiteInfo';
+// import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
 import styles from './webInput.module.scss';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { HttpClient, HttpClientResponse } from '@microsoft/sp-http';
 import ReactJson from 'react-json-view';
 import { fetchLables, IFpsHttpInfo } from '../HTTPFetch';
+// import { BasicAuth } from '../../storedSecrets/CorpAPIs';
+import { IHttpClientOptions } from '@microsoft/sp-http-base';
 // import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 // import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 // import { AllTeachBubbles } from '../Teaching/bubbles';
@@ -26,11 +28,14 @@ export interface IHTTPApiProps {
   callBackOnError: boolean;
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
+  headers?: IHttpClientOptions;
 }
 const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { debugMode, wpID, showComponent, textInput, updateInputCallback, httpClient, description, callBackOnError } = props; //appLinks, news 
+  const { debugMode, wpID, showComponent, textInput, updateInputCallback, httpClient, description, callBackOnError, headers } = props; //appLinks, news 
   const [ currentUrl, setCurrentUrl ] = useState<string>( textInput );
+  const [ currentUser, setCurrentUser ] = useState<string>( textInput );
+  const [ currentPass, setCurrentPass ] = useState<string>( textInput );
   const [ webURLStatus, setWebURLStatus ] = useState<string>( 'Untested' );
   // const [ validUrl, setValidUrl ] = useState<string>( '' );
   const [ response, setResponse ] = useState< IFpsHttpInfo >( null );
@@ -47,7 +52,7 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
     const NewValue = typeof input === 'string' ? input : input && input.target && input.target.value ? input.target.value : '';
     setTimeout(async () => {
       if ( currentUrl !== NewValue || forceRun === true ) {
-        const responseInfo: IFpsHttpInfo = await fetchLables( NewValue, httpClient, description );
+        const responseInfo: IFpsHttpInfo = await fetchLables( NewValue, httpClient, description, headers );
         if ( responseInfo.status === 'Success' ) {
           // setValidUrl( NewValue );
           setCurrentUrl( NewValue );
@@ -99,6 +104,8 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
       value={ currentUrl }
       label={ null }
       autoComplete='off'
+      type='NOTpassword'
+      canRevealPassword={ true }
       // onChange={ this._onHTTPApiChange.bind(this) }
       onChange={ delayOnHTTPApiChange.bind(this) }
       onGetErrorMessage= { (value: string | Date) : string => { return "";} }

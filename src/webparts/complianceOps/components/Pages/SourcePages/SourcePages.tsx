@@ -189,11 +189,19 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
 
     const topSearchContent = <div className={ styles.topSearch } style={ { background : debugMode === true ? 'pink' : null }} >{ topSearch }</div>;
 
+    const renderAsTable = this.props.tableHeaderElements && this.props.tableHeaderElements.length > 0 ? true : false;
+    let tableElement = undefined;
+
     const filtered: JSX.Element[] = [];
+    let tableHeaderRow: JSX.Element = undefined;
+    if ( renderAsTable === true ) {
+      tableHeaderRow = <tr className={ this.props.tableHeaderClassName }>{
+        this.props.tableHeaderElements.map( ( item, index ) => { return <th key={ index }>{item}</th>} )
+      }</tr>
+    }
+
     this.state.filtered.map( ( item: IAnySourceItem, idx: number ) => {
-
       if ( idx >= this.state.firstVisible && idx <= this.state.lastVisible ) {
-
         filtered.push( this.props.renderRow({
           item : item,
           searchText: searchText,
@@ -233,6 +241,13 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
         }
       </div>
       )
+    }
+
+    if ( renderAsTable === true ) {
+      tableElement = <table className={ this.props.tableClassName }>
+        { tableHeaderRow }
+        { filtered }
+      </table>
     }
 
     const searchBox =  <SourceSearchHook 
@@ -278,6 +293,7 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
     //     canvasOptions: canvasOptions,
     //   } );
 
+
     return (
           <div className={ styles.storagePage }>
               { debugContent }
@@ -285,7 +301,8 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
               { searchSourceDesc }
               { searchBox }
               { topSearchContent }
-              { filtered }
+              { renderAsTable === true ? tableElement : undefined }
+              { renderAsTable === false ? filtered : undefined }
               { this.props.footerElement }
               {/* { FetchingSpinner } */}
               {/* { deepHistory }
@@ -304,11 +321,17 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
     const startingItems: IAnySourceItem[] = this.props.stateSource.items;
     const filtered: IAnySourceItem[] = getFilteredItems( startingItems, this.state.searchText, [], [], [], selected );
 
+    let lastVisible = this._itemsPerPage;
+
+    if ( check4Gulp() === true ) console.log( 'filtered SourePage', lastVisible, filtered, );
+
+    if ( filtered.length < lastVisible ) lastVisible = filtered.length;
+
     this.setState({ 
       topSearch: selected , 
       filtered: filtered,
       firstVisible: 0,
-      lastVisible: filtered.length - 1,
+      lastVisible: lastVisible - 1,
       resetArrows: makeid(4),
      });
 

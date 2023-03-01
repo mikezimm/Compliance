@@ -22,6 +22,12 @@ export const AllTeachBubbles: IMinTeachBubble[] =     [
     message: `${defaultMessage}`,
   }, {
     // step: 0,
+    target: `#${MainPivot}RigItems${ReplaceWpId}`,
+    headline: `Search by common file types`,
+    message: `Search common file types and see if they are records.`,
+    // message: `${defaultMessage}`,
+  }, {
+    // step: 0,
     target: `#${MainPivot}Labels${ReplaceWpId}`,
     headline: `Search the Retention Schedule`,
     message: `Search (AS-303) Labels and determine what types of records you might have.`,

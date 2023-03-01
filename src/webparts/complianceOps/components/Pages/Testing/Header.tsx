@@ -1,13 +1,15 @@
 import * as React from 'react';
 import styles from './header.module.scss';
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { HttpClient, HttpClientResponse } from '@microsoft/sp-http';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useEffect } from 'react';
 
-import ReactJson from 'react-json-view';
+// import ReactJson from 'react-json-view';
 
-import { IComplianceOpsProps, IComplianceOpsState, IStateSource, ITabContactPivots, ITabMain, ITabTesting, ITabTestingPivots } from '../../IComplianceOpsProps';
+import { IStateSource, ITabMain, ITabTestingPivots } from '../../IComplianceOpsProps';
 
 import HTTPApiHook from '../../HttpApiBox/component';
 
@@ -20,11 +22,11 @@ import HTTPApiHook from '../../HttpApiBox/component';
 import { Pivot, PivotItem, PivotLinkFormat, PivotLinkSize,} from 'office-ui-fabric-react/lib/Pivot';
 import { ISourcePropsCOP } from '../../DataInterface';
 import { IWebpartBannerProps } from '../../../fpsReferences';
-import { RIG_API_PROD_Sales, RIG_API_PROD_Titles, RIG_API_QA_Sales, RIG_API_QA_Titles } from '../../../storedSecrets/CorpAPIs';
+import { BasicAuth, BasicAuthNA, RIG_API_PROD_Contracts, RIG_API_PROD_Sales, RIG_API_PROD_Titles, RIG_API_QA_Sales, RIG_API_QA_Titles } from '../../../storedSecrets/CorpAPIs';
 // import { ISpinnerStyles, Spinner, SpinnerSize, } from 'office-ui-fabric-react/lib/Spinner';
 
 
-const testingKeys: ITabTestingPivots[] = [ 'Instructions', 'Prod Titles', 'QA Titles', 'Prod Sales', 'QA Sales', ];
+const testingKeys: ITabTestingPivots[] = [ 'Instructions', 'Prod Titles', 'QA Titles', 'Prod Sales', 'QA Sales', 'RIG Items NA', 'Prod Titles NA' ];
 const testingPivots: JSX.Element[] = testingKeys.map( ( key: string, idx: number ) => {
   return <PivotItem key={ idx } headerText={ testingKeys[idx] } ariaLabel={testingKeys[idx]} title={testingKeys[idx]} itemKey={ key }/>;
 });
@@ -72,19 +74,25 @@ const TestingPageHook: React.FC<ITestingPageProps> = ( props ) => {
 
   const [ tab, setTab ] = useState< ITabTestingPivots >( 'Instructions' );
   const [ fetchThis, setFetchThis ] = useState< string >( '' );
+  const [ options, setOptions ] = useState< any >( BasicAuth );
   // const [ response, setResponse ] = useState< IFpsHttpInfo >( null );
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pivotTestingClick = async ( temp: any ): Promise<void> => {
     const tabKey: ITabTestingPivots = temp.props.itemKey;
     setTab( tabKey );
     let fetchThisStr: string = '';
+    let useOptions: any = BasicAuth;
     if ( tabKey === 'Prod Sales' ) { fetchThisStr = RIG_API_PROD_Sales }
     else if ( tabKey === 'QA Sales' ) { fetchThisStr = RIG_API_QA_Sales }
     else if ( tabKey === 'Prod Titles' ) { fetchThisStr = RIG_API_PROD_Titles }
     else if ( tabKey === 'QA Titles' ) { fetchThisStr = RIG_API_QA_Titles }
+    else if ( tabKey === 'Prod Titles NA' ) { fetchThisStr = RIG_API_PROD_Titles; useOptions = BasicAuthNA; }
+    else if ( tabKey === 'RIG Items NA' ) { fetchThisStr = RIG_API_PROD_Contracts; useOptions = BasicAuthNA; }
 
     // const respon: IFpsHttpInfo = await fetchLables( fetchThis, props.httpClient, tabKey );
     setFetchThis( fetchThisStr );
+    setOptions( useOptions );
 
   }
 
@@ -115,6 +123,7 @@ const TestingPageHook: React.FC<ITestingPageProps> = ( props ) => {
     updateInputCallback={ null }
     callBackOnError= { true }
     wpID={ props.wpID }
+    headers={ options }
   />
 
   const TestingPageElement: JSX.Element = mainPivotKey !== 'Testing' ? null : <div className = { styles.page } style={ null }>

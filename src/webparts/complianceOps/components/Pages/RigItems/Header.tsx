@@ -3,25 +3,42 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { IStateSource, IStateSuggestions, IStateUser, ITabMain, } from '../../IComplianceOpsProps';
 
-// import { Icon  } from 'office-ui-fabric-react/lib/Icon';
+import { Icon  } from 'office-ui-fabric-react/lib/Icon';
 import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
 
 import styles from './header.module.scss';
+import stylesRow from './Row.module.scss';
 
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
-import { OtherIframeHref, RigAPIDocs, RIG_Page_Search_PROD, } from '../../../storedSecrets/CorpAPIs';
+// import { OtherIframeHref, RigAPIDocs, RIG_Page_Search_PROD, RIG_Page_Search_QA } from '../../../storedSecrets/CorpAPIs';
 // import { buttonProperties } from 'office-ui-fabric-react';
 import { ISuggestion } from '../../Suggestions/LabelSuggestions';
 import { ISourcePropsCOP } from '../../DataInterface';
+// import SourcePages from '../SourcePages/SourcePages';
+import { createRigItemsRow0, createRigItemsRow1, createRigItemsRow2 } from './Row';
+// import { check4Gulp, makeid } from '../../../fpsReferences';
+import ReactJson from 'react-json-view';
+import { simplifyPropsosedRIGItems } from '../../../storedSecrets/AS303 Items v3';
+
 import SourcePages from '../SourcePages/SourcePages';
-import { createLabelsRow } from './Row';
-import { check4Gulp, makeid } from '../../../fpsReferences';
+import { makeid } from '../../../fpsReferences';
+import { OtherIframeHref } from '../../../storedSecrets/CorpAPIs';
+// import { FutureMockRecordItems } from '../../../storedSecrets/AS303 Items Full';
+
+const renderRows = [ createRigItemsRow0, createRigItemsRow1, createRigItemsRow2 ];
+const renderHeaders = [
+  [ 'Item Name', 'Record Code', 'Data Classification', 'Data Privacy', 'Status', ],
+  [ 'Item Name', 'Item Description', 'Record Code', 'Data Classification', 'Data Privacy', 'Status', ],
+  [ 'Item Name', 'Item Description', 'Record Code',  'Record Title', 'Data Classification', 'Data Privacy', 'Status', ],
+]
+const renderIcons = [ 'TripleColumn', 'QuadColumn', 'DoubleColumn',  ];
+const renderTitles = [ 'Simple', '+ Description', '+ Record Title',  ];
 
 const defaultButton: string = 'defaults';
 
-export interface ILabelsPageProps {
+export interface IRigItemsPageProps {
   stateSource: IStateSource;
   primarySource: ISourcePropsCOP;
   debugMode?: boolean; //Option to display visual ques in app like special color coding and text
@@ -43,17 +60,19 @@ export interface ILabelsPageProps {
  *                                                                                     
  */
 
-const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
+const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { debugMode, mainPivotKey, user, suggestions, primarySource, stateSource, webTitle } = props; //appLinks, news wpID, 
+  const { debugMode, mainPivotKey, user, suggestions, primarySource, stateSource, webTitle } = props; //appLinks, news 
 
-  const [ buttonLabels, setButtonLabels ] = useState<string[]>( primarySource.defSearchButtons );
+  // const [ buttonRigItems, setSuttonRigItems ] = useState<string[]>( primarySource.defSearchButtons );
+  const [ buttonRigItems, setButtonRigItems ] = useState<string[]>( primarySource.defSearchButtons );
   const [ activeButton, setActiveButton ] = useState<string>( defaultButton );
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [ refreshId, setRefreshId ] = useState<string>( makeid( 5 ) );
   const [ teachBubble, setTeachBubble ] = useState<number>( null );
   const [ lastBubble, setLastBubble ] = useState<number>( 0 );
+  // const [ activeView, setActiveView ] = useState<string>( renderTitles[0] );
+  const [ activeView, setActiveView ] = useState<string>( renderTitles[0] );
 
   /***
  *     .d88b.  d8b   db       .o88b. db      d888888b  .o88b. db   dD .d8888. 
@@ -69,6 +88,11 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
   // useEffect(() => {
   //   setExpandedState( easyPagesExpanded )
   // }, [ debugMode ] );
+
+  // const toggleView = ( ): void => {
+  //   const newView = activeView === renderRows.length -1 ? 0 : activeView + 1;
+  //   setActiveView( newView );
+  // }
 
   const closeTour = ( ): void => {
     const saveBubble = teachBubble + 0;
@@ -98,7 +122,7 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
 
   const updateButtons = ( suggestion: ISuggestion ) : void => {
     const useThese: string[] = suggestion === defaultButton as any ? primarySource.defSearchButtons : suggestion.suggestions;
-    setButtonLabels( useThese );
+    setButtonRigItems( useThese );
     setActiveButton( suggestion === defaultButton as any ? defaultButton : suggestion.title );
   }
 
@@ -127,25 +151,19 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
 
   </div>
 
+  const rowOptions = renderTitles.map( row => { return <button key={ row } 
+      className={ row === activeView ? styles.isSelected : '' }
+      onClick={ () => setActiveView( row )}>{ row }</button>});
+
   const MainContent: JSX.Element = <div className={ styles.infoItems }style={{ cursor: 'default' }}>
-    {/* <ul> */}
-      <div>Hi { user.item.givenName }, the first step to applying records retention to your files, is understanding what kinds of records you may have.</div>
-      <div>You can search the retention schedule here or &nbsp;
-        <span className={ styles.isLink } onClick={ () => window.open( RIG_Page_Search_PROD, '_blank') } >
-          click on this link</span> to open in a full window.</div>
-      {/* <li onClick={ () => window.open( RIG_Page_Search, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}>IFrame Url1: { RIG_Page_Search} </li> */}
-      { IntroContent }
-
-      {
-        check4Gulp() !== true ? undefined :
-          <div>
-            <div onClick={ () => window.open( OtherIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>IFrame Url2: { OtherIframeHref} </div>
-            <div onClick={ () => window.open( RigAPIDocs, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>API Docs: { RigAPIDocs} </div>
-          </div>
-      }
-
-      {/* <li style={{ padding: '10px 0px', fontSize: 'x-large', color: 'purple', fontWeight: 600 }}>MIKE to provide further description here</li> */}
-    {/* </ul> */}
+    <b><mark>Need to verify this text is ok and update it</mark></b>
+    <div>Items on this tab are RIG Items.</div>
+    <div>RIG Items are typical names of content that may or may not be a record.</div>
+    <div>You can search for common names here and determine both Retention types as well as privacy and data classifications.</div>
+    <div>This is a living list that anyone in the company can help maintain.</div>
+    <div>To submit an update, please <span className={ styles.isLink } onClick={ () => window.open( OtherIframeHref, '_blank')} >click here</span></div>
+    <div>You can filter lots of different ways</div>
+    <div style={{ fontSize: 'large' }}>Change Layout: <span className={ styles.suggestions }>{ rowOptions }</span>  </div>
   </div>
 
   const InfoElement: JSX.Element = <Accordion 
@@ -153,7 +171,7 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
     defaultIcon = 'Help'
     showAccordion = { true }
     content = { MainContent }
-    contentStyles = { { height: '195px' } }
+    contentStyles = { { height: '200px' } }
   />;
 
   const itemsElement = <SourcePages
@@ -161,12 +179,15 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
     primarySource={ primarySource }
     itemsPerPage={ 20 }
     pageWidth={ 1000 }
-    topButtons={ buttonLabels }
+    topButtons={ buttonRigItems }
     stateSource={ { ...stateSource, ...{ refreshId: refreshId } } }
     startQty={ 20 }
     showItemType={ false }
     debugMode={ debugMode }
-    renderRow={ createLabelsRow }
+    tableHeaderElements={ renderHeaders[ renderTitles.indexOf( activeView ) ] }
+    tableClassName= { styles.itemTable }
+    tableHeaderClassName= { [ stylesRow.genericItem ].join( ' ' )  }
+    renderRow={ renderRows[ renderTitles.indexOf( activeView ) ] }
     // bumpDeepLinks= { this.bumpDeepStateFromComponent.bind(this) }
     deepProps={ null } //this.state.deepProps
     // canvasOptions={ this.props.canvasOptions }
@@ -177,20 +198,24 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
   />;
 
 
-  const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'Labels' ), updateTour, closeTour );
+  const TeachMe = teachBubble === null ? null : makeBubbleElementFromBubbles( lastBubble, getTeachBubbles( AllTeachBubbles ,'', 'RigItems' ), updateTour, closeTour );
 
-  const LabelsPageElement: JSX.Element = mainPivotKey !== 'Labels' ? null : <div className = { styles.page } style={ null }>
+  const RigItemsPageElement: JSX.Element = mainPivotKey !== 'RigItems' ? null : <div className = { styles.page } style={ null }>
     { itemsElement }
-    {/* <div id={ 'ComplLabelsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
-    <div style={{ width: 'calc(100% - 40px)', height: '75vh'}}>
-      <iframe src={RIG_Page_Search_PROD} width='100%' height='100%' name='labels_Iframe'/>
-    </div>
+    {/* <div id={ 'ComplRigItemsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
+    {
 
+    }
+    <ReactJson src={ stateSource } name={ 'Response Details' } collapsed={ false } displayDataTypes={ false } displayObjectSize={ true }
+      enableClipboard={ true } style={{ padding: '20px 0px' }} theme= { 'rjv-default' } indentWidth={ 2}/>
+
+    <ReactJson src={ simplifyPropsosedRIGItems() } name={ 'Response Details' } collapsed={ false } displayDataTypes={ false } displayObjectSize={ true }
+      enableClipboard={ true } style={{ padding: '20px 0px' }} theme= { 'rjv-default' } indentWidth={ 2}/>
     { TeachMe }
   </div>;
 
-  return ( LabelsPageElement );
+  return ( RigItemsPageElement );
 
 }
 
-export default LabelsPageHook;
+export default RigItemsPageHook;

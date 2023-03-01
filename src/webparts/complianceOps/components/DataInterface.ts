@@ -14,14 +14,14 @@ import { DisplayMode } from '@microsoft/sp-core-library';
 // import { IAppFormat } from './INTERFACES/ILayoutsPage';
 
 // NOTE:  IAppFormat must be very similar to StdComplianceKeys... except history vs unknown
-export type IAppFormat = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'history' | 'admins' | 'labels';
+export type IAppFormat = 'site' | 'allLists' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'history' | 'admins' | 'labels' | 'rigItems';
 
 export const IntraNetRecs = ['/sites','/SP_Glob','alPpqRec','ords']; //Just so this is not searchable easily
 export const IntraNetHome: string =`${IntraNetRecs.join('')}`;
 
-export type IDefSourceType = 'site' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'admins' | 'history' | 'labels' | 'user' | 'targetInfo' | 'unknown' | '*';
+export type IDefSourceType = 'site' | 'allLists' | 'committee' | 'coordinators' | 'maps' | 'forms' | 'tips' | 'admins' | 'history' | 'labels' | 'rigItems' | 'user' | 'targetInfo' | 'unknown' | '*';
 
-export type ISearchSource = 'Site' | 'Committee' | 'Coordinators' | 'Maps' | 'Forms' | 'Tips' | 'Admins' | 'Labels' | 'History';
+export type ISearchSource = 'Site' | 'AllLists' | 'Committee' | 'Coordinators' | 'Maps' | 'Forms' | 'Tips' | 'Admins' | 'Labels' | 'RigItems' | 'History';
 
 /**
  * Added  { prop: string; asc: boolean; } to fix the orderBy? Lint Error.
@@ -33,6 +33,7 @@ export interface ISourcePropsCOP extends ISourceProps {
     defType: IDefSourceType;        //Used in Search Meta function
 
     searchSource: ISearchSource;
+    indexKey: string;
     // searchSourceDesc: string;
 
     // orderBy?: {
@@ -53,12 +54,15 @@ export interface ISourceInfo {
   tips: ISourcePropsCOP;
   admins: ISourcePropsCOP;
   labels: ISourcePropsCOP;
+  rigItems: ISourcePropsCOP;
+  allLists: ISourcePropsCOP;
   history: ISourcePropsCOP;
 }
 
 export const RecordsSitePagesColumns: string[] = [ 'Status', 'WebPartTab', 'SortOrder' ];
 
 export const EnforcementColumns: string[] = [ 'ID', 'Title', 'URL', 'Subsite', 'SubTitle', 'SPOwner', 'NoRecordsDeclared', 'DocumentsHosted', 'JSONLists' ];
+export const EnforcementColumnsLists: string[] = [ 'ID', 'Title', 'SubTitle', 'NoRecordsDeclared', 'DocumentsHosted' ];
 
 export const CoordinatorColumns: string[] = [ 'ID','Facility', 'Division', 'Name/Title', 'AlternateContact/Title', 'Datelastverified', 'MapComplete' ];
 export const MapsColumns: string[] = [ 'ID','Region', 'Facility', ];
@@ -101,6 +105,23 @@ export const LabelSearchColumns: string[] = [
   'RecordFunction', // Searchable : "Facilities, Equipment and Fleet",
   'RecordCategory', // Searchable : "FAC-2 Physical Security",
   'Status', // Searchable         : "Active",
+  'ItemNamesStr', // From RigItemNames         : ,
+ ];
+
+ export const RigItemSearchColumns: string[] = [
+  'Status', //  : string;
+  'ItemId', //  : string; // This is added when it is fetched so it can be processed easier.
+  'ItemName', //  : string;
+  'ItemType', //  : string;
+  'ItemDescription', //  : string;
+  'FunctionCode', //  : string;
+  'FunctionName', //  : string;
+  'CategoryCode', //  : string;
+  'CategoryName', //  : string;
+  'RecordCode', //  : string;
+  'RecordTitle', //  : string;
+  'Classification', //  : string;
+  'GlobalDataPrivacy', //  : string;
  ];
 
 export const LabelOtherColumns: string[] = [
@@ -126,6 +147,7 @@ export const SourceInfo: ISourceInfo = {
     key: `labels`,
     defType: `labels`,
     performanceSettings: {  label: 'labels', updateMiliseconds: true, includeMsStr: true, op: 'fetch7'  },
+    indexKey: `RecordCode`,
     webUrl: ``,
     listTitle: ``,
     webRelativeLink: ``,
@@ -154,9 +176,44 @@ export const SourceInfo: ISourceInfo = {
     fetchCount: 5000,
   },
 
+  rigItems: {
+    key: `rigItems`,
+    defType: `rigItems`,
+    indexKey: `ItemName`, //ItemId 
+    performanceSettings: {  label: 'RigItems', updateMiliseconds: true, includeMsStr: true, op: 'fetch8'  },
+    webUrl: ``,
+    listTitle: ``,
+    webRelativeLink: ``,
+    // absoluteWebUrl?: string;
+    // sitesWebUrls?: string;
+    // selectThese?: string[];
+    // expandThese?: string[];
+    // restFilter?: string;
+    // orderBy?: ISeriesSortObject;
+    // webRelativeLink: string;
+    viewItemLink: ``,
+    searchSource: `Labels`,
+    searchSourceDesc: ``,
+    columns: [],
+    searchProps: RigItemSearchColumns,
+
+    // evalFilter?: string;
+    // itemFetchCol?: string[];
+    // isModern?: boolean;
+    // OverflowTab?: string;
+    // meta0?: string[];
+    // meta1?: string[];
+    // meta2?: string[];
+    // meta3?: string[];
+    // metaX?: string[];
+    defSearchButtons: [ 'Current', 'China', 'Contracts', 'FAC', 'Personal Data', 'Sensitive Personal Data', 'Confidential', 'Secret' ],
+    fetchCount: 5000,
+  },
+
   admins: {
     key: 'admins',
     defType: 'admins',
+    indexKey: `ID`,
     performanceSettings: {  label: 'admins', updateMiliseconds: true, includeMsStr: true, op: 'fetch6'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Site Pages',
@@ -181,9 +238,11 @@ export const SourceInfo: ISourceInfo = {
     },
     fetchCount: 5000,
   },
+
   site: {
     key: 'site',
     defType: 'site',
+    indexKey: `ID`,
     performanceSettings: {  label: 'site', updateMiliseconds: true, includeMsStr: true, op: 'fetch0' },
     webUrl: `/sites/alvsiteprovisioning`,
     listTitle: 'SPORetentionLabelsEnforcement',
@@ -204,9 +263,36 @@ export const SourceInfo: ISourceInfo = {
     },
     fetchCount: 500,
   },
+
+  allLists: {
+    key: 'allLists',
+    defType: 'allLists',
+    indexKey: `ID`,
+    performanceSettings: {  label: 'allLists', updateMiliseconds: true, includeMsStr: true, op: 'fetch9' },
+    webUrl: `/sites/alvsiteprovisioning`,
+    listTitle: 'SPORetentionLabelsEnforcement',
+    webRelativeLink: '/lists/SPORetentionLabelsEnforcement',
+    searchSource: 'Site',
+    searchSourceDesc:  'Site Collection Retention Label Status',
+    columns: [ ...EnforcementColumnsLists ],
+    itemFetchCol: [],
+    searchProps: [ ...EnforcementColumnsLists ],
+    selectThese: [ ...EnforcementColumnsLists ],
+    isModern: true,
+    restFilter: ``,
+    defSearchButtons: [ '' ],
+    // orderBy: { //Including even though it does not seem to do anything
+    //   prop: 'Title',
+    //   order: 'asc',
+    //   asc: true,
+    // },
+    fetchCount: 5000,
+  },
+
   committee: {
     key: 'committee',
     defType: 'committee',
+    indexKey: `ID`,
     performanceSettings: {  label: 'committee', updateMiliseconds: true, includeMsStr: true, op: 'fetch1' },
     webUrl: `${IntraNetHome}`,
     listTitle: 'RIG Committee',
@@ -233,6 +319,7 @@ export const SourceInfo: ISourceInfo = {
   coordinators: {
     key: 'coordinators',
     defType: 'coordinators',
+    indexKey: `ID`,
     performanceSettings: {  label: 'coordinators', updateMiliseconds: true, includeMsStr: true, op: 'fetch2'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Facility Records Coordinators',
@@ -259,6 +346,7 @@ export const SourceInfo: ISourceInfo = {
   maps: {
     key: 'maps',
     defType: 'maps',
+    indexKey: `ID`,
     performanceSettings: {  label: 'maps', updateMiliseconds: true, includeMsStr: true, op: 'fetch3'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Facility Record Maps',
@@ -284,6 +372,7 @@ export const SourceInfo: ISourceInfo = {
   forms: {
     key: 'forms',
     defType: 'forms',
+    indexKey: `ID`,
     performanceSettings: {  label: 'forms', updateMiliseconds: true, includeMsStr: true, op: 'fetch4'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Appendices toAS303 and Commonly Used Forms',
@@ -304,6 +393,7 @@ export const SourceInfo: ISourceInfo = {
   tips: {
     key: 'tips',
     defType: 'tips',
+    indexKey: `ID`,
     performanceSettings: {  label: 'tips', updateMiliseconds: true, includeMsStr: true, op: 'fetch5'  },
     webUrl: `${IntraNetHome}`,
     listTitle: 'Tip of the Day',
@@ -328,6 +418,7 @@ export const SourceInfo: ISourceInfo = {
   history: {
     key: 'history',
     defType: 'history',
+    indexKey: `ID`,
     webUrl: `${IntraNetHome}/`,
     webRelativeLink: '',
     searchSource: 'History',
