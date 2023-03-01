@@ -26,7 +26,7 @@ export async function fetchLables ( apiEndPoint: string, httpClient: HttpClient,
   // Validate approved location
   // const websLocation = this.approvedWebs.filter(loc => loc.key == web)[0];
   // const websQuery = window.location.origin + websLocation.siteRelativeURL + "/_api/Web/Lists?$filter=BaseTemplate eq 101 and Hidden eq false&select=Title";
-  
+
   try {
     // const response = await httpClient.get(apiEndPoint, HttpClient.configurations.v1, headers ? headers : undefined );
     const response = await httpClient.get(apiEndPoint, HttpClient.configurations.v1, headers );
@@ -64,8 +64,18 @@ export async function createFPSHttpResponse( description: string, response: Http
   results.status = response ? response.statusText as IFPSResultStatus : 'Error';
 
   const data_1 = response ? await response.json() : null;
+
   if ( check4Gulp() ===  true ) console.log(`API JSON: ${description}`, response ? response: results );
+
   results.value = data_1 ? data_1.value : null;
+
+  // Added for https://github.com/mikezimm/Compliance/issues/62
+  results.errorInfo = {
+    errObj: null,
+    friendly: '',
+    result: null,
+    returnMess: '',
+  }
 
   return results;
 
