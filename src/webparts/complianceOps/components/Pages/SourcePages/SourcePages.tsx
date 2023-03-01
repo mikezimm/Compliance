@@ -189,17 +189,19 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
 
     const topSearchContent = <div className={ styles.topSearch } style={ { background : debugMode === true ? 'pink' : null }} >{ topSearch }</div>;
 
+    const renderAsTable = this.props.tableHeaderElements && this.props.tableHeaderElements.length > 0 ? true : false;
+    let tableElement = undefined;
+
     const filtered: JSX.Element[] = [];
     let tableHeaderRow: JSX.Element = undefined;
-    if ( this.props.tableHeaderElements && this.props.tableHeaderElements.length > 0 ) {
+    if ( renderAsTable === true ) {
       tableHeaderRow = <tr className={ this.props.tableHeaderClassName }>{
         this.props.tableHeaderElements.map( ( item, index ) => { return <th key={ index }>{item}</th>} )
       }</tr>
     }
+
     this.state.filtered.map( ( item: IAnySourceItem, idx: number ) => {
-
       if ( idx >= this.state.firstVisible && idx <= this.state.lastVisible ) {
-
         filtered.push( this.props.renderRow({
           item : item,
           searchText: searchText,
@@ -239,6 +241,13 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
         }
       </div>
       )
+    }
+
+    if ( renderAsTable === true ) {
+      tableElement = <table className={ this.props.tableClassName }>
+        { tableHeaderRow }
+        { filtered }
+      </table>
     }
 
     const searchBox =  <SourceSearchHook 
@@ -284,6 +293,7 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
     //     canvasOptions: canvasOptions,
     //   } );
 
+
     return (
           <div className={ styles.storagePage }>
               { debugContent }
@@ -291,8 +301,8 @@ public async updateWebInfo (   ): Promise<void> {  // eslint-disable-line  @type
               { searchSourceDesc }
               { searchBox }
               { topSearchContent }
-              { tableHeaderRow }
-              { filtered }
+              { renderAsTable === true ? tableElement : undefined }
+              { renderAsTable === false ? filtered : undefined }
               { this.props.footerElement }
               {/* { FetchingSpinner } */}
               {/* { deepHistory }

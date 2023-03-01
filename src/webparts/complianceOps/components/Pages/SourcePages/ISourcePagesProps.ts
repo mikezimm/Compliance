@@ -31,6 +31,7 @@ export interface ISourcePagesProps extends IPageArrowsParentProps {
   renderRow( props: ISourceRowRender ): JSX.Element;
 
   tableHeaderElements?: ITableHeaderElement[];
+  tableClassName?: string;
   tableHeaderClassName?: string;
 
   // onParentCall is a pass down from the parent web part component and SHOULD look for this signature.

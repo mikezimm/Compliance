@@ -49,19 +49,19 @@ export function createRigItemsRow0( props: ISourceRowRender ): JSX.Element { // 
   const ClassificationIdx = ClassifyChoices.indexOf( Classification );
   const PrivacyIdx = PrivacyChoices.indexOf( GlobalDataPrivacy );
   
-  const row = <div className={ [ styles.genericItem, styles.genericItem0 ].join( ' ' ) } onClick = { null }>
-    <div title={ ItemType } >{ getHighlightedText( ItemName, searchText ) }</div>
-    {/* <div title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</div> */}
-    <div title={ null } >{ getHighlightedText( RecordCode, searchText ) }</div>
-    {/* <div title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</div> */}
-    <div>{ getHighlightedText( Classification, searchText ) }
+  const row = <tr className={ [ styles.genericItem ].join( ' ' ) } onClick = { null }>
+    <td title={ ItemType } >{ getHighlightedText( ItemName, searchText ) }</td>
+    {/* <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</td> */}
+    <td title={ null } style={{ whiteSpace: 'nowrap' }} >{ getHighlightedText( RecordCode, searchText ) }</td>
+    {/* <td title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</td> */}
+    <td style={{textAlign: 'center' }}>{ getHighlightedText( Classification, searchText ) }
       {/* <Icon iconName = { ClassifyIcons[ ClassificationIdx ] } style={{ color: ClassifyColors[ ClassificationIdx ] }} title={ Classification }/> */}
-    </div>
-    <div>{ getHighlightedText( GlobalDataPrivacy, searchText ) }
+    </td>
+    <td style={{textAlign: 'center' }}>{ getHighlightedText( GlobalDataPrivacy, searchText ) }
       {/* <Icon iconName = { PrivacyIcons[ PrivacyIdx ] } style={{ color: PrivacyColors[ PrivacyIdx ] }} title = { GlobalDataPrivacy }/> */}
-    </div>
-    <div title={ item.ItemId } >{ getHighlightedText( Status, searchText ) }</div>
-  </div>;
+    </td>
+    <td title={ item.ItemId }  style={{textAlign: 'center' }}>{ getHighlightedText( Status, searchText ) }</td>
+  </tr>;
 
   return row;
 
@@ -76,20 +76,20 @@ export function createRigItemsRow1( props: ISourceRowRender ): JSX.Element { // 
   const ClassificationIdx = ClassifyChoices.indexOf( Classification );
   const PrivacyIdx = PrivacyChoices.indexOf( GlobalDataPrivacy );
   
-  const row = <div className={ [ styles.genericItem, styles.genericItem2 ].join( ' ' ) } onClick = { null }>
+  const row = <tr className={ [ styles.genericItem ].join( ' ' ) } onClick = { null }>
 
-    <div title={ item.ItemType } >{ getHighlightedText( item.ItemName, searchText ) }</div>
-    <div title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</div>
-    <div title={ item.RecordTitle } >{ getHighlightedText( item.RecordCode, searchText ) }</div>
-    {/* <div title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</div> */}
-    <div>
+    <td title={ item.ItemType } >{ getHighlightedText( item.ItemName, searchText ) }</td>
+    <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</td>
+    <td title={ item.RecordTitle } style={{ whiteSpace: 'nowrap' }} >{ getHighlightedText( item.RecordCode, searchText ) }</td>
+    {/* <td title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</td> */}
+    <td style={{textAlign: 'center' }}>
       <Icon iconName = { ClassifyIcons[ ClassificationIdx ] } style={{ color: ClassifyColors[ ClassificationIdx ] }} title={ Classification }/>
-    </div>
-    <div>
+    </td>
+    <td style={{textAlign: 'center' }}>
       <Icon iconName = { PrivacyIcons[ PrivacyIdx ] } style={{ color: PrivacyColors[ PrivacyIdx ] }} title = { GlobalDataPrivacy }/>
-    </div>
-    <div title={ item.ItemId } >{ getHighlightedText( item.Status, searchText ) }</div>
-  </div>;
+    </td>
+    <td title={ item.ItemId } style={{textAlign: 'center' }} >{ getHighlightedText( item.Status, searchText ) }</td>
+  </tr>;
 
   return row;
 
@@ -105,19 +105,19 @@ export function createRigItemsRow2( props: ISourceRowRender ): JSX.Element { // 
   const ClassificationIdx = ClassifyChoices.indexOf( Classification );
   const PrivacyIdx = PrivacyChoices.indexOf( GlobalDataPrivacy );
   
-  const row = <div className={ [ styles.genericItem, styles.genericItem1 ].join( ' ' ) } onClick = { null }>
-    <div title={ item.ItemType } >{ getHighlightedText( item.ItemName, searchText ) }</div>
-    <div title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</div>
-    <div title={ null } >{ getHighlightedText( item.RecordCode, searchText ) }</div>
-    <div title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</div>
-    <div>
+  const row = <tr className={ [ styles.genericItem ].join( ' ' ) } onClick = { null }>
+    <td title={ item.ItemType } >{ getHighlightedText( item.ItemName, searchText ) }</td>
+    <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</td>
+    <td style={{ whiteSpace: 'nowrap' }} >{ getHighlightedText( item.RecordCode, searchText ) }</td>
+    <td title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</td>
+    <td style={{textAlign: 'center' }}>
       <Icon iconName = { ClassifyIcons[ ClassificationIdx ] } style={{ color: ClassifyColors[ ClassificationIdx ] }} title={ Classification }/>
-    </div>
-    <div>
+    </td>
+    <td style={{textAlign: 'center' }}>
       <Icon iconName = { PrivacyIcons[ PrivacyIdx ] } style={{ color: PrivacyColors[ PrivacyIdx ] }} title = { GlobalDataPrivacy }/>
-    </div>
-    <div title={ item.ItemId } >{ getHighlightedText( item.Status, searchText ) }</div>
-  </div>;
+    </td>
+    <td title={ item.ItemId } style={{textAlign: 'center' }} >{ getHighlightedText( item.Status, searchText ) }</td>
+  </tr>;
 
   return row;
 

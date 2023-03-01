@@ -34,8 +34,7 @@ const renderHeaders = [
   [ 'Item Name', 'Item Description', 'Record Code',  'Record Title', 'Data Classification', 'Data Privacy', 'Status', ],
 ]
 const renderIcons = [ 'TripleColumn', 'QuadColumn', 'DoubleColumn',  ];
-const renderTitles = [ 'Simple', 'Description', 'Details',  ];
-const renderStyles = [ stylesRow.genericItem0, stylesRow.genericItem1, stylesRow.genericItem2,  ];
+const renderTitles = [ 'Simple', '+ Description', '+ Record Title',  ];
 
 const defaultButton: string = 'defaults';
 
@@ -175,12 +174,6 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
     contentStyles = { { height: '200px' } }
   />;
 
-  const headerRows = <div className={ [ stylesRow.genericItem, stylesRow.genericItem1 ].join( ' ' ) } onClick = { null }>
-    { renderHeaders[ renderTitles.indexOf( activeView ) ].map( heading => {
-      return <div key={ heading } >{ heading }</div>
-    })}
-  </div>
-
   const itemsElement = <SourcePages
     // source={ SourceInfo }
     primarySource={ primarySource }
@@ -192,7 +185,8 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
     showItemType={ false }
     debugMode={ debugMode }
     tableHeaderElements={ renderHeaders[ renderTitles.indexOf( activeView ) ] }
-    tableHeaderClassName= { [ stylesRow.genericItem, renderStyles[ renderTitles.indexOf( activeView ) ] ].join( ' ' )  }
+    tableClassName= { styles.itemTable }
+    tableHeaderClassName= { [ stylesRow.genericItem ].join( ' ' )  }
     renderRow={ renderRows[ renderTitles.indexOf( activeView ) ] }
     // bumpDeepLinks= { this.bumpDeepStateFromComponent.bind(this) }
     deepProps={ null } //this.state.deepProps
