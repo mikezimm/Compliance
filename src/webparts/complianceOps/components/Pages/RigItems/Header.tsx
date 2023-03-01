@@ -163,7 +163,7 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
     <div>This is a living list that anyone in the company can help maintain.</div>
     <div>To submit an update, please <span className={ styles.isLink } onClick={ () => window.open( OtherIframeHref, '_blank')} >click here</span></div>
     <div>You can filter lots of different ways</div>
-    <div style={{ fontSize: 'large', cursor: 'pointer' }}>Change Layout: <span className={ styles.suggestions }>{ rowOptions }</span>  </div>
+    <div style={{ fontSize: 'large' }}>Change Layout: <span className={ styles.suggestions }>{ rowOptions }</span>  </div>
   </div>
 
   const InfoElement: JSX.Element = <Accordion 
