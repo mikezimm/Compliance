@@ -11,12 +11,16 @@ import styles from './webInput.module.scss';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { HttpClient, HttpClientResponse } from '@microsoft/sp-http';
 import ReactJson from 'react-json-view';
-import { fetchLables, IFpsHttpInfo } from '../HTTPFetch';
+import { fetchAPI, IFpsHttpInfo } from '../HTTPFetch';
 // import { BasicAuth } from '../../storedSecrets/CorpAPIs';
 import { IHttpClientOptions } from '@microsoft/sp-http-base';
 // import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 // import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 // import { AllTeachBubbles } from '../Teaching/bubbles';
+
+import { IPerformanceSettings } from "@mikezimm/fps-library-v2/lib/components/molecules/Performance/IPerformanceSettings";
+import { createPerformanceTableVisitor } from "@mikezimm/fps-library-v2/lib/components/molecules/Performance/tables";
+
 export const HTTPApiIsValidMessage: string = `API is valid`;
 export interface IHTTPApiProps {
   showComponent: boolean;
@@ -30,6 +34,7 @@ export interface IHTTPApiProps {
   wpID: string; //Unique Web Part instance Id generated in main web part onInit to target specific Element IDs in this instance
   headers?: IHttpClientOptions;
 }
+
 const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { debugMode, wpID, showComponent, textInput, updateInputCallback, httpClient, description, callBackOnError, headers } = props; //appLinks, news 
@@ -48,11 +53,18 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
   //   setLastBubble( saveBubble );
   //   setTeachBubble( null );
   // }
+
+  const performanceSettings: IPerformanceSettings = {
+    label: `HTTPApiHook`,
+    updateMiliseconds: true,
+    editMode: null,
+    includeMsStr: true,
+  }
   const delayOnHTTPApiChange = (input: any, forceRun: boolean ): void => {
     const NewValue = typeof input === 'string' ? input : input && input.target && input.target.value ? input.target.value : '';
     setTimeout(async () => {
       if ( currentUrl !== NewValue || forceRun === true ) {
-        const responseInfo: IFpsHttpInfo = await fetchLables( NewValue, httpClient, description, headers );
+        const responseInfo: IFpsHttpInfo = await fetchAPI( NewValue, httpClient, description, performanceSettings, headers );
         if ( responseInfo.status === 'Success' ) {
           // setValidUrl( NewValue );
           setCurrentUrl( NewValue );
@@ -119,8 +131,18 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
          { webURLStatus }
       </span> }
     </div>
+
+    { !response || !response.performanceOp ? undefined :<div>
+      <tr>
+        <td>{ response.performanceOp.label }</td>
+        <td>{ response.performanceOp.mode === 1 ? 'View' : 'Edit' }</td>
+        <td>{ response.performanceOp.startStr }</td>
+        <td>{ response.performanceOp.ms }</td>
+      </tr>
+    </div> }
+
     { !response ? <div>{webURLStatus}</div> :
-        <ReactJson src={ response } name={ 'Response Details' } collapsed={ false } displayDataTypes={ false } displayObjectSize={ false }
+      <ReactJson src={ response } name={ 'Response Details' } collapsed={ false } displayDataTypes={ false } displayObjectSize={ false }
         enableClipboard={ true } style={{ padding: '20px 0px' }} theme= { 'rjv-default' } indentWidth={ 2}/>
     }
     </div>;

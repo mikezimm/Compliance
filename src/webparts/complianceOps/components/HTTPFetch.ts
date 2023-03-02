@@ -4,6 +4,10 @@ import { IHttpClientOptions } from '@microsoft/sp-http';
 import { IFpsErrorObject } from '@mikezimm/fps-library-v2/lib/pnpjs/Common/IFpsErrorObject';
 import { IFPSResultStatus } from '@mikezimm/fps-pnp2/lib/services/sp/IFPSResultStatus';
 
+import { startPerformOpV2, updatePerformanceEndV2 } from "@mikezimm/fps-library-v2/lib/components/molecules/Performance/functions";
+import { IPerformanceSettings } from "@mikezimm/fps-library-v2/lib/components/molecules/Performance/IPerformanceSettings";
+
+
 import { check4Gulp } from '../fpsReferences';
 
 export interface IFpsHttpInfo extends IFpsErrorObject {
@@ -21,21 +25,29 @@ export interface IFpsHttpInfo extends IFpsErrorObject {
 
 }
 
-export async function fetchLables ( apiEndPoint: string, httpClient: HttpClient, description: string, headers?: IHttpClientOptions ): Promise<IFpsHttpInfo>  {
+export async function fetchAPI ( apiEndPoint: string, httpClient: HttpClient, description: string, performanceSettings: IPerformanceSettings, headers?: IHttpClientOptions ): Promise<IFpsHttpInfo>  {
 
   // Validate approved location
   // const websLocation = this.approvedWebs.filter(loc => loc.key == web)[0];
   // const websQuery = window.location.origin + websLocation.siteRelativeURL + "/_api/Web/Lists?$filter=BaseTemplate eq 101 and Hidden eq false&select=Title";
-  
+
+  const performanceOp = performanceSettings ? startPerformOpV2( performanceSettings ) : null;
+
   try {
     // const response = await httpClient.get(apiEndPoint, HttpClient.configurations.v1, headers ? headers : undefined );
+
     const response = await httpClient.get(apiEndPoint, HttpClient.configurations.v1, headers );
     if ( check4Gulp() ===  true ) console.log(`API Response: ${description}`, response );
 
-    return await createFPSHttpResponse( description, response );
+    const result : IFpsHttpInfo = await createFPSHttpResponse( description, response );
+
+    result.performanceOp = performanceSettings ?
+      updatePerformanceEndV2( { op: performanceOp, updateMiliseconds: performanceSettings.updateMiliseconds, count: result.value ? result.value.length : -1 })  : null;
+
+    return result;
 
   } catch(e) {
-    return { 
+    const result : IFpsHttpInfo = { 
       value: null, e: e, status: 'Error', statusText: e.message,
       errorInfo: {
         errObj: e,
@@ -44,6 +56,11 @@ export async function fetchLables ( apiEndPoint: string, httpClient: HttpClient,
         returnMess: e.message,
       }
     };
+
+    result.performanceOp = performanceSettings ?
+      updatePerformanceEndV2( { op: performanceOp, updateMiliseconds: performanceSettings.updateMiliseconds, count: result.value ? result.value.length : -1 })  : null;
+
+    return result;
 
   }
 
@@ -64,8 +81,20 @@ export async function createFPSHttpResponse( description: string, response: Http
   results.status = response ? response.statusText as IFPSResultStatus : 'Error';
 
   const data_1 = response ? await response.json() : null;
-  if ( check4Gulp() ===  true ) console.log(`API JSON: ${description}`, response ? response: results );
+
+  console.log(`API JSON data_1 ~ 69: ${description}`, data_1 ? data_1: results );
+
   results.value = data_1 ? data_1.value : null;
+
+  // Added for https://github.com/mikezimm/Compliance/issues/62
+  results.errorInfo = {
+    errObj: null,
+    friendly: '',
+    result: null,
+    returnMess: '',
+  }
+
+  if ( check4Gulp() ===  true ) console.log(`API JSON response ~ 81: ${description}`, response ? response: results );
 
   return results;
 
