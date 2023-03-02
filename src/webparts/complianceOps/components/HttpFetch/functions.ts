@@ -8,11 +8,13 @@ import { startPerformOpV2, updatePerformanceEndV2 } from "@mikezimm/fps-library-
 import { IPerformanceSettings } from "@mikezimm/fps-library-v2/lib/components/molecules/Performance/IPerformanceSettings";
 
 
-import { check4Gulp } from '../fpsReferences';
+import { check4Gulp } from '../../fpsReferences';
 
 export interface IFpsHttpInfo extends IFpsErrorObject {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
+  items: any[];
+  item: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   text?: string;
   type?: ResponseType;
@@ -49,6 +51,8 @@ export async function fetchAPI ( apiEndPoint: string, httpClient: HttpClient, de
   } catch(e) {
     const result : IFpsHttpInfo = { 
       value: null, e: e, status: 'Error', statusText: e.message,
+      items: [],
+      item: null,
       errorInfo: {
         errObj: e,
         friendly: e.message,
@@ -69,7 +73,8 @@ export async function fetchAPI ( apiEndPoint: string, httpClient: HttpClient, de
 
 export async function createFPSHttpResponse( description: string, response: HttpClientResponse ): Promise<IFpsHttpInfo> {
 
-  const results: IFpsHttpInfo = { value: null, e: null, status: 'Error' };
+  const results: IFpsHttpInfo = { value: null, e: null, status: 'Error', items: [],
+  item: null, };
   results.statusNo = response ? response.status : null;
   results.statusText = response ? response.statusText : null;
   results.ok = response ? response.ok : false;
@@ -85,6 +90,9 @@ export async function createFPSHttpResponse( description: string, response: Http
   console.log(`API JSON data_1 ~ 69: ${description}`, data_1 ? data_1: results );
 
   results.value = data_1 ? data_1.value : null;
+
+  // Assume results are always an array
+  results.items = results.value;
 
   // Added for https://github.com/mikezimm/Compliance/issues/62
   results.errorInfo = {

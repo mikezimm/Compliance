@@ -15,13 +15,14 @@ import { LabelExportJSON } from "../../../storedSecrets/AS303 Labels v3 - JSON F
 import { IAnySourceItem } from "../../../fpsReferences";
 import { IApiMode } from "../../IComplianceOpsProps";
 import { fetchAPI } from "../../HttpFetch/functions";
-import { BasicAuthNA, RIG_API_PROD_Titles } from "../../../storedSecrets/CorpAPIs";
+import { BasicAuthNA, RIG_API_PROD_Item, RIG_API_PROD_Titles } from "../../../storedSecrets/CorpAPIs";
 
 import { HttpClient, HttpClientResponse } from '@microsoft/sp-http';  // , httpClient: HttpClient
 import { IHttpClientOptions } from '@microsoft/sp-http';
 import { HTTPApiPerformanceSettings } from "../../HttpFetch/HTTPApiPerformanceSettings";
+import { simplifyPropsosedRIGItems } from "../../../storedSecrets/AS303 Items v3";
 
-export async function fetchLabelData( sourceProps: ISourceProps, alertMe: boolean | undefined, consoleLog: boolean | undefined, apiMode: IApiMode, httpClient: HttpClient ) : Promise<IFpsItemsReturn> {
+export async function fetchRigData( sourceProps: ISourceProps, alertMe: boolean | undefined, consoleLog: boolean | undefined, apiMode: IApiMode, httpClient: HttpClient ) : Promise<IFpsItemsReturn> {
 
   const { performanceSettings } = sourceProps;
   // const FetchProps : IMinFetchProps = createMinFetchProps( sourceProps, alertMe, consoleLog );
@@ -35,16 +36,24 @@ export async function fetchLabelData( sourceProps: ISourceProps, alertMe: boolea
   }
 
   if ( apiMode === 'Mock' ) {
-    const MockLabels: IAnySourceItem[] = LabelExportJSON.map( ( label: IAnySourceItem ) => {
-      label.Title = label.RecordTitle;
-      return label;
-    } );
+    if ( sourceProps.key === 'labels' ) {
+      initialResult.items = LabelExportJSON.map( ( label: IAnySourceItem ) => {
+        label.Title = label.RecordTitle;
+        return label;
+      } );
+    } else {
+      const Items = simplifyPropsosedRIGItems();
+      initialResult.items = Items.map( ( item: IAnySourceItem ) => {
+        item.Title = item.ItemName;
+        return item;
+      } );
+    }
 
-    initialResult.items = MockLabels;
     initialResult.status = 'Success';
 
   } else {
-    initialResult = await fetchAPI( RIG_API_PROD_Titles, httpClient, sourceProps.listTitle, { ...HTTPApiPerformanceSettings, ...{ label: sourceProps.listTitle }}, BasicAuthNA );
+    const useThisAPI: string = sourceProps.key === 'labels' ? RIG_API_PROD_Titles : RIG_API_PROD_Item;
+    initialResult = await fetchAPI( useThisAPI, httpClient, sourceProps.listTitle, { ...HTTPApiPerformanceSettings, ...{ label: sourceProps.listTitle }}, BasicAuthNA );
   }
 
   const result : IFpsItemsReturn = checkItemsResults( initialResult, `fps-library-v2: getSourceItems ~ 24`, alertMe, consoleLog );

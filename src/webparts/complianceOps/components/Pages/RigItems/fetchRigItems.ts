@@ -14,26 +14,46 @@ import { IItemsErrorObj } from "@mikezimm/fps-pnp2/lib/services/sp/fetch/items/I
 import { LabelExportJSON } from "../../../storedSecrets/AS303 Labels v3 - JSON Formatted";
 import { IAnySourceItem } from "../../../fpsReferences";
 import { simplifyPropsosedRIGItems } from "../../../storedSecrets/AS303 Items v3";
+import { IApiMode } from "../../IComplianceOpsProps";
 
+import { HttpClient, HttpClientResponse } from '@microsoft/sp-http';  // , httpClient: HttpClient
+import { IHttpClientOptions } from '@microsoft/sp-http';
+import { HTTPApiPerformanceSettings } from "../../HttpFetch/HTTPApiPerformanceSettings";
+import { fetchAPI } from "../../HttpFetch/functions";
+import { BasicAuthNA, RIG_API_PROD_Item } from "../../../storedSecrets/CorpAPIs";
 
-export function fetchRigItems( sourceProps: ISourceProps, alertMe: boolean | undefined, consoleLog: boolean | undefined, ) : IFpsItemsReturn {
+export async function fetchRigItems( sourceProps: ISourceProps, alertMe: boolean | undefined, consoleLog: boolean | undefined, apiMode: IApiMode, httpClient: HttpClient ) : Promise<IFpsItemsReturn> {
 
   const { performanceSettings } = sourceProps;
   // const FetchProps : IMinFetchProps = createMinFetchProps( sourceProps, alertMe, consoleLog );
   const performanceOp = performanceSettings ? startPerformOpV2( performanceSettings ) : null;
   // const initialResult = await fetchAnyItems( FetchProps );
 
-  const Items = simplifyPropsosedRIGItems();
-  const MockLabels: IAnySourceItem[] = Items.map( ( item: IAnySourceItem ) => {
-    item.Title = item.ItemName;
-    return item;
-  } );
-
-  const initialResult: IItemsErrorObj = {
-    status: 'Success',
-    items: MockLabels,
+  let initialResult: IItemsErrorObj = {
+    status: 'Unknown',
+    items: [],
     e: null,
   }
+
+  if ( apiMode === 'Mock' ) {
+    const Items = simplifyPropsosedRIGItems();
+    const MockLabels: IAnySourceItem[] = Items.map( ( item: IAnySourceItem ) => {
+      item.Title = item.ItemName;
+      return item;
+    } );
+
+    initialResult = {
+      status: 'Success',
+      items: MockLabels,
+      e: null,
+    }
+
+  } else {
+    initialResult = await fetchAPI( RIG_API_PROD_Item, httpClient, sourceProps.listTitle, { ...HTTPApiPerformanceSettings, ...{ label: sourceProps.listTitle }}, BasicAuthNA );
+  }
+
+
+
 
   const result : IFpsItemsReturn = checkItemsResults( initialResult, `fps-library-v2: getSourceItems ~ 24`, alertMe, consoleLog );
 
