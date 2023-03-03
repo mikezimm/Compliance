@@ -70,6 +70,8 @@ import AdminsPageHook from './Pages/Admins/Header';
 
 import TestingPageHook from './Pages/Testing/Header';
 
+import AllListsPageHook from './Pages/AllLists/Header';
+
 // import { createAdminsRow } from './Pages/Admins/Row';
 import { addEasyIcons } from '@mikezimm/fps-library-v2/lib/components/atoms/EasyIcons/getEasyIcon';
 
@@ -77,7 +79,7 @@ import SharePointPageHook from './Pages/SharePoint/Header';
 import { getSiteCollectionUrlFromLink } from '@mikezimm/fps-library-v2/lib/logic/Strings/urlServices';
 import { IUserProperties } from './PersonaCard/IUserProperties';
 import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
-import { fetchLabelData } from './Pages/Labels/fetchLabels';
+// import { fetchLabelData } from './Pages/Labels/fetchLabels';
 // import { createLabelsRow } from './Pages/Labels/Row';
 
 import { MSGraphClient } from '@microsoft/sp-http';
@@ -86,7 +88,7 @@ import { convertSugsLC } from './Suggestions/convertSugsLC';
 import { LabelSuggestions } from './Suggestions/LabelSuggestions';
 import { getSuggestionsByKeys, getSuggestionsFromStrings } from './Suggestions/getSuggestionsByKeys';
 import { getSiteInfo } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/getSiteInfo';
-import { fetchRigItems } from './Pages/RigItems/fetchRigItems';
+// import { fetchRigItems } from './Pages/RigItems/fetchRigItems';
 import { fetchRigData } from './Pages/Labels/fetchRigStuff';
 
 // import { createSharePointRow } from './Pages/SharePoint/Row';
@@ -527,7 +529,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     const { displayMode } = this.props.bannerProps;
     let stateSource: IStateSource = null;
     if ( sourceProps.key === 'labels' || sourceProps.key === 'rigItems' ) {
-      stateSource = await fetchRigData( sourceProps, true, true, this.state.apiMode, this.props.httpClient ) as IStateSource;
+      stateSource = await fetchRigData( sourceProps, false, true, this.state.apiMode, this.props.httpClient ) as IStateSource;
       // if ( sourceProps.key === 'labels' ) {
       //   stateSource = await fetchRigData( sourceProps, true, true, this.state.apiMode, this.props.httpClient ) as IStateSource;
       // } else {
@@ -537,7 +539,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       stateSource.items.map( item => { stateSource.index.push( item[ sourceProps.indexKey ] ) });
 
     } else {
-      stateSource = await getSourceItems( { ...sourceProps, ...{ editMode: displayMode } }, true, true ) as IStateSource;
+      stateSource = await getSourceItems( { ...sourceProps, ...{ editMode: displayMode } }, false, true ) as IStateSource;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -569,6 +571,28 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
           }
         }
       });
+
+      // Copy Top SIte info to Subsite if Subsite is empty
+      if ( sourceProps.key === 'allLists' || sourceProps.key === 'site' ) {
+        stateSource.items.map( item => {
+          if ( !item.SubTitle ) item.SubTitle = item.Title;
+          if ( !item.Subsite ) item.Subsite = item.URL.replace(`${window.location.origin}/sites`, '');
+        });
+      }
+
+      stateSource.items.map( item => {
+        if ( item.JSONLists ) { 
+          try {
+            item.JSON = JSON.parse( item.JSONLists );
+            if ( item.JSON.url ) item.ListUrl = item.JSON.url;
+            if ( item.JSON.id ) item.ListId = item.JSON.id;
+            if ( item.JSON.id ) item.ListSettings = `${item.Subsite}/_layouts/15/Hold.aspx?Tag=true&List={${item.ListId}}`;
+          } catch (e) {
+            console.log('UNABLE TO PARSE JSONLists field')
+          }
+        }
+      });
+
       stateSource.items = addSearchMeta2( stateSource.items, SearchTypes );
       analyzePerf = updatePerformanceEnd( analyzePerf , true, stateSource.items.length );
       _performanceOpsAny[ `process${idx}` ] = analyzePerf; // Need to use just index here in order to save to correct object key
@@ -691,8 +715,12 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     />;
 
     
-    const allListsPageHeader = <SitePageHook
-      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
+    const allListsPageHeader = <AllListsPageHook
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
+      allLists={ this.state.allLists }
+      primarySource={ this._SourceInfo.allLists }
+      refreshId={ this.state.allLists.refreshId }
+    />;
     
     const rigItemsPageHeader = <RigItemsPageHook
       suggestions={ this.state.suggestions }
@@ -861,6 +889,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { mainPivotKey !== 'Maps' ? undefined : mapItems }
         { mainPivotKey !== 'Forms' ? undefined : formItems }
         { mainPivotKey !== 'Admins' ? undefined : adminsPageHeader }
+        { mainPivotKey !== 'AllLists' ? undefined : allListsPageHeader }
 
         {/* <h2>Fetch Status: { fullAnalyticsSaved === true ? 'Finished!' : 'working' } { fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' } ms</h2> */}
 

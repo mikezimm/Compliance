@@ -15,16 +15,17 @@ import { LabelExportJSON } from "../../../storedSecrets/AS303 Labels v3 - JSON F
 import { IAnySourceItem } from "../../../fpsReferences";
 import { IApiMode } from "../../IComplianceOpsProps";
 import { fetchAPI } from "../../HttpFetch/functions";
-import { BasicAuthNA, RIG_API_PROD_Item, RIG_API_PROD_Titles } from "../../../storedSecrets/CorpAPIs";
+import { BasicAuthNA, } from "../../../storedSecrets/CorpAPIs";
 
 import { HttpClient, HttpClientResponse } from '@microsoft/sp-http';  // , httpClient: HttpClient
 import { IHttpClientOptions } from '@microsoft/sp-http';
 import { HTTPApiPerformanceSettings } from "../../HttpFetch/HTTPApiPerformanceSettings";
 import { simplifyPropsosedRIGItems } from "../../../storedSecrets/AS303 Items v3";
+import { ISourcePropsCOP } from "../../DataInterface";
 
-export async function fetchRigData( sourceProps: ISourceProps, alertMe: boolean | undefined, consoleLog: boolean | undefined, apiMode: IApiMode, httpClient: HttpClient ) : Promise<IFpsItemsReturn> {
+export async function fetchRigData( sourceProps: ISourcePropsCOP, alertMe: boolean | undefined, consoleLog: boolean | undefined, apiMode: IApiMode, httpClient: HttpClient ) : Promise<IFpsItemsReturn> {
 
-  const { performanceSettings } = sourceProps;
+  const { performanceSettings, apiUrl } = sourceProps;
   // const FetchProps : IMinFetchProps = createMinFetchProps( sourceProps, alertMe, consoleLog );
   const performanceOp = performanceSettings ? startPerformOpV2( performanceSettings ) : null;
   // const initialResult = await fetchAnyItems( FetchProps );
@@ -52,11 +53,10 @@ export async function fetchRigData( sourceProps: ISourceProps, alertMe: boolean 
     initialResult.status = 'Success';
 
   } else {
-    const useThisAPI: string = sourceProps.key === 'labels' ? RIG_API_PROD_Titles : RIG_API_PROD_Item;
-    initialResult = await fetchAPI( useThisAPI, httpClient, sourceProps.listTitle, { ...HTTPApiPerformanceSettings, ...{ label: sourceProps.listTitle }}, BasicAuthNA );
+    initialResult = await fetchAPI( apiUrl, httpClient, sourceProps.listTitle, { ...HTTPApiPerformanceSettings, ...{ label: sourceProps.listTitle }}, BasicAuthNA );
   }
 
-  const result : IFpsItemsReturn = checkItemsResults( initialResult, `fps-library-v2: getSourceItems ~ 24`, alertMe, consoleLog );
+  const result : IFpsItemsReturn = checkItemsResults( initialResult, `fps-library-v2: fetchRigData ~ 59`, alertMe, consoleLog );
 
   result.performanceOp = performanceSettings ?
      updatePerformanceEndV2( { op: performanceOp, updateMiliseconds: performanceSettings.updateMiliseconds, count: result.items.length })  : null;

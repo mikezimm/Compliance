@@ -1,5 +1,5 @@
 
-import { HttpClient, HttpClientResponse } from '@microsoft/sp-http';
+import { HttpClient, HttpClientResponse } from '@microsoft/sp-http';  // , httpClient: HttpClient
 import { IHttpClientOptions } from '@microsoft/sp-http';
 import { IFpsErrorObject } from '@mikezimm/fps-library-v2/lib/pnpjs/Common/IFpsErrorObject';
 import { IFPSResultStatus } from '@mikezimm/fps-pnp2/lib/services/sp/IFPSResultStatus';

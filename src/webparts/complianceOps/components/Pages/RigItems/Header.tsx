@@ -12,7 +12,7 @@ import stylesRow from './Row.module.scss';
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
-// import { OtherIframeHref, RigAPIDocs, RIG_Page_Search_PROD, RIG_Page_Search_QA } from '../../../storedSecrets/CorpAPIs';
+// import { ITEM_Page_Search_PROD, RigAPIDocs, LABEL_Page_Search_PROD, RIG_Page_Search_QA } from '../../../storedSecrets/CorpAPIs';
 // import { buttonProperties } from 'office-ui-fabric-react';
 import { ISuggestion } from '../../Suggestions/LabelSuggestions';
 import { ISourcePropsCOP } from '../../DataInterface';
@@ -24,7 +24,7 @@ import { simplifyPropsosedRIGItems } from '../../../storedSecrets/AS303 Items v3
 
 import SourcePages from '../SourcePages/SourcePages';
 import { makeid } from '../../../fpsReferences';
-import { OtherIframeHref } from '../../../storedSecrets/CorpAPIs';
+import { ITEM_Page_Search_PROD } from '../../../storedSecrets/CorpAPIs';
 // import { FutureMockRecordItems } from '../../../storedSecrets/AS303 Items Full';
 
 const renderRows = [ createRigItemsRow0, createRigItemsRow1, createRigItemsRow2 ];
@@ -161,7 +161,7 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
     <div>RIG Items are typical names of content that may or may not be a record.</div>
     <div>You can search for common names here and determine both Retention types as well as privacy and data classifications.</div>
     <div>This is a living list that anyone in the company can help maintain.</div>
-    <div>To submit an update, please <span className={ styles.isLink } onClick={ () => window.open( OtherIframeHref, '_blank')} >click here</span></div>
+    <div>To submit an update, please <span className={ styles.isLink } onClick={ () => window.open( ITEM_Page_Search_PROD, '_blank')} >click here</span></div>
     <div>You can filter lots of different ways</div>
     <div style={{ fontSize: 'large' }}>Change Layout: <span className={ styles.suggestions }>{ rowOptions }</span>  </div>
   </div>

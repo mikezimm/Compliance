@@ -22,7 +22,7 @@ import HTTPApiHook from '../../HttpApiBox/component';
 import { Pivot, PivotItem, PivotLinkFormat, PivotLinkSize,} from 'office-ui-fabric-react/lib/Pivot';
 import { ISourcePropsCOP } from '../../DataInterface';
 import { IWebpartBannerProps } from '../../../fpsReferences';
-import { BasicAuth, BasicAuthNA, RIG_API_PROD_Contracts, RIG_API_PROD_Sales, RIG_API_PROD_Titles, RIG_API_QA_Sales, RIG_API_QA_Titles } from '../../../storedSecrets/CorpAPIs';
+import { BasicAuth, BasicAuthNA, GetTitlesApi, RIG_API_PROD, RIG_API_PROD_Contracts, RIG_API_PROD_Sales, RIG_API_QA_Sales, RIG_API_QA_Titles } from '../../../storedSecrets/CorpAPIs';
 // import { ISpinnerStyles, Spinner, SpinnerSize, } from 'office-ui-fabric-react/lib/Spinner';
 
 
@@ -85,9 +85,9 @@ const TestingPageHook: React.FC<ITestingPageProps> = ( props ) => {
     let useOptions: any = BasicAuth;
     if ( tabKey === 'Prod Sales' ) { fetchThisStr = RIG_API_PROD_Sales }
     else if ( tabKey === 'QA Sales' ) { fetchThisStr = RIG_API_QA_Sales }
-    else if ( tabKey === 'Prod Titles' ) { fetchThisStr = RIG_API_PROD_Titles }
+    else if ( tabKey === 'Prod Titles' ) { fetchThisStr = `${ RIG_API_PROD }${ GetTitlesApi }` }
     else if ( tabKey === 'QA Titles' ) { fetchThisStr = RIG_API_QA_Titles }
-    else if ( tabKey === 'Prod Titles NA' ) { fetchThisStr = RIG_API_PROD_Titles; useOptions = BasicAuthNA; }
+    else if ( tabKey === 'Prod Titles NA' ) { fetchThisStr = `${ RIG_API_PROD }${ GetTitlesApi }`; useOptions = BasicAuthNA; }
     else if ( tabKey === 'RIG Items NA' ) { fetchThisStr = RIG_API_PROD_Contracts; useOptions = BasicAuthNA; }
 
     // const respon: IFpsHttpInfo = await fetchLables( fetchThis, props.httpClient, tabKey );

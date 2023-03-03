@@ -131,7 +131,7 @@ const HTTPApiHook: React.FC<IHTTPApiProps> = ( props ) => {
       <tr>
         <td>{ response.performanceOp.label }</td>
         <td>{ response.performanceOp.mode === 1 ? 'View' : 'Edit' }</td>
-        <td>{ response.performanceOp.startStr }</td>
+        <td>{ response.performanceOp.startStr } - </td>
         <td>{ response.performanceOp.ms }</td>
       </tr>
     </div> }
