@@ -78,8 +78,12 @@ export interface IStateSuggestions {
 /**
  * Extends IFPSCorePinMeReactComponentState with all basics required for FPS Banner
  */
+
+export type IApiMode = 'Mock' | 'Live';
+
 export interface IComplianceOpsState extends IFPSCorePinMeReactComponentState {
 
+  apiMode: IApiMode;
   mainPivotKey: ITabMain;
   contactPivotKey: ITabContactPivots;
 

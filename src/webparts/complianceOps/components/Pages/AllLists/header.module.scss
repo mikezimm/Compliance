@@ -11,26 +11,44 @@
   margin: 0 0!important;
   // background: yellow;
   
+  .itemTable {
+    overflow-x: auto;
+    width: 100%;
+    margin-top: 15px;
+    tr:nth-child(even) {background-color: #f2f2f2;}
+    th {
+      transition:all 0.3s ease;
+      background-color: gray;
+      color: white;
+      padding: 5px 10px;
+    }
+    tr:hover {
+      transition:all 0.3s ease;
+      background: lightgray;
+    }
+
+    td {
+      padding: 5px 10px;
+    }
+  }
+  
   .infoItems {
-    padding: 5px 20px px 20px
+    padding: 5px 20px 5px 20px
   }
 
-  .suggestions {
-    button {
-      // padding: 5px;
-      margin: 5px;
-      // background: darkblue;
-      cursor: pointer;
-    }
-
-    button.isSelected {
-      background-color: $ms-color-themePrimary;
-      border-color: $ms-color-themePrimary;
-      color: $ms-color-white;
-      font-weight: bolder;
-    }
-
+  button.isSelected {
+    background-color: $ms-color-themePrimary;
+    border-color: $ms-color-themePrimary;
+    color: $ms-color-white;
+    font-weight: bolder;
   }
+  button {
+    // padding: 5px;
+    margin: 5px;
+    // background: darkblue;
+    cursor: pointer;
+  }
+
   // https://developer.mozilla.org/en-US/docs/web/css/grid-template-areas
 
   // grid-template-areas:

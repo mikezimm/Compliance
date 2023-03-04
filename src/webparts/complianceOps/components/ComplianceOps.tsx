@@ -1,9 +1,10 @@
 import * as React from 'react';
 import styles from './ComplianceOps.module.scss';
-import { IComplianceOpsProps, IComplianceOpsState, IStateSource, IStateSuggestions, IStateUser, ITabContactPivots, ITabMain, } from './IComplianceOpsProps';
+import { IApiMode, IComplianceOpsProps, IComplianceOpsState, IStateSource, IStateSuggestions, IStateUser, ITabContactPivots, ITabMain, } from './IComplianceOpsProps';
 
 
 import { Pivot, PivotItem, PivotLinkFormat, PivotLinkSize,} from 'office-ui-fabric-react/lib/Pivot';
+import { Icon,} from 'office-ui-fabric-react/lib/Icon';
 // import { ISpinnerStyles, Spinner, SpinnerSize, } from 'office-ui-fabric-react/lib/Spinner';
 
 import { saveViewAnalytics } from '../CoreFPS/Analytics';
@@ -69,6 +70,8 @@ import AdminsPageHook from './Pages/Admins/Header';
 
 import TestingPageHook from './Pages/Testing/Header';
 
+import AllListsPageHook from './Pages/AllLists/Header';
+
 // import { createAdminsRow } from './Pages/Admins/Row';
 import { addEasyIcons } from '@mikezimm/fps-library-v2/lib/components/atoms/EasyIcons/getEasyIcon';
 
@@ -76,7 +79,7 @@ import SharePointPageHook from './Pages/SharePoint/Header';
 import { getSiteCollectionUrlFromLink } from '@mikezimm/fps-library-v2/lib/logic/Strings/urlServices';
 import { IUserProperties } from './PersonaCard/IUserProperties';
 import { IFpsGetSiteReturn } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/IFpsGetSiteReturn';
-import { fetchLabelData } from './Pages/Labels/fetchLabels';
+// import { fetchLabelData } from './Pages/Labels/fetchLabels';
 // import { createLabelsRow } from './Pages/Labels/Row';
 
 import { MSGraphClient } from '@microsoft/sp-http';
@@ -85,7 +88,8 @@ import { convertSugsLC } from './Suggestions/convertSugsLC';
 import { LabelSuggestions } from './Suggestions/LabelSuggestions';
 import { getSuggestionsByKeys, getSuggestionsFromStrings } from './Suggestions/getSuggestionsByKeys';
 import { getSiteInfo } from '@mikezimm/fps-library-v2/lib/pnpjs/Sites/getSiteInfo';
-import { fetchRigItems } from './Pages/RigItems/fetchRigItems';
+// import { fetchRigItems } from './Pages/RigItems/fetchRigItems';
+import { fetchRigData } from './Pages/Labels/fetchRigStuff';
 
 // import { createSharePointRow } from './Pages/SharePoint/Row';
 
@@ -249,6 +253,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     if ( this._performance === null ) { this._performance = this.props.performance;  }
     const constId: string = this._newRefreshId();
 
+    const apiMode: IApiMode = check4Gulp() === true ? 'Mock' : 'Live';
+
     this.state = {
       pinState: this.props.bannerProps.fpsPinMenu.defPinState ? this.props.bannerProps.fpsPinMenu.defPinState : 'normal',
       showDevHeader: false,
@@ -257,6 +263,9 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
       refreshId: constId,
       debugMode: false,
       showSpinner: false,
+
+      apiMode: apiMode,
+
       targetSiteUrl: collectionUrl,
       targetWebUrl: this.props.bannerProps.context.pageContext.web.absoluteUrl,
       targetStatus: '',
@@ -319,7 +328,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
    *         
    */
 
-  public async componentDidUpdate( prevProps: IComplianceOpsProps ): Promise<void> {
+  public async componentDidUpdate( prevProps: IComplianceOpsProps, prevState: IComplianceOpsState ): Promise<void> {
 
     /**
      * This section is needed if you want to track performance in the react component.
@@ -332,7 +341,8 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
 
     if ( check4Gulp() === true )  console.log( `${consolePrefix} ~ componentDidUpdate` );
 
-    const refresh = this.props.bannerProps.displayMode !== prevProps.bannerProps.displayMode ? true : false;
+    let refresh = this.props.bannerProps.displayMode !== prevProps.bannerProps.displayMode ? true : false;
+    if ( this.state.apiMode !== prevState.apiMode ) refresh = true;
 
     //refresh these privates when the prop changes warrent it
     if ( refresh === true ) {
@@ -344,7 +354,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     if ( this.props.bannerProps.beAUser !== prevProps.bannerProps.beAUser ) {
       this._setIsAdmin();
       this.setState({ refreshId: this._newRefreshId() });
-    } 
+    }
   }
 
   private async updateTheseSources( sources: IDefSourceType[] ): Promise<void> {
@@ -519,12 +529,17 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     const { displayMode } = this.props.bannerProps;
     let stateSource: IStateSource = null;
     if ( sourceProps.key === 'labels' || sourceProps.key === 'rigItems' ) {
-      stateSource = sourceProps.key === 'labels' ? fetchLabelData( sourceProps, true, true ) as IStateSource : fetchRigItems( sourceProps, true, true ) as IStateSource;
+      stateSource = await fetchRigData( sourceProps, false, true, this.state.apiMode, this.props.httpClient ) as IStateSource;
+      // if ( sourceProps.key === 'labels' ) {
+      //   stateSource = await fetchRigData( sourceProps, true, true, this.state.apiMode, this.props.httpClient ) as IStateSource;
+      // } else {
+      //   stateSource = await fetchRigItems( sourceProps, true, true, this.state.apiMode, this.props.httpClient ) as IStateSource;
+      // }
       stateSource.index = [];
       stateSource.items.map( item => { stateSource.index.push( item[ sourceProps.indexKey ] ) });
 
     } else {
-      stateSource = await getSourceItems( { ...sourceProps, ...{ editMode: displayMode } }, true, true ) as IStateSource;
+      stateSource = await getSourceItems( { ...sourceProps, ...{ editMode: displayMode } }, false, true ) as IStateSource;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -556,6 +571,28 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
           }
         }
       });
+
+      // Copy Top SIte info to Subsite if Subsite is empty
+      if ( sourceProps.key === 'allLists' || sourceProps.key === 'site' ) {
+        stateSource.items.map( item => {
+          if ( !item.SubTitle ) item.SubTitle = item.Title;
+          if ( !item.Subsite ) item.Subsite = item.URL.replace(`${window.location.origin}/sites`, '');
+        });
+      }
+
+      stateSource.items.map( item => {
+        if ( item.JSONLists ) { 
+          try {
+            item.JSON = JSON.parse( item.JSONLists );
+            if ( item.JSON.url ) item.ListUrl = item.JSON.url;
+            if ( item.JSON.id ) item.ListId = item.JSON.id;
+            if ( item.JSON.id ) item.ListSettings = `${item.Subsite}/_layouts/15/Hold.aspx?Tag=true&List={${item.ListId}}`;
+          } catch (e) {
+            console.log('UNABLE TO PARSE JSONLists field')
+          }
+        }
+      });
+
       stateSource.items = addSearchMeta2( stateSource.items, SearchTypes );
       analyzePerf = updatePerformanceEnd( analyzePerf , true, stateSource.items.length );
       _performanceOpsAny[ `process${idx}` ] = analyzePerf; // Need to use just index here in order to save to correct object key
@@ -596,10 +633,15 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     ];
 
     //Setting showTricks to false here ( skipping this line does not have any impact on bug #90 )
-    if ( this.props.bannerProps.beAUser === false ) {
+    if ( this.props.bannerProps.beAUser === false && this.props.bannerProps.showTricks === true ) {
+      const { apiMode  } = this.state;
+      const apiIcon = apiMode === 'Live' ? 'PlugConnected' : 'PlugDisconnected';
+      const switchText = apiMode === 'Live' ? 'Mock' : 'Live';
+
       farBannerElementsArray.push(
-        // <div title={'Show Debug Info'}><Icon iconName='TestAutoSolid' onClick={ this.toggleDebugMode.bind(this) } style={ this.debugCmdStyles }></Icon></div>
+        <div title={`Currently in ${apiMode} API Mode.  Press to switch to ${switchText} data mode`}><Icon iconName={apiIcon} onClick={ this._toggleApiMode.bind(this) } style={ bannerProps.bannerCmdReactCSS }/></div>
       );
+
     }
 
     // const FPSUser : IFPSUser = this.props.bannerProps.FPSUser;
@@ -673,8 +715,12 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     />;
 
     
-    const allListsPageHeader = <SitePageHook
-      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' } />;
+    const allListsPageHeader = <AllListsPageHook
+      debugMode={ this.state.debugMode } mainPivotKey={ mainPivotKey } wpID={ '' }
+      allLists={ this.state.allLists }
+      primarySource={ this._SourceInfo.allLists }
+      refreshId={ this.state.allLists.refreshId }
+    />;
     
     const rigItemsPageHeader = <RigItemsPageHook
       suggestions={ this.state.suggestions }
@@ -843,6 +889,7 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
         { mainPivotKey !== 'Maps' ? undefined : mapItems }
         { mainPivotKey !== 'Forms' ? undefined : formItems }
         { mainPivotKey !== 'Admins' ? undefined : adminsPageHeader }
+        { mainPivotKey !== 'AllLists' ? undefined : allListsPageHeader }
 
         {/* <h2>Fetch Status: { fullAnalyticsSaved === true ? 'Finished!' : 'working' } { fullAnalyticsSaved === true ? this._performance.ops.fetch.ms : '' } ms</h2> */}
 
@@ -880,6 +927,15 @@ export default class ComplianceOps extends React.Component<IComplianceOpsProps, 
     this._SourceInfo = buildCurrentSourceInfo( this.props.bannerProps.displayMode, this._isAdmin, this.state.targetSiteUrl );
     await this.updateTheseSources( this._missingFetches( this._isAdmin ) );
 
+  }
+
+  private _toggleApiMode(): void {
+    const apiMode = this.state.apiMode === 'Live' ? 'Mock' : 'Live';
+    this.setState({ 
+      apiMode: apiMode,
+      rigItems : { items: [], index: [], loaded: false, refreshId: this._newRefreshId(), status: 'Unknown', e: null, misc1: [], },
+      labels : { items: [], index: [], loaded: false, refreshId: this._newRefreshId(), status: 'Unknown', e: null },
+    });
   }
 
   private pivotMainClick( temp: any ): void {

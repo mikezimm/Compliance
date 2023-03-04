@@ -9,6 +9,7 @@ import { ModernSitePagesColumns, ModernSitePagesSearch, ExtraFetchModernPage } f
 import { ISearchType, ISearchTypes } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/Interfaces/ISearchTypes';
 import { StdFileKeys, StdFileSearchTypes, StdSharePointKeys, StdSharePointSearchTypes } from '@mikezimm/fps-library-v2/lib/components/molecules/SearchPage/Interfaces/StandardTypes';
 import { DisplayMode } from '@microsoft/sp-core-library';
+import { RIG_API_PROD, LABEL_Page_Search_PROD, GetTitlesApi, GetItemApi } from '../storedSecrets/CorpAPIs';
 
 // import { ISeriesSort } from '../fpsReferences';
 // import { IAppFormat } from './INTERFACES/ILayoutsPage';
@@ -34,6 +35,8 @@ export interface ISourcePropsCOP extends ISourceProps {
 
     searchSource: ISearchSource;
     indexKey: string;
+
+    apiUrl?: string;
     // searchSourceDesc: string;
 
     // orderBy?: {
@@ -62,7 +65,7 @@ export interface ISourceInfo {
 export const RecordsSitePagesColumns: string[] = [ 'Status', 'WebPartTab', 'SortOrder' ];
 
 export const EnforcementColumns: string[] = [ 'ID', 'Title', 'URL', 'Subsite', 'SubTitle', 'SPOwner', 'NoRecordsDeclared', 'DocumentsHosted', 'JSONLists' ];
-export const EnforcementColumnsLists: string[] = [ 'ID', 'Title', 'SubTitle', 'NoRecordsDeclared', 'DocumentsHosted' ];
+export const EnforcementColumnsAllLists: string[] = [ 'ID', 'Title', 'URL', 'Subsite', 'SubTitle', 'NoRecordsDeclared', 'DocumentsHosted' ];
 
 export const CoordinatorColumns: string[] = [ 'ID','Facility', 'Division', 'Name/Title', 'AlternateContact/Title', 'Datelastverified', 'MapComplete' ];
 export const MapsColumns: string[] = [ 'ID','Region', 'Facility', ];
@@ -148,9 +151,10 @@ export const SourceInfo: ISourceInfo = {
     defType: `labels`,
     performanceSettings: {  label: 'labels', updateMiliseconds: true, includeMsStr: true, op: 'fetch7'  },
     indexKey: `RecordCode`,
-    webUrl: ``,
-    listTitle: ``,
-    webRelativeLink: ``,
+    webUrl: RIG_API_PROD,
+    listTitle: `Labels`,
+    webRelativeLink: `/RetentionSchedule.aspx`,
+    apiUrl: `${ RIG_API_PROD }${ GetTitlesApi }`,
     // absoluteWebUrl?: string;
     // sitesWebUrls?: string;
     // selectThese?: string[];
@@ -160,7 +164,7 @@ export const SourceInfo: ISourceInfo = {
     // webRelativeLink: string;
     viewItemLink: ``,
     searchSource: `Labels`,
-    searchSourceDesc: ``,
+    searchSourceDesc: `Labels`,
     columns: [],
     searchProps: LabelSearchColumns,
     // evalFilter?: string;
@@ -181,9 +185,10 @@ export const SourceInfo: ISourceInfo = {
     defType: `rigItems`,
     indexKey: `ItemName`, //ItemId 
     performanceSettings: {  label: 'RigItems', updateMiliseconds: true, includeMsStr: true, op: 'fetch8'  },
-    webUrl: ``,
-    listTitle: ``,
-    webRelativeLink: ``,
+    webUrl: RIG_API_PROD,
+    listTitle: `Examples`,
+    webRelativeLink: `/ItemGovernance.aspx`,
+    apiUrl: `${ RIG_API_PROD }${ GetItemApi }`,
     // absoluteWebUrl?: string;
     // sitesWebUrls?: string;
     // selectThese?: string[];
@@ -192,8 +197,8 @@ export const SourceInfo: ISourceInfo = {
     // orderBy?: ISeriesSortObject;
     // webRelativeLink: string;
     viewItemLink: ``,
-    searchSource: `Labels`,
-    searchSourceDesc: ``,
+    searchSource: `RigItems`,
+    searchSourceDesc: `Examples`,
     columns: [],
     searchProps: RigItemSearchColumns,
 
@@ -274,10 +279,10 @@ export const SourceInfo: ISourceInfo = {
     webRelativeLink: '/lists/SPORetentionLabelsEnforcement',
     searchSource: 'Site',
     searchSourceDesc:  'Site Collection Retention Label Status',
-    columns: [ ...EnforcementColumnsLists ],
+    columns: [ ...EnforcementColumnsAllLists ],
     itemFetchCol: [],
-    searchProps: [ ...EnforcementColumnsLists ],
-    selectThese: [ ...EnforcementColumnsLists ],
+    searchProps: [ ...EnforcementColumnsAllLists ],
+    selectThese: [ ...EnforcementColumnsAllLists ],
     isModern: true,
     restFilter: ``,
     defSearchButtons: [ '' ],

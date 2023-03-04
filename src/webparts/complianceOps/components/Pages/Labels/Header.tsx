@@ -11,7 +11,7 @@ import styles from './header.module.scss';
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
 import { AllTeachBubbles } from '../Teaching/bubbles';
-import { OtherIframeHref, RigAPIDocs, RIG_Page_Search_PROD, } from '../../../storedSecrets/CorpAPIs';
+import { ITEM_Page_Search_PROD, RigAPIDocs, LABEL_Page_Search_PROD, } from '../../../storedSecrets/CorpAPIs';
 // import { buttonProperties } from 'office-ui-fabric-react';
 import { ISuggestion } from '../../Suggestions/LabelSuggestions';
 import { ISourcePropsCOP } from '../../DataInterface';
@@ -131,7 +131,7 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
     {/* <ul> */}
       <div>Hi { user.item.givenName }, the first step to applying records retention to your files, is understanding what kinds of records you may have.</div>
       <div>You can search the retention schedule here or &nbsp;
-        <span className={ styles.isLink } onClick={ () => window.open( RIG_Page_Search_PROD, '_blank') } >
+        <span className={ styles.isLink } onClick={ () => window.open( LABEL_Page_Search_PROD, '_blank') } >
           click on this link</span> to open in a full window.</div>
       {/* <li onClick={ () => window.open( RIG_Page_Search, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px' }}>IFrame Url1: { RIG_Page_Search} </li> */}
       { IntroContent }
@@ -139,7 +139,7 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
       {
         check4Gulp() !== true ? undefined :
           <div>
-            <div onClick={ () => window.open( OtherIframeHref, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>IFrame Url2: { OtherIframeHref} </div>
+            <div onClick={ () => window.open( ITEM_Page_Search_PROD, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>IFrame Url2: { ITEM_Page_Search_PROD} </div>
             <div onClick={ () => window.open( RigAPIDocs, '_blank') } style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', padding: '5px 0px'  }}>API Docs: { RigAPIDocs} </div>
           </div>
       }
@@ -183,7 +183,7 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
     { itemsElement }
     {/* <div id={ 'ComplLabelsStartTour' } ><Icon iconName={ 'MapPin' }/></div> */}
     <div style={{ width: 'calc(100% - 40px)', height: '75vh'}}>
-      <iframe src={RIG_Page_Search_PROD} width='100%' height='100%' name='labels_Iframe'/>
+      <iframe src={LABEL_Page_Search_PROD} width='100%' height='100%' name='labels_Iframe'/>
     </div>
 
     { TeachMe }
