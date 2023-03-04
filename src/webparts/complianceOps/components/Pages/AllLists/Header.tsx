@@ -265,7 +265,7 @@ const AllListsPageHook: React.FC<IAllListsPageProps> = ( props ) => {
       return <button key={ label } onClick={ () => setSplitWords( index )} 
         className={ index === splitWords ? styles.isSelected : '' } >{ label }</button> 
       } ) }
-      <span style={{ paddingTop: '10px'}} ><b>*</b> This option will split things like the Library or Site Title into words.  This may highlight certain types of files into larger groups</span>
+      <span style={{ paddingTop: '10px', fontWeight: 'normal'}} ><b>*</b> This option will split things like the Library or Site Title into words.  This may highlight certain types of files into larger groups</span>
       </div>
     <div style={{ paddingTop: '10px', fontWeight: 600}} >Sort results:
       { ObjectSortKeys.map( ( label, index ) => { 
@@ -277,7 +277,6 @@ const AllListsPageHook: React.FC<IAllListsPageProps> = ( props ) => {
 
   const MainContent: JSX.Element = <div className={ styles.infoItems }style={{ cursor: 'default' }}>
       <div>This page summarizes number of files that do not have a retention label.</div>
-
       { IntroContent }
   </div>
 
