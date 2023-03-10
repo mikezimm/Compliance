@@ -27,6 +27,10 @@ export interface IRigItemSource extends IAnySourceItem {
   GlobalStorageLocation: string;
 
   RecordIdx?: number; // The index of the parent Label Item
+  Facilities?: string[];
+  Countries?: string[];
+  FacilitiesStr?: string;
+  CountriesStr?: string;
 }
 
 //export const CoordinatorColumns: string[] = [ 'ID','Facility', 'Division', 'Name/Title', 'AlternateContact/Title', 'Datelastverified', 'MapComplete' ];
@@ -50,7 +54,7 @@ export function createRigItemsRow0( props: ISourceRowRender ): JSX.Element { // 
   const PrivacyIdx = PrivacyChoices.indexOf( GlobalDataPrivacy );
   
   const row = <tr className={ [ styles.genericItem ].join( ' ' ) } onClick = { null }>
-    <td title={ ItemType } >{ getHighlightedText( ItemName, searchText ) }</td>
+    <td title={ ItemType } onClick={ () => { console.log( `createRigItemsRow0:`, item )}}>{ getHighlightedText( ItemName, searchText ) }</td>
     {/* <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</td> */}
     <td title={ null } style={{ whiteSpace: 'nowrap' }} >{ getHighlightedText( RecordCode, searchText ) }</td>
     {/* <td title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</td> */}
@@ -75,10 +79,9 @@ export function createRigItemsRow1( props: ISourceRowRender ): JSX.Element { // 
 
   const ClassificationIdx = ClassifyChoices.indexOf( Classification );
   const PrivacyIdx = PrivacyChoices.indexOf( GlobalDataPrivacy );
-  
   const row = <tr className={ [ styles.genericItem ].join( ' ' ) } onClick = { null }>
 
-    <td title={ item.ItemType } >{ getHighlightedText( item.ItemName, searchText ) }</td>
+    <td title={ item.ItemType }  onClick={ () => { console.log( `createRigItemsRow1:`, item )}}>{ getHighlightedText( item.ItemName, searchText ) }</td>
     <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</td>
     <td title={ item.RecordTitle } style={{ whiteSpace: 'nowrap' }} >{ getHighlightedText( item.RecordCode, searchText ) }</td>
     {/* <td title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</td> */}
@@ -106,7 +109,7 @@ export function createRigItemsRow2( props: ISourceRowRender ): JSX.Element { // 
   const PrivacyIdx = PrivacyChoices.indexOf( GlobalDataPrivacy );
   
   const row = <tr className={ [ styles.genericItem ].join( ' ' ) } onClick = { null }>
-    <td title={ item.ItemType } >{ getHighlightedText( item.ItemName, searchText ) }</td>
+    <td title={ item.ItemType }  onClick={ () => { console.log( `createRigItemsRow2:`, item )}}>{ getHighlightedText( item.ItemName, searchText ) }</td>
     <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</td>
     <td style={{ whiteSpace: 'nowrap' }} >{ getHighlightedText( item.RecordCode, searchText ) }</td>
     <td title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</td>

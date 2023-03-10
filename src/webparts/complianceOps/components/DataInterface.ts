@@ -125,6 +125,8 @@ export const LabelSearchColumns: string[] = [
   'RecordTitle', //  : string;
   'Classification', //  : string;
   'GlobalDataPrivacy', //  : string;
+  'FacilitiesStr',
+  'CountriesStr',
  ];
 
 export const LabelOtherColumns: string[] = [
