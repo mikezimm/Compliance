@@ -87,9 +87,11 @@ export async function createFPSHttpResponse( description: string, response: Http
 
   const data_1 = response ? await response.json() : null;
 
-  console.log(`API JSON data_1 ~ 69: ${description}`, data_1 ? data_1: results );
+  console.log(`createFPSHttpResponse data_1 ~ 91: ${description} results`, results );
+  console.log(`createFPSHttpResponse data_1 ~ 90: ${description} data_1`, data_1 );
+  console.log(`createFPSHttpResponse data_1 ~ 92: ${description} data_1.value`, data_1 ? data_1.value : undefined );
 
-  results.value = data_1 ? data_1.value : null;
+  results.value = data_1 && data_1.value ? data_1.value : data_1 ? data_1 : [];
 
   // Assume results are always an array
   results.items = results.value;
@@ -102,7 +104,8 @@ export async function createFPSHttpResponse( description: string, response: Http
     returnMess: '',
   }
 
-  if ( check4Gulp() ===  true ) console.log(`API JSON response ~ 81: ${description}`, response ? response: results );
+  // if ( check4Gulp() ===  true ) console.log(`API JSON response ~ 108: ${description}`, response ? response: results );
+  console.log(`API JSON response ~ 108: ${description}`, response ? response: results );
 
   return results;
 
