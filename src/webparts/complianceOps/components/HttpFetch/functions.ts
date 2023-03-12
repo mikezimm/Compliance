@@ -83,7 +83,7 @@ export async function createFPSHttpResponse( description: string, response: Http
   results.bodyUsed = response ? response.bodyUsed : null;
   results.headers = response ? response.headers : null;
 
-  results.status = response ? response.statusText as IFPSResultStatus : 'Error';
+  results.status = response ? response.status === 200 ? 'Success' : response.statusText as IFPSResultStatus : 'Error';
 
   const data_1 = response ? await response.json() : null;
 
