@@ -56,7 +56,10 @@ export async function fetchRigData( sourceProps: ISourcePropsCOP, alertMe: boole
 
   } else {
     initialResult = await fetchAPI( apiUrl, httpClient, sourceProps.listTitle, { ...HTTPApiPerformanceSettings, ...{ label: sourceProps.listTitle }}, BasicAuthNA );
-    initialResult.items = simplifyGetItems( initialResult.items );
+    if ( sourceProps.key === 'rigItems' ) {
+      initialResult.items = simplifyGetItems( initialResult.items );
+    }
+
   }
 
   const result : IFpsItemsReturn = checkItemsResults( initialResult, `fps-library-v2: fetchRigData ~ 59`, alertMe, consoleLog );
