@@ -142,10 +142,12 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
     return SuggestionButtons;
   }
 
-
+  // https://github.com/mikezimm/Compliance/issues/81
+  const jobTitle = user.item && user.item.jobTitle ? user.item.jobTitle : 'Unknown';
+  
   const IntroContent: JSX.Element = <div>
     We might suggest clicking on these Topics to get started.
-    { suggestionRow( suggestions.user, `Based your Job Title of '${ user.item.jobTitle }':`, updateButtons ) }
+    { suggestionRow( suggestions.user, `Based your Job Title of '${ jobTitle }':`, updateButtons ) }
     { suggestionRow( suggestions.web, `Based your Current Site Title of '${ webTitle }' or Site Description:`, updateButtons ) }
     { suggestionRow( suggestions.libraries, `Based your Libraries on this site:`, updateButtons ) }
 
