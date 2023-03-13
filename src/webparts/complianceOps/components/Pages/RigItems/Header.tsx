@@ -173,7 +173,7 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
     defaultIcon = 'Help'
     showAccordion = { true }
     content = { MainContent }
-    contentStyles = { { height: '200px' } }
+    contentStyles = { { height: '240px' } }
   />;
 
   const itemsElement = <SourcePages
