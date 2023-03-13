@@ -127,7 +127,7 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
   }
 
   // onClick( sug: ISuggestion, ): void
-  const suggestionRow = ( sugs: ISuggestion[], intro: string, onClick : any ): JSX.Element  => {
+  const suggestionRow = ( sugs: ISuggestion[], intro: string | JSX.Element, onClick : any ): JSX.Element  => {
     const SuggestionButtons : JSX.Element = sugs.length === 0 ? undefined : <div>
       { intro } 
       <span className={ styles.suggestions }>
@@ -142,12 +142,14 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
     return SuggestionButtons;
   }
 
+  // https://github.com/mikezimm/Compliance/issues/81
+  const jobTitle = user.item && user.item.jobTitle ? user.item.jobTitle : 'Unknown';
 
-  const IntroContent: JSX.Element = <div>
-    We might suggest clicking on these Topics to get started.
-    { suggestionRow( suggestions.user, `Based your Job Title of '${ user.item.jobTitle }':`, updateButtons ) }
-    { suggestionRow( suggestions.web, `Based your Current Site Title of '${ webTitle }' or Site Description:`, updateButtons ) }
-    { suggestionRow( suggestions.libraries, `Based your Libraries on this site:`, updateButtons ) }
+  const IntroContent: JSX.Element = <div style={{ paddingTop: '10px' }}>
+    You can filter lots of different ways, we suggest clicking on these Topics to get started.
+    { suggestionRow( suggestions.user, <span><b>Based your Job Title</b>{` of '${ jobTitle }':`}</span>, updateButtons ) }
+    { suggestionRow( suggestions.web, <span><b>Based your Site Title</b>{` of '${ webTitle }':`}</span>, updateButtons ) }
+    { suggestionRow( suggestions.libraries, <span><b>Based the Libraries on this site:</b></span>, updateButtons ) }
 
   </div>
 
@@ -157,12 +159,12 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
 
   const MainContent: JSX.Element = <div className={ styles.infoItems }style={{ cursor: 'default' }}>
     <b><mark>Need to verify this text is ok and update it</mark></b>
-    <div>Items on this tab are RIG Items.</div>
-    <div>RIG Items are typical names of content that may or may not be a record.</div>
-    <div>You can search for common names here and determine both Retention types as well as privacy and data classifications.</div>
-    <div>This is a living list that anyone in the company can help maintain.</div>
-    <div>To submit an update, please <span className={ styles.isLink } onClick={ () => window.open( ITEM_Page_Search_PROD, '_blank')} >click here</span></div>
-    <div>You can filter lots of different ways</div>
+    <div>Items on this tab are RIG Examples - names of content that may or may not be a record.  &nbsp;&nbsp;
+      You can search for common names here and determine both Retention types as well as privacy and data classifications.  &nbsp;&nbsp;
+      This is a living list that anyone in the company can help maintain.  &nbsp;&nbsp;
+      To submit an update, please <span className={ styles.isLink } onClick={ () => window.open( ITEM_Page_Search_PROD, '_blank')} >click here</span></div>
+    {/* <div></div> */}
+    { IntroContent }
     <div style={{ fontSize: 'large' }}>Change Layout: <span className={ styles.suggestions }>{ rowOptions }</span>  </div>
   </div>
 
