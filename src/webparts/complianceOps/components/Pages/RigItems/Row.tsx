@@ -126,8 +126,8 @@ export function createRigItemsRow2( props: ISourceRowRender ): JSX.Element { // 
 
 export function createFacilityCountryLabel( item: IAnySourceItem ): JSX.Element {
   const { Facilities, Countries, } = item;
-  const facilities = Facilities.length > 0 ? <span className={ styles.rigItemFacilityNote }><b title={ Facilities.join('; ') }>&nbsp;&nbsp;&nbsp;{`Facilities impacted: ${Facilities.length }`}</b></span> : ``;
-  const countries = Countries.length > 0 ? <span className={ styles.rigItemFacilityNote }><b title={ Countries.join('; ') }>&nbsp;&nbsp;&nbsp;{`Countries impacted: ${Countries.length }`}</b></span> : ``;
+  const facilities = Facilities.length > 0 ? <span className={ styles.rigItemFacilityNote } title={ Facilities.join('; ') }>&nbsp;&nbsp;&nbsp;{`Facilities: ${Facilities.length }`}</span> : ``;
+  const countries = Countries.length > 0 ? <span className={ styles.rigItemCountryNote } title={ Countries.join('; ') }>&nbsp;&nbsp;&nbsp;{`Countries: ${Countries.length }`}</span> : ``;
   const result = <span>{ facilities }{ countries }</span>;
   return result;
 
