@@ -143,7 +143,9 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
   }
 
   // https://github.com/mikezimm/Compliance/issues/81
-  const jobTitle = user.item && user.item.jobTitle ? user.item.jobTitle : 'Unknown';
+  // https://github.com/mikezimm/Compliance/issues/89
+  const jobTitle = user.item && user.item.jobTitle ? user.item.jobTitle : '';
+  const givenName = user.item && user.item.givenName ? user.item.givenName : '';   
 
   const IntroContent: JSX.Element = <div style={{ paddingTop: '10px' }}>
     You can filter lots of different ways, we suggest clicking on these Topics to get started.
@@ -159,7 +161,7 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
 
   const MainContent: JSX.Element = <div className={ styles.infoItems }style={{ cursor: 'default' }}>
     <b><mark>Need to verify this text is ok and update it</mark></b>
-    <div>Items on this tab are RIG Examples - names of content that may or may not be a record.  &nbsp;&nbsp;
+    <div>Hi { givenName }, Items on this tab are RIG Examples - names of content that may or may not be a record.  &nbsp;&nbsp;
       You can search for common names here and determine both Retention types as well as privacy and data classifications.  &nbsp;&nbsp;
       This is a living list that anyone in the company can help maintain.  &nbsp;&nbsp;
       To submit an update, please <span className={ styles.isLink } onClick={ () => window.open( ITEM_Page_Search_PROD, '_blank')} >click here</span></div>

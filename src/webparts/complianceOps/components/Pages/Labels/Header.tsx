@@ -119,7 +119,9 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
   }
 
   // https://github.com/mikezimm/Compliance/issues/81
-  const jobTitle = user.item && user.item.jobTitle ? user.item.jobTitle : 'Unknown'; 
+  // https://github.com/mikezimm/Compliance/issues/89
+  const jobTitle = user.item && user.item.jobTitle ? user.item.jobTitle : ''; 
+  const givenName = user.item && user.item.givenName ? user.item.givenName : ''; 
 
   const IntroContent: JSX.Element = <div>
     We might suggest clicking on these Topics to get started.
@@ -131,7 +133,7 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
 
   const MainContent: JSX.Element = <div className={ styles.infoItems }style={{ cursor: 'default' }}>
     {/* <ul> */}
-      <div>Hi { user.item.givenName }, the first step to applying records retention to your files, is understanding what kinds of records you may have.</div>
+      <div>Hi { givenName }, the first step to applying records retention to your files, is understanding what kinds of records you may have.</div>
       <div>You can search the retention schedule here or &nbsp;
         <span className={ styles.isLink } onClick={ () => window.open( LABEL_Page_Search_PROD, '_blank') } >
           click on this link</span> to open in a full window.</div>
