@@ -46,13 +46,14 @@ const PrivacyColors = [ 'dimgray', 'darkgreen', 'purple', ];
 
 export function createRigItemsRow0( props: ISourceRowRender ): JSX.Element { // eslint-disable-line @typescript-eslint/no-explicit-any
   const { item, searchText,  } = props; // details, showItemType, onOpenPanel, onParentCall, onClick
-  const { ItemName, ItemType, RecordCode, Classification, GlobalDataPrivacy, Status } = item;
+  const { ItemName, ItemType, RecordCode, Classification, GlobalDataPrivacy, Status, } = item;
 
   // const thisItem: IRigItemSource = item as IRigItemSource;
 
-  const ClassificationIdx = ClassifyChoices.indexOf( Classification );
-  const PrivacyIdx = PrivacyChoices.indexOf( GlobalDataPrivacy );
-  
+  // const ClassificationIdx = ClassifyChoices.indexOf( Classification );
+  // const PrivacyIdx = PrivacyChoices.indexOf( GlobalDataPrivacy );
+
+
   const row = <tr className={ [ styles.genericItem ].join( ' ' ) } onClick = { null }>
     <td title={ ItemType } onClick={ () => { console.log( `createRigItemsRow0:`, item )}}>{ getHighlightedText( ItemName, searchText ) }</td>
     {/* <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</td> */}
@@ -73,16 +74,15 @@ export function createRigItemsRow0( props: ISourceRowRender ): JSX.Element { // 
 
 export function createRigItemsRow1( props: ISourceRowRender ): JSX.Element { // eslint-disable-line @typescript-eslint/no-explicit-any
   const { item, searchText,  } = props; // details, showItemType, onOpenPanel, onParentCall, onClick
-  const { Classification, GlobalDataPrivacy } = item;
+  const { Classification, GlobalDataPrivacy, } = item;
 
-  // const thisItem: IRigItemSource = item as IRigItemSource;
 
   const ClassificationIdx = ClassifyChoices.indexOf( Classification );
   const PrivacyIdx = PrivacyChoices.indexOf( GlobalDataPrivacy );
   const row = <tr className={ [ styles.genericItem ].join( ' ' ) } onClick = { null }>
 
     <td title={ item.ItemType }  onClick={ () => { console.log( `createRigItemsRow1:`, item )}}>{ getHighlightedText( item.ItemName, searchText ) }</td>
-    <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</td>
+    <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }{ createFacilityCountryLabel( item ) }</td>
     <td title={ item.RecordTitle } style={{ whiteSpace: 'nowrap' }} >{ getHighlightedText( item.RecordCode, searchText ) }</td>
     {/* <td title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</td> */}
     <td style={{textAlign: 'center' }}>
@@ -101,16 +101,14 @@ export function createRigItemsRow1( props: ISourceRowRender ): JSX.Element { // 
 
 export function createRigItemsRow2( props: ISourceRowRender ): JSX.Element { // eslint-disable-line @typescript-eslint/no-explicit-any
   const { item, searchText,  } = props; // details, showItemType, onOpenPanel, onParentCall, onClick
-  const { Classification, GlobalDataPrivacy } = item;
-
-  // const thisItem: IRigItemSource = item as IRigItemSource;
+  const { Classification, GlobalDataPrivacy, } = item;
 
   const ClassificationIdx = ClassifyChoices.indexOf( Classification );
   const PrivacyIdx = PrivacyChoices.indexOf( GlobalDataPrivacy );
   
   const row = <tr className={ [ styles.genericItem ].join( ' ' ) } onClick = { null }>
     <td title={ item.ItemType }  onClick={ () => { console.log( `createRigItemsRow2:`, item )}}>{ getHighlightedText( item.ItemName, searchText ) }</td>
-    <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</td>
+    <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }{ createFacilityCountryLabel( item ) }</td>
     <td style={{ whiteSpace: 'nowrap' }} >{ getHighlightedText( item.RecordCode, searchText ) }</td>
     <td title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</td>
     <td style={{textAlign: 'center' }}>
@@ -123,5 +121,14 @@ export function createRigItemsRow2( props: ISourceRowRender ): JSX.Element { // 
   </tr>;
 
   return row;
+
+}
+
+export function createFacilityCountryLabel( item: IAnySourceItem ): JSX.Element {
+  const { Facilities, Countries, } = item;
+  const facilities = Facilities.length > 0 ? <span className={ styles.rigItemFacilityNote }><b title={ Facilities.join('; ') }>&nbsp;&nbsp;&nbsp;{`Facilities impacted: ${Facilities.length }`}</b></span> : ``;
+  const countries = Countries.length > 0 ? <span className={ styles.rigItemFacilityNote }><b title={ Countries.join('; ') }>&nbsp;&nbsp;&nbsp;{`Countries impacted: ${Countries.length }`}</b></span> : ``;
+  const result = <span>{ facilities }{ countries }</span>;
+  return result;
 
 }
