@@ -1,9 +1,11 @@
 
 import * as React from 'react';
 import styles from './Row.module.scss';
+import { Icon } from 'office-ui-fabric-react/lib/Icon';
 
 import { getHighlightedText, IAnySourceItem, } from '../../../fpsReferences';
 import { ISourceRowRender } from '../SourcePages/ISourceRowRender';
+import { Label_Detail_Page_PROD } from '../../../storedSecrets/CorpAPIs';
 
 // import { buildClickableIcon } from '@mikezimm/fps-library-v2/lib/components/atoms/Icons/stdIconsBuildersV02';
 
@@ -60,13 +62,24 @@ export function createLabelsRow( props: ISourceRowRender ): JSX.Element { // esl
 
   // const thisItem: ICorpLabelsSource = item as ICorpLabelsSource;
 
-  const row = <div className={ styles.genericItem } onClick = { null }>
-    <div title={ null } >{ getHighlightedText( item.RecordCode, searchText ) }</div>
-    <div title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</div>
-    <div title={ null } >{ getHighlightedText( item.Description, searchText ) }</div>
+  const row = <tr className={ styles.genericItem } onClick = { null }>
+    <td>{ createItemIcon( item as ICorpLabelsSource, styles.rigItemOpenIcon0 ) }</td>
+    <td title={ null } className={ styles.noWrap }>{ getHighlightedText( item.RecordCode, searchText ) }</td>
+    <td title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</td>
+    <td title={ null } >{ getHighlightedText( item.Description, searchText ) }</td>
     {/* <div title={ null } >{ getHighlightedText( item[ 'Name/Title' ], searchText ) }</div> */}
-  </div>;
+  </tr>;
 
   return row;
 
+}
+
+
+export function createItemIcon( item: ICorpLabelsSource, className: string ): JSX.Element {
+
+  const itemId = item.ItemId ? item.ItemId : 'UPDATECODE';
+  const ItemLink = `${Label_Detail_Page_PROD}${ itemId }`;
+  const ItemIcon = <Icon title={`Open item ${ itemId } in RIG Database`} onClick={ () => { window.open( ItemLink, `_blank` )}} iconName='OpenInNewWindow' />;
+
+  return <td className={ className }>{ ItemIcon }</td>;
 }

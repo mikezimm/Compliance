@@ -11,6 +11,7 @@
   margin: 0 0!important;
   // background: yellow;
 
+  //Commonize these styles across web part for common icons
   .itemTable {
     overflow-x: auto;
     width: 100%;
@@ -33,7 +34,7 @@
   }
 
   .infoItems {
-    padding: 5px 20px px 20px
+    padding: 5px 20px 5px 20px
   }
 
   .suggestions {

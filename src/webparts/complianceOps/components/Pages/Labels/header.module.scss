@@ -10,9 +10,34 @@
   padding: 10px 20px 20px 20px;
   margin: 0 0!important;
   // background: yellow;
-  
+
+  //Commonize these styles across web part for common icons
+  // EXCEPT THIS ONE HAS MORE TOP AND BOTTOM PADDING
+  .itemTable {
+    overflow-x: auto;
+    width: 100%;
+    margin-top: 15px;
+    padding-right: 20px;
+
+    tr:nth-child(even) {background-color: #f2f2f2;}
+    th {
+      transition:all 0.3s ease;
+      background-color: gray;
+      color: white;
+      padding: 5px 10px;
+    }
+    tr:hover {
+      transition:all 0.3s ease;
+      background: lightgray;
+    }
+
+    td {
+      padding: 8px 10px;
+    }
+  }
+
   .infoItems {
-    padding: 5px 20px px 20px
+    padding: 5px 20px 5px 20px
   }
 
   .suggestions {

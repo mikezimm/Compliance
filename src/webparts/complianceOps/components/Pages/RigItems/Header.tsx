@@ -29,11 +29,11 @@ import { ITEM_Page_Search_PROD } from '../../../storedSecrets/CorpAPIs';
 
 const renderRows = [ createRigItemsRow0, createRigItemsRow1, createRigItemsRow2 ];
 const renderHeaders = [
-  [ 'Item Name', 'Record Code', 'Data Classification', 'Data Privacy', 'Status', ],
-  [ 'Item Name', 'Item Description', 'Record Code', 'Data Classification', 'Data Privacy', 'Status', ],
-  [ 'Item Name', 'Item Description', 'Record Code',  'Record Title', 'Data Classification', 'Data Privacy', 'Status', ],
+  [ 'Item', 'Item Name', 'Record Code', 'Data Classification', 'Data Privacy', 'Status', ],
+  [ 'Item', 'Item Name', 'Item Description', 'Record Code', 'Data Classification', 'Data Privacy', 'Status', ],
+  [ 'Item', 'Item Name', 'Item Description', 'Record Code',  'Record Title', 'Data Classification', 'Data Privacy', 'Status', ],
 ]
-const renderIcons = [ 'TripleColumn', 'QuadColumn', 'DoubleColumn',  ];
+// const renderIcons = [ 'TripleColumn', 'QuadColumn', 'DoubleColumn',  ];
 const renderTitles = [ 'Simple', '+ Description', '+ Record Title',  ];
 
 const defaultButton: string = 'defaults';
@@ -143,7 +143,9 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
   }
 
   // https://github.com/mikezimm/Compliance/issues/81
-  const jobTitle = user.item && user.item.jobTitle ? user.item.jobTitle : 'Unknown';
+  // https://github.com/mikezimm/Compliance/issues/89
+  const jobTitle = user.item && user.item.jobTitle ? user.item.jobTitle : '';
+  const givenName = user.item && user.item.givenName ? user.item.givenName : '';   
 
   const IntroContent: JSX.Element = <div style={{ paddingTop: '10px' }}>
     You can filter lots of different ways, we suggest clicking on these Topics to get started.
@@ -159,7 +161,7 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
 
   const MainContent: JSX.Element = <div className={ styles.infoItems }style={{ cursor: 'default' }}>
     <b><mark>Need to verify this text is ok and update it</mark></b>
-    <div>Items on this tab are RIG Examples - names of content that may or may not be a record.  &nbsp;&nbsp;
+    <div>Hi { givenName }, Items on this tab are RIG Examples - names of content that may or may not be a record.  &nbsp;&nbsp;
       You can search for common names here and determine both Retention types as well as privacy and data classifications.  &nbsp;&nbsp;
       This is a living list that anyone in the company can help maintain.  &nbsp;&nbsp;
       To submit an update, please <span className={ styles.isLink } onClick={ () => window.open( ITEM_Page_Search_PROD, '_blank')} >click here</span></div>
@@ -186,9 +188,11 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
     startQty={ 20 }
     showItemType={ false }
     debugMode={ debugMode }
+
     tableHeaderElements={ renderHeaders[ renderTitles.indexOf( activeView ) ] }
     tableClassName= { styles.itemTable }
     tableHeaderClassName= { [ stylesRow.genericItem ].join( ' ' )  }
+
     renderRow={ renderRows[ renderTitles.indexOf( activeView ) ] }
     // bumpDeepLinks= { this.bumpDeepStateFromComponent.bind(this) }
     deepProps={ null } //this.state.deepProps

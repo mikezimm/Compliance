@@ -27,6 +27,16 @@
   color: darkred;
 }
 
+//Commonize these styles across web part for common icons
+.rigItemOpenIcon0 i {
+  font-size: large;
+}
+
+.rigItemOpenIcon12 i {
+  font-size: large;
+  padding: 5px;
+}
+
 .genericItem0 {
   // grid-template-columns: auto auto auto auto auto;
 }

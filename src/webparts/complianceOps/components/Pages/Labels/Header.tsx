@@ -7,6 +7,7 @@ import { IStateSource, IStateSuggestions, IStateUser, ITabMain, } from '../../IC
 import Accordion from '@mikezimm/fps-library-v2/lib/components/molecules/Accordion/Accordion';
 
 import styles from './header.module.scss';
+import stylesRow from './Row.module.scss';
 
 import { makeBubbleElementFromBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/component';
 import { getTeachBubbles } from '@mikezimm/fps-library-v2/lib/components/atoms/TeachBubble/getTeacher';
@@ -31,6 +32,12 @@ export interface ILabelsPageProps {
   user: IStateUser;
   webTitle: string;
 }
+
+const renderHeaders = [
+  [ 'Item', 'Code', 'Title', 'Description', ],
+]
+// const renderIcons = [ 'TripleColumn', 'QuadColumn', 'DoubleColumn',  ];
+// const renderTitles = [ 'Simple', '+ Description', '+ Record Title',  ];
 
 /***
  *    .d8888. d888888b  .d8b.  d8888b. d888888b      db   db  .d88b.   .d88b.  db   dD 
@@ -119,7 +126,9 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
   }
 
   // https://github.com/mikezimm/Compliance/issues/81
-  const jobTitle = user.item && user.item.jobTitle ? user.item.jobTitle : 'Unknown'; 
+  // https://github.com/mikezimm/Compliance/issues/89
+  const jobTitle = user.item && user.item.jobTitle ? user.item.jobTitle : ''; 
+  const givenName = user.item && user.item.givenName ? user.item.givenName : ''; 
 
   const IntroContent: JSX.Element = <div>
     We might suggest clicking on these Topics to get started.
@@ -131,7 +140,7 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
 
   const MainContent: JSX.Element = <div className={ styles.infoItems }style={{ cursor: 'default' }}>
     {/* <ul> */}
-      <div>Hi { user.item.givenName }, the first step to applying records retention to your files, is understanding what kinds of records you may have.</div>
+      <div>Hi { givenName }, the first step to applying records retention to your files, is understanding what kinds of records you may have.</div>
       <div>You can search the retention schedule here or &nbsp;
         <span className={ styles.isLink } onClick={ () => window.open( LABEL_Page_Search_PROD, '_blank') } >
           click on this link</span> to open in a full window.</div>
@@ -168,6 +177,11 @@ const LabelsPageHook: React.FC<ILabelsPageProps> = ( props ) => {
     startQty={ 20 }
     showItemType={ false }
     debugMode={ debugMode }
+
+    tableHeaderElements={ renderHeaders[ 0 ] }
+    tableClassName= { styles.itemTable }
+    tableHeaderClassName= { [ stylesRow.genericItem ].join( ' ' )  }
+
     renderRow={ createLabelsRow }
     // bumpDeepLinks= { this.bumpDeepStateFromComponent.bind(this) }
     deepProps={ null } //this.state.deepProps

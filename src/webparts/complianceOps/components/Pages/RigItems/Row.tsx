@@ -5,6 +5,7 @@ import styles from './Row.module.scss';
 import { getHighlightedText, IAnySourceItem, } from '../../../fpsReferences';
 import { ISourceRowRender } from '../SourcePages/ISourceRowRender';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
+import { ITEM_Detail_Page_PROD } from '../../../storedSecrets/CorpAPIs';
 
 // import { buildClickableIcon } from '@mikezimm/fps-library-v2/lib/components/atoms/Icons/stdIconsBuildersV02';
 
@@ -46,7 +47,7 @@ const PrivacyColors = [ 'dimgray', 'darkgreen', 'purple', ];
 
 export function createRigItemsRow0( props: ISourceRowRender ): JSX.Element { // eslint-disable-line @typescript-eslint/no-explicit-any
   const { item, searchText,  } = props; // details, showItemType, onOpenPanel, onParentCall, onClick
-  const { ItemName, ItemType, RecordCode, Classification, GlobalDataPrivacy, Status, } = item;
+  const { ItemName, ItemType, RecordCode, Classification, GlobalDataPrivacy, Status, } = item as IRigItemSource;
 
   // const thisItem: IRigItemSource = item as IRigItemSource;
 
@@ -55,6 +56,7 @@ export function createRigItemsRow0( props: ISourceRowRender ): JSX.Element { // 
 
 
   const row = <tr className={ [ styles.genericItem ].join( ' ' ) } onClick = { null }>
+    <td>{ createItemIcon( item as IRigItemSource, styles.rigItemOpenIcon0 ) }</td>
     <td title={ ItemType } onClick={ () => { console.log( `createRigItemsRow0:`, item )}}>{ getHighlightedText( ItemName, searchText ) }</td>
     {/* <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }</td> */}
     <td title={ null } style={{ whiteSpace: 'nowrap' }} >{ getHighlightedText( RecordCode, searchText ) }</td>
@@ -74,13 +76,13 @@ export function createRigItemsRow0( props: ISourceRowRender ): JSX.Element { // 
 
 export function createRigItemsRow1( props: ISourceRowRender ): JSX.Element { // eslint-disable-line @typescript-eslint/no-explicit-any
   const { item, searchText,  } = props; // details, showItemType, onOpenPanel, onParentCall, onClick
-  const { Classification, GlobalDataPrivacy, } = item;
+  const { Classification, GlobalDataPrivacy, } = item as IRigItemSource;
 
 
   const ClassificationIdx = ClassifyChoices.indexOf( Classification );
   const PrivacyIdx = PrivacyChoices.indexOf( GlobalDataPrivacy );
   const row = <tr className={ [ styles.genericItem ].join( ' ' ) } onClick = { null }>
-
+    <td>{ createItemIcon( item as IRigItemSource, styles.rigItemOpenIcon12 ) }</td>
     <td title={ item.ItemType }  onClick={ () => { console.log( `createRigItemsRow1:`, item )}}>{ getHighlightedText( item.ItemName, searchText ) }</td>
     <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }{ createFacilityCountryLabel( item ) }</td>
     <td title={ item.RecordTitle } style={{ whiteSpace: 'nowrap' }} >{ getHighlightedText( item.RecordCode, searchText ) }</td>
@@ -105,8 +107,9 @@ export function createRigItemsRow2( props: ISourceRowRender ): JSX.Element { // 
 
   const ClassificationIdx = ClassifyChoices.indexOf( Classification );
   const PrivacyIdx = PrivacyChoices.indexOf( GlobalDataPrivacy );
-  
+
   const row = <tr className={ [ styles.genericItem ].join( ' ' ) } onClick = { null }>
+    <td>{ createItemIcon( item as IRigItemSource, styles.rigItemOpenIcon12 ) }</td>
     <td title={ item.ItemType }  onClick={ () => { console.log( `createRigItemsRow2:`, item )}}>{ getHighlightedText( item.ItemName, searchText ) }</td>
     <td title={ null } >{ getHighlightedText( item.ItemDescription, searchText ) }{ createFacilityCountryLabel( item ) }</td>
     <td style={{ whiteSpace: 'nowrap' }} >{ getHighlightedText( item.RecordCode, searchText ) }</td>
@@ -122,6 +125,15 @@ export function createRigItemsRow2( props: ISourceRowRender ): JSX.Element { // 
 
   return row;
 
+}
+
+export function createItemIcon( item: IRigItemSource, className: string ): JSX.Element {
+
+  const itemId = item.ItemId ? item.ItemId : 'UPDATECODE';
+  const ItemLink = `${ITEM_Detail_Page_PROD}${itemId}`;
+  const ItemIcon = <Icon title={`Open item ${itemId} in RIG Database`} onClick={ () => { window.open( ItemLink, `_blank` )}} iconName='OpenInNewWindow' />;
+
+  return <td className={ className }>{ ItemIcon }</td>;
 }
 
 export function createFacilityCountryLabel( item: IAnySourceItem ): JSX.Element {
