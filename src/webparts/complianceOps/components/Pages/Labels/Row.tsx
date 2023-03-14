@@ -64,7 +64,7 @@ export function createLabelsRow( props: ISourceRowRender ): JSX.Element { // esl
 
   const row = <tr className={ styles.genericItem } onClick = { null }>
     <td>{ createItemIcon( item as ICorpLabelsSource, styles.rigItemOpenIcon0 ) }</td>
-    <td title={ null } >{ getHighlightedText( item.RecordCode, searchText ) }</td>
+    <td title={ null } className={ styles.noWrap }>{ getHighlightedText( item.RecordCode, searchText ) }</td>
     <td title={ null } >{ getHighlightedText( item.RecordTitle, searchText ) }</td>
     <td title={ null } >{ getHighlightedText( item.Description, searchText ) }</td>
     {/* <div title={ null } >{ getHighlightedText( item[ 'Name/Title' ], searchText ) }</div> */}
@@ -77,8 +77,9 @@ export function createLabelsRow( props: ISourceRowRender ): JSX.Element { // esl
 
 export function createItemIcon( item: ICorpLabelsSource, className: string ): JSX.Element {
 
-  const ItemLink = `${Label_Detail_Page_PROD}${ item.ItemId ? item.ItemId : 'UPDATECODE' }`;
-  const ItemIcon = <Icon title={`Open item in RIG Database`} onClick={ () => { window.open( ItemLink, `_blank` )}} iconName='OpenInNewWindow' />;
+  const itemId = item.ItemId ? item.ItemId : 'UPDATECODE';
+  const ItemLink = `${Label_Detail_Page_PROD}${ itemId }`;
+  const ItemIcon = <Icon title={`Open item ${ itemId } in RIG Database`} onClick={ () => { window.open( ItemLink, `_blank` )}} iconName='OpenInNewWindow' />;
 
   return <td className={ className }>{ ItemIcon }</td>;
 }

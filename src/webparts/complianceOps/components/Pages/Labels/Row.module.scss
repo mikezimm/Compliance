@@ -1,33 +1,31 @@
 @import '~office-ui-fabric-react/dist/sass/References.scss';
 
 .genericItem {
-    padding-top: 15px;
+  padding-top: 15px;
+  // display: grid;
+  // grid-gap: 10px;
+  justify-items: start;
 
-    display: grid;
-    grid-template-columns: 80px 200px auto;
-    grid-gap: 10px;
+  i {
+    // padding-right: 15px;
+    cursor: pointer;
+  }
 
-    i {
-      // padding-right: 15px;
-      cursor: pointer;
-    }
-
-    div {
-      // white-space: nowrap;
-      // overflow: hidden;
-      // text-overflow: ellipsis;
-    }
-
-    //Commonize these styles across web part for common icons
-    .rigItemOpenIcon0 {
-      font-size: large;
-    }
-
-    .rigItemOpenIcon12 {
-      font-size: large;
-      padding: 5px;
-    }
-
+  .noWrap {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
 }
 
+
+//Commonize these styles across web part for common icons
+.rigItemOpenIcon0 i {
+  font-size: large;
+}
+
+.rigItemOpenIcon12 i {
+  font-size: large;
+  padding: 5px;
+}

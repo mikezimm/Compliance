@@ -129,8 +129,9 @@ export function createRigItemsRow2( props: ISourceRowRender ): JSX.Element { // 
 
 export function createItemIcon( item: IRigItemSource, className: string ): JSX.Element {
 
-  const ItemLink = `${ITEM_Detail_Page_PROD}${item.ItemId}`;
-  const ItemIcon = <Icon title={`Open item in RIG Database`} onClick={ () => { window.open( ItemLink, `_blank` )}} iconName='OpenInNewWindow' />;
+  const itemId = item.ItemId ? item.ItemId : 'UPDATECODE';
+  const ItemLink = `${ITEM_Detail_Page_PROD}${itemId}`;
+  const ItemIcon = <Icon title={`Open item ${itemId} in RIG Database`} onClick={ () => { window.open( ItemLink, `_blank` )}} iconName='OpenInNewWindow' />;
 
   return <td className={ className }>{ ItemIcon }</td>;
 }
