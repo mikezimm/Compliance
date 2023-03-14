@@ -29,11 +29,11 @@ import { ITEM_Page_Search_PROD } from '../../../storedSecrets/CorpAPIs';
 
 const renderRows = [ createRigItemsRow0, createRigItemsRow1, createRigItemsRow2 ];
 const renderHeaders = [
-  [ 'Item Name', 'Record Code', 'Data Classification', 'Data Privacy', 'Status', ],
-  [ 'Item Name', 'Item Description', 'Record Code', 'Data Classification', 'Data Privacy', 'Status', ],
-  [ 'Item Name', 'Item Description', 'Record Code',  'Record Title', 'Data Classification', 'Data Privacy', 'Status', ],
+  [ 'Item', 'Item Name', 'Record Code', 'Data Classification', 'Data Privacy', 'Status', ],
+  [ 'Item', 'Item Name', 'Item Description', 'Record Code', 'Data Classification', 'Data Privacy', 'Status', ],
+  [ 'Item', 'Item Name', 'Item Description', 'Record Code',  'Record Title', 'Data Classification', 'Data Privacy', 'Status', ],
 ]
-const renderIcons = [ 'TripleColumn', 'QuadColumn', 'DoubleColumn',  ];
+// const renderIcons = [ 'TripleColumn', 'QuadColumn', 'DoubleColumn',  ];
 const renderTitles = [ 'Simple', '+ Description', '+ Record Title',  ];
 
 const defaultButton: string = 'defaults';
