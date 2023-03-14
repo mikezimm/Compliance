@@ -188,9 +188,11 @@ const RigItemsPageHook: React.FC<IRigItemsPageProps> = ( props ) => {
     startQty={ 20 }
     showItemType={ false }
     debugMode={ debugMode }
+
     tableHeaderElements={ renderHeaders[ renderTitles.indexOf( activeView ) ] }
     tableClassName= { styles.itemTable }
     tableHeaderClassName= { [ stylesRow.genericItem ].join( ' ' )  }
+
     renderRow={ renderRows[ renderTitles.indexOf( activeView ) ] }
     // bumpDeepLinks= { this.bumpDeepStateFromComponent.bind(this) }
     deepProps={ null } //this.state.deepProps
